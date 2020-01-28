@@ -47,10 +47,10 @@ lerrorbars=True
 lprintzero=False
 
 # Make the Y-ranges on all the plots identical.
-lharmonize_y=True
+lharmonize_y=False
 
 # This is a flag that will set a lot of the parameters, include which simulations we plot
-possible_graphnames=("test", "full_global", "full_verify", "LUC_full", "sectorplot_full", "forestry_full", "grassland_full", "crops_full", "inversions_full", "inversions_test","biofuels","inversions_verify")
+possible_graphnames=("test", "full_global", "full_verify", "LUC_full", "sectorplot_full", "forestry_full", "grassland_full", "crops_full", "inversions_full", "inversions_test","biofuels","inversions_verify","lulucf")
 try:
    graphname=sys.argv[1]
 except:
@@ -149,7 +149,7 @@ countrynames={ \
 ALA=countries65.index('ALA');ALB=countries65.index('ALB');AND=countries65.index('AND'); AUT=countries65.index('AUT');BEL=countries65.index('BEL');BGR=countries65.index('BGR');BIH=countries65.index('BIH');BLR=countries65.index('BLR');CHE=countries65.index('CHE');CYP=countries65.index('CYP');CZE=countries65.index('CZE');DEU=countries65.index('DEU');DNK=countries65.index('DNK');ESP=countries65.index('ESP');EST=countries65.index('EST');FIN=countries65.index('FIN');FRA=countries65.index('FRA');FRO=countries65.index('FRO');GBR=countries65.index('GBR');GGY=countries65.index('GGY');GRC=countries65.index('GRC');HRV=countries65.index('HRV');HUN=countries65.index('HUN');IMN=countries65.index('IMN');IRL=countries65.index('IRL');ISL=countries65.index('ISL');ITA=countries65.index('ITA');JEY=countries65.index('JEY');LIE=countries65.index('LIE');LTU=countries65.index('LTU');LUX=countries65.index('LUX');LVA=countries65.index('LVA');MDA=countries65.index('MDA');MKD=countries65.index('MKD'); MLT=countries65.index('MLT'); MNE=countries65.index('MNE'); NLD=countries65.index('NLD');NOR=countries65.index('NOR'); POL=countries65.index('POL');PRT=countries65.index('PRT');ROU=countries65.index('ROU');RUS=countries65.index('RUS');SJM=countries65.index('SJM');SMR=countries65.index('SMR');SRB=countries65.index('SRB');SVK=countries65.index('SVK');SVN=countries65.index('SVN');SWE=countries65.index('SWE'); TUR=countries65.index('TUR');UKR=countries65.index('UKR');BNL=countries65.index('BNL'); UKI=countries65.index('UKI');IBE=countries65.index('IBE');WEE=countries65.index('WEE');CEE=countries65.index('CEE');NOE=countries65.index('NOE');SOE=countries65.index('SOE');SEE=countries65.index('SEE');EAE=countries65.index('EAE');E15=countries65.index('E15');E27=countries65.index('E27');E28=countries65.index('E28');EUR=countries65.index('EUR'); EUT=countries65.index('EUT');KOS=countries65.index('KOS')
 
 # Only create plots for these countries/regions
-#desired_plots=['FRA','DEU','SWE','E28']
+desired_plots=['FRA','DEU','SWE','E28']
 ####
 #desired_plots=countries65
 #desired_plots.remove('KOS')
@@ -160,7 +160,7 @@ ALA=countries65.index('ALA');ALB=countries65.index('ALB');AND=countries65.index(
 # it like just another region.  So, let's try to set everything
 # up for a new region here.  The code now handles everything in 
 # in group_input.
-desired_plots=['AUT','EAE2','WEE2']
+#desired_plots=['EAE2','WEE2']
 # This is a test case that should produce indentical results
 #desired_plots=['IBE','IBE2']
 
@@ -496,9 +496,16 @@ if lharmonize_y:
    ymax=ymax+0.05*abs(ymax)
 #endif
 
+
+######## Sometimes people want raw data.  I will
+# print all raw data for all the plots to this file.
+datafile=open("plotting_data.txt","w")
+
 for iplot,cplot in enumerate(desired_plots):
 
    print("**** On plot {0} ****".format(plot_titles_master[cplot]))
+   datafile.write("**** On plot {0} ****\n".format(plot_titles_master[cplot]))
+
    # In an effort to harmonize the spacing a bit, I create a three-panel
    # grid, and then put only the legend in the bottom panel.
 
@@ -566,8 +573,14 @@ for iplot,cplot in enumerate(desired_plots):
          #endif
 
          if simtype[isim] == "INVENTORY" and graphname != "sectorplot_full":
+            datafile.write("**** On dataset {0} ****\n".format(desired_simulations[isim]))
+
             upperrange=simulation_data[isim,:,iplot]+simulation_data[isim,:,iplot]*simulation_err[isim,:,iplot]
             lowerrange=simulation_data[isim,:,iplot]-simulation_data[isim,:,iplot]*simulation_err[isim,:,iplot]
+            datafile.write("years {}\n".format(allyears[:]))
+            datafile.write("data {}\n".format(simulation_data[isim,:,iplot]))
+            datafile.write("upperbounds {}\n".format(upperrange[:]))
+            datafile.write("lowerbounds {}\n".format(lowerrange[:]))
             for iyear in range(ndesiredyears):
                p1=mpl.patches.Rectangle((allyears[iyear]-0.5,lowerrange[iyear]),1,upperrange[iyear]-lowerrange[iyear], color=uncert_color[isim], alpha=0.30)
                ax1.add_patch(p1)
@@ -589,6 +602,7 @@ for iplot,cplot in enumerate(desired_plots):
 
             legend_axes.append(p1)
             legend_titles.append(displayname[isim])
+            datafile.write("\n")
 
          #endif
       #endfor
@@ -624,6 +638,14 @@ for iplot,cplot in enumerate(desired_plots):
       legend_titles.append("Mean of GCP (removing lakes/rivers)")
       legend_axes.append(p1)
       legend_titles.append("Min/Max of GCP")
+      
+      # Write raw data to a file
+      datafile.write("**** On dataset Mean of GCP ****\n")
+      datafile.write("years {}\n".format(allyears[:]))
+      datafile.write("data {}\n".format(globalinvmean[:,iplot]))
+      datafile.write("upperbounds {}\n".format(upperrange[:]))
+      datafile.write("lowerbounds {}\n".format(lowerrange[:]))
+
       # I want to make sure the symbol shows up on top of the error bars.  Just used a simple thick horizontal bar in the same color as above.
       #p1=ax1.scatter(allyears,globalinvmean[:,iplot],marker="_",label="EUROCOM",facecolors="None", edgecolors="red",s=60)
 
@@ -653,6 +675,13 @@ for iplot,cplot in enumerate(desired_plots):
 
       #endif
       
+      # Write raw data to a file
+      datafile.write("**** On dataset Mean of CarboScopeReg (removing lakes/rivers) ****\n")
+      datafile.write("years {}\n".format(allyears[:]))
+      datafile.write("data {}\n".format(verifyinvmean[:,iplot]))
+      datafile.write("upperbounds {}\n".format(upperrange[:]))
+      datafile.write("lowerbounds {}\n".format(lowerrange[:]))
+
       # I want to make sure the symbol shows up on top of the error bars.  Just used a simple thick horizontal bar in the same color as above.
       #p1=ax1.scatter(allyears,verifyinvmean[:,iplot],marker="_",label="EUROCOM",facecolors="None", edgecolors="red",s=60)
 
@@ -672,6 +701,13 @@ for iplot,cplot in enumerate(desired_plots):
       legend_axes.append(p1)
       legend_titles.append("Min/Max of EUROCOM")
  
+      # Write raw data to a file
+      datafile.write("**** On dataset Mean of EUROCOM (removing lakes/rivers) ****\n")
+      datafile.write("years {}\n".format(allyears[:]))
+      datafile.write("data {}\n".format(regionalinvmean[:,iplot]))
+      datafile.write("upperbounds {}\n".format(upperrange[:]))
+      datafile.write("lowerbounds {}\n".format(lowerrange[:]))
+
       # I want to make sure the symbol shows up on top of the error bars.  Just used a simple thick horizontal bar in the same color as above.
       #p1=ax1.scatter(allyears,regionalinvmean[:,iplot],marker="_",label="EUROCOM",facecolors="None", edgecolors="red",s=60)
 
