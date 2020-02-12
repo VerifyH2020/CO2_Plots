@@ -24,7 +24,7 @@ import pandas as pd
 from netCDF4 import Dataset
 from matplotlib.ticker import MultipleLocator
 import matplotlib.gridspec as gridspec
-from plotting_subroutines import get_simulation_parameters,find_date,get_cumulated_array,readfile,group_input
+from plotting_subroutines import get_simulation_parameters,find_date,get_cumulated_array,readfile,group_input,combine_simulations
 
 ##########################################################################
 # Here are some variables that are used throughout the code
@@ -50,7 +50,7 @@ lprintzero=False
 lharmonize_y=False
 
 # This is a flag that will set a lot of the parameters, include which simulations we plot
-possible_graphnames=("test", "full_global", "full_verify", "LUC_full", "sectorplot_full", "forestry_full", "grassland_full", "crops_full", "inversions_full", "inversions_test","biofuels","inversions_verify","lulucf")
+possible_graphnames=("test", "full_global", "full_verify", "LUC_full", "sectorplot_full", "forestry_full", "grassland_full", "crops_full", "inversions_full", "inversions_test","biofuels","inversions_verify","lulucf","LULUCF_full","inversions_combined")
 try:
    graphname=sys.argv[1]
 except:
@@ -149,7 +149,7 @@ countrynames={ \
 ALA=countries65.index('ALA');ALB=countries65.index('ALB');AND=countries65.index('AND'); AUT=countries65.index('AUT');BEL=countries65.index('BEL');BGR=countries65.index('BGR');BIH=countries65.index('BIH');BLR=countries65.index('BLR');CHE=countries65.index('CHE');CYP=countries65.index('CYP');CZE=countries65.index('CZE');DEU=countries65.index('DEU');DNK=countries65.index('DNK');ESP=countries65.index('ESP');EST=countries65.index('EST');FIN=countries65.index('FIN');FRA=countries65.index('FRA');FRO=countries65.index('FRO');GBR=countries65.index('GBR');GGY=countries65.index('GGY');GRC=countries65.index('GRC');HRV=countries65.index('HRV');HUN=countries65.index('HUN');IMN=countries65.index('IMN');IRL=countries65.index('IRL');ISL=countries65.index('ISL');ITA=countries65.index('ITA');JEY=countries65.index('JEY');LIE=countries65.index('LIE');LTU=countries65.index('LTU');LUX=countries65.index('LUX');LVA=countries65.index('LVA');MDA=countries65.index('MDA');MKD=countries65.index('MKD'); MLT=countries65.index('MLT'); MNE=countries65.index('MNE'); NLD=countries65.index('NLD');NOR=countries65.index('NOR'); POL=countries65.index('POL');PRT=countries65.index('PRT');ROU=countries65.index('ROU');RUS=countries65.index('RUS');SJM=countries65.index('SJM');SMR=countries65.index('SMR');SRB=countries65.index('SRB');SVK=countries65.index('SVK');SVN=countries65.index('SVN');SWE=countries65.index('SWE'); TUR=countries65.index('TUR');UKR=countries65.index('UKR');BNL=countries65.index('BNL'); UKI=countries65.index('UKI');IBE=countries65.index('IBE');WEE=countries65.index('WEE');CEE=countries65.index('CEE');NOE=countries65.index('NOE');SOE=countries65.index('SOE');SEE=countries65.index('SEE');EAE=countries65.index('EAE');E15=countries65.index('E15');E27=countries65.index('E27');E28=countries65.index('E28');EUR=countries65.index('EUR'); EUT=countries65.index('EUT');KOS=countries65.index('KOS')
 
 # Only create plots for these countries/regions
-desired_plots=['FRA','DEU','SWE','E28']
+desired_plots=['FRA','E28']
 ####
 #desired_plots=countries65
 #desired_plots.remove('KOS')
@@ -172,6 +172,7 @@ plot_titles_master={}
 for cname in countrynames.keys():
    plot_titles_master[cname]=countrynames[cname]
 #endfor
+plot_titles_master["E28"]="EU27_2020"
 
 
 ##########################################################################
@@ -183,7 +184,7 @@ for cname in countrynames.keys():
 
 numplot=len(desired_plots)
 
-desired_simulations,files_master,simtype_master,plotmarker_master,variables_master,edgec_master,facec_master,uncert_color_master,markersize_master,productiondata_master,displayname_master,datasource,output_file_start,output_file_end,titleending,printfakewarning=get_simulation_parameters(graphname,lshow_productiondata)
+desired_simulations,files_master,simtype_master,plotmarker_master,variables_master,edgec_master,facec_master,uncert_color_master,markersize_master,productiondata_master,displayname_master,displaylegend_master,datasource,output_file_start,output_file_end,titleending,printfakewarning,lplot_areas,overwrite_simulations,desired_legend=get_simulation_parameters(graphname,lshow_productiondata)
 
 
 # This is a generic code to read in all the simulations.  We may do different things based on the
@@ -204,6 +205,7 @@ uncert_color=[]
 markersize=[]
 productiondata=[]
 displayname=[]
+displaylegend=[]
 for simulationname in desired_simulations:
    variables.append(variables_master[simulationname])
    files.append(files_master[simulationname])
@@ -215,6 +217,7 @@ for simulationname in desired_simulations:
    markersize.append(markersize_master[simulationname])
    productiondata.append(productiondata_master[simulationname])
    displayname.append(displayname_master[simulationname])
+   displaylegend.append(displaylegend_master[simulationname])
 #endfor
 
 
@@ -245,25 +248,37 @@ for isim,simname in enumerate(desired_simulations):
       annfCO2=np.nanmean(inv_fCO2,axis=1)   #convert from monthly to yearly
       annfCO2_err=np.nanmean(inv_fCO2_err,axis=1)   #convert from monthly to yearly
       
-      simulation_data[isim,:,:],simulation_err[isim,:,:]=group_input(annfCO2,annfCO2_err,desired_plots,True,ndesiredyears,numplot,countries65)
+      simulation_data[isim,:,:],simulation_err[isim,:,:]=group_input(annfCO2,annfCO2_err,desired_plots,True,ndesiredyears,numplot,countries65,desired_simulations[isim])
       #simulation_err[isim,:,:]=group_input(annfCO2_err,desired_plots)
-   elif simtype[isim] in ("TRENDY","VERIFY_BU","NONVERIFY_BU","INVENTORY_NOERR","VERIFY_TD","GLOBAL_TD","REGIONAL_TD"):
+   elif simtype[isim] in ("TRENDY","VERIFY_BU","NONVERIFY_BU","INVENTORY_NOERR","VERIFY_TD","GLOBAL_TD","REGIONAL_TD","OTHER"):
       inv_fCO2=readfile(fname,variables[isim],ndesiredyears)  #monthly
       annfCO2=np.nanmean(inv_fCO2,axis=1)   #convert from monthly to yearly
 
       # Some minor corrections have to be made to some of the files
       # The fluxes for ORCHIDEE seemed inverted with regards to the TRENDY
-      # sign convention.  Flip that for the chart.
-      if desired_simulations[isim] in ("ORCHIDEE","ORCHIDEE_for","ORCHIDEE_grass","ORCHIDEE_crops", "CBM"):
-         print("Flipping the sign of the ORCHIDEE VERIFY and CBM fluxes.")
+      # sign convention.  Flip that for the chart.  Same for CBM and the
+      # two EFISCEN models.
+      if desired_simulations[isim] in ("ORCHIDEE","ORCHIDEE_F-F","ORCHIDEE_grass","ORCHIDEE_crops", "CBM", "EFISCEN", "EFISCEN-Space","EFISCEN-unscaled"):
+         print("Flipping the sign of the ORCHIDEE VERIFY, EFISCEN, EFISCEN-Space, EFISCEN-unscaled, and CBM fluxes.")
          annfCO2=-annfCO2
       elif desired_simulations[isim] == "EUROCOM_Lumia":
          # One year in this inversion seems messed up.
          print("Correcting erroneously high values for Lumia fluxes.")
          annfCO2[annfCO2>1e30]=np.nan
       #endif
+      if desired_simulations[isim] in ("EFISCEN","EFISCEN-unscaled"):
+         # A couple years near the end of this inversion seem messed up.
+         print("Correcting erroneously high values for EFISCEN fluxes.")
+         annfCO2[abs(annfCO2)>1e35]=np.nan
+      #endif
 
-      simulation_data[isim,:,:],simulation_err[isim,:,:]=group_input(annfCO2,annfCO2,desired_plots,False,ndesiredyears,numplot,countries65)
+      if desired_simulations[isim] == "FAOSTAT_F-F":
+         # The sum over the EU seems messed up
+         print("Correcting erroneously high values for FAOSTAT_F-F fluxes.")
+         annfCO2[abs(annfCO2)>1e35]=np.nan
+      #endif
+
+      simulation_data[isim,:,:],simulation_err[isim,:,:]=group_input(annfCO2,annfCO2,desired_plots,False,ndesiredyears,numplot,countries65,desired_simulations[isim])
    else:
       print("Do not know how to process data for simulation type: {0}".format(simtype[isim]))
       sys.exit()
@@ -394,7 +409,7 @@ for isim,simname in enumerate(desired_simulations):
 # that it is a character array and loops over every letter.  Not what
 # we want.
 
-if graphname in ('inversions_full','inversions_test'):
+if graphname in ("inversions_combined",'inversions_full','inversions_test'):
    correction_simulations=np.array(["ULB_Inland_waters"],dtype=object)
    correction_data=np.zeros((ndesiredyears,numplot))
    for isim,simname in enumerate(desired_simulations):  
@@ -437,44 +452,10 @@ if lverifyinv:
    printindices=np.where(allyears == 2006)
 #endif
 
-# In the case of the UNFCCC LUC, this is a sum of six different timeseries.
-# Those are all in different files, so I combine them here, propogate the
-# error, and then only print out this in the actual plot.
-if graphname == 'LUC_full':
-   temp_desired_sims=('UNFCCC_forest_convert','UNFCCC_grassland_convert','UNFCCC_cropland_convert','UNFCCC_wetland_convert','UNFCCC_settlement_convert','UNFCCC_other_convert')
-   iluc=desired_simulations.index("UNFCCC_LUC")
-   if iluc < 0:
-      print("******************************************************************")
-      print("For the graph {0}, you need to be sure to include the simulation UNFCCC_LUC!".format(graphname))
-      print("******************************************************************")
-      sys.exit()
-   #endif
-   simulation_data[iluc,:,:]=0.0
-   simulation_err[iluc,:,:]=0.0
-   for isim,csim in enumerate(temp_desired_sims):
-      simulation_data[iluc,:,:]=simulation_data[iluc,:,:]+simulation_data[desired_simulations.index(csim),:,:]
-      # Do a simple propogation of error, as well
-      simulation_err[iluc,:,:]=simulation_err[iluc,:,:]+(simulation_err[desired_simulations.index(csim),:,:]*simulation_data[desired_simulations.index(csim),:,:])**2
-   #endfor
+# Sometimes I need to sum several variables into one timeseries.  This does that, assuming
+# that there one simulation already in the dataset that will be overwritten.
+simulation_data[:,:,:],simulation_err[:,:,:]=combine_simulations(overwrite_simulations,simulation_data,simulation_err,desired_simulations,graphname)
 
-   # don't like doing this in a loop, but the sqrt function doesn't seem to work on arrays?
-   for iplot in range(len(simulation_err[0,0,:])):
-      for itime in range(len(simulation_err[0,:,0])):
-         simulation_err[iluc,itime,iplot]=math.sqrt(simulation_err[iluc,itime,iplot])/simulation_data[iluc,itime,iplot]
-         #endif
-      #endfor
-   #endfor
-   
-   # make any zero elements nan so they don't plot.  Hopefully this doesn't lead to undesired
-   # results.
-   for iplot in range(len(simulation_err[0,0,:])):
-      for itime in range(len(simulation_err[0,:,0])):
-         if simulation_data[iluc,itime,iplot] == 0.0:
-            simulation_data[iluc,itime,iplot]= np.nan
-         #endif
-      #endfor
-   #endfor
-#endif
 
 ######### Here is where we get to the actual plotting
 # set the titles
@@ -523,7 +504,7 @@ for iplot,cplot in enumerate(desired_plots):
 
       if graphname == "sectorplot_full":
 
-         temp_desired_sims=("UNFCCC_for","UNFCCC_grass","UNFCCC_crops")
+         temp_desired_sims=("UNFCCC_F-F","UNFCCC_grass","UNFCCC_crops")
          temp_data=np.zeros((len(temp_desired_sims),ndesiredyears))
          for isim,csim in enumerate(temp_desired_sims):
             temp_data[isim,:]=simulation_data[desired_simulations.index(csim),:,iplot]
@@ -564,13 +545,17 @@ for iplot,cplot in enumerate(desired_plots):
 
       for isim,simname in enumerate(desired_simulations):  
 
-         if graphname in ("inversions_full", "inversions_test") and desired_simulations[isim] in correction_simulations:
+         if graphname in ("inversions_combined","inversions_full", "inversions_test") and desired_simulations[isim] in correction_simulations:
             continue
          #endif 
 
          if graphname == 'LUC_full' and desired_simulations[isim] in ('UNFCCC_forest_convert','UNFCCC_grassland_convert','UNFCCC_cropland_convert','UNFCCC_wetland_convert','UNFCCC_settlement_convert','UNFCCC_other_convert'):
             continue
          #endif
+
+         if graphname == "forestry_full" and desired_simulations[isim] == "LUH2v2_FOREST":
+            continue
+         #endif 
 
          if simtype[isim] == "INVENTORY" and graphname != "sectorplot_full":
             datafile.write("**** On dataset {0} ****\n".format(desired_simulations[isim]))
@@ -669,7 +654,7 @@ for iplot,cplot in enumerate(desired_plots):
          # This is for a symbol with error bars
          # Notice error bars must always be positive
          errorbars=np.array((verifyinvmean[:,iplot]-lowerrange[:],upperrange[:]-verifyinvmean[:,iplot])).reshape(2,ndesiredyears)
-         p2=ax1.errorbar(allyears,verifyinvmean[:,iplot],yerr=errorbars,marker='s',mfc='red',mec='black',ms=10,capsize=10,capthick=2,ecolor="black",linestyle='None')
+         p2=ax1.errorbar(allyears,verifyinvmean[:,iplot],yerr=errorbars,marker='s',mfc='orange',mec='black',ms=10,capsize=10,capthick=2,ecolor="black",linestyle='None',zorder=5)
          legend_axes.append(p2)
          legend_titles.append("Mean of CarboScopeReg (removing lakes/rivers)")
 
@@ -721,20 +706,27 @@ for iplot,cplot in enumerate(desired_plots):
          if graphname == "sectorplot_full" and desired_simulations[isim] in ("EPIC","ECOSSE_grass","EFISCEN"):
             continue
          #endif
-         if graphname in ("inversions_full", "inversions_test") and desired_simulations[isim] in correction_simulations:
+         if graphname in ("inversions_combined","inversions_full", "inversions_test") and desired_simulations[isim] in correction_simulations:
             continue
          #endif      
 
-
+         if not displaylegend[isim]:
+            continue
+         #endif
 
          # I use lighter symbols if the data is not real, i.e. I created a false dataset just to have something to plot
          if productiondata[isim]:
-            p1=ax1.scatter(allyears,simulation_data[isim,:,iplot],marker=plotmarker[isim],label=desired_simulations[isim],facecolors=facec[isim], edgecolors=edgec[isim],s=markersize[isim],alpha=production_alpha)
+            p1=ax1.scatter(allyears,simulation_data[isim,:,iplot],marker=plotmarker[isim],label=desired_simulations[isim],facecolors=facec[isim], edgecolors=edgec[isim],s=markersize[isim],alpha=production_alpha,zorder=1)
          else:
-            p1=ax1.scatter(allyears,simulation_data[isim,:,iplot],marker=plotmarker[isim],label=desired_simulations[isim],facecolors=facec[isim], edgecolors=edgec[isim],s=markersize[isim],alpha=nonproduction_alpha)
+            p1=ax1.scatter(allyears,simulation_data[isim,:,iplot],marker=plotmarker[isim],label=desired_simulations[isim],facecolors=facec[isim], edgecolors=edgec[isim],s=markersize[isim],alpha=nonproduction_alpha,zorder=1)
          #endif
          legend_axes.append(p1)
          legend_titles.append(displayname[isim])
+
+
+         datafile.write("**** On dataset {0} ****\n".format(displayname[isim]))
+         datafile.write("years {}\n".format(allyears[:]))
+         datafile.write("data {}\n".format(simulation_data[isim,:,iplot]))
 
       #endif
    #endif
@@ -779,40 +771,32 @@ for iplot,cplot in enumerate(desired_plots):
          legend_titles.append(csim)
       #endfor
 
-      # I want to rearrange the order of the legends
-      # This only works if I already have all of these
-      desired_legend_order=(\
-                           "UNFCCC_for","UNFCCC_grass","UNFCCC_crops",\
-                           "Spread of TRENDY_v7",\
-                            "EFISCEN","ECOSSE_grass","EPIC",\
-                            "EPIC/ECOSSE/EFISCEN","ORCHIDEE","FLUXCOM-rsmeteo",\
-                         )
-      # run a quick check
-      for isim,csim in enumerate(desired_legend_order):
-         try:
-            legend_titles.index(csim) 
-         except:
-            print("{0} does not appear to be present in the simulations we have treated.".format(csim))
-            print("Please change desired_legend_order for graph {0}".format(graphname))
-            print(desired_legend_order)
-            print(legend_titles)       
-            sys.exit()
-         #endtry
-      #endfor
+   #endif
 
-      # I cannot use a simple equals here, because the axes are references.  Using the equals copies the reference,
-      # so when the one of the references is modified, we lose the original value.  Thankfully, "copy" copies the
-      # actual object.
-      legend_axes_backup=copy.copy(legend_axes)
-      for isim,csim in enumerate(desired_legend_order):
-         legend_axes[isim]=copy.copy(legend_axes_backup[legend_titles.index(csim)])
-      #endif
-      legend_titles=desired_legend_order
+   # I want to plot the forest area on this plot as bars at the bottom.
+   if graphname == "forestry_full" and lplot_areas:
 
+      axsub = ax1.twinx()
+      csim="LUH2v2_FOREST"
+      isim=desired_simulations.index(csim)
+      barwidth=0.3
+      p1=axsub.bar(allyears, simulation_data[isim,:,iplot], color=facec[desired_simulations.index(csim)],width=barwidth,alpha=production_alpha*0.3)
+      legend_axes.append(p1)
+      legend_titles.append(csim)
+
+      axsub.set_ylabel('Forest area for LUH2v2\n[m2]')
+      # I want the bars to only take up the bottom third of the graph or so.
+      ylimits=axsub.get_ylim()
+      yaxisrange=ylimits[1]-ylimits[0]
+      axsub.set_ylim(ylimits[0],ylimits[1]+3.0*yaxisrange)
+
+      datafile.write("**** On dataset {0} ****\n".format(displayname[isim]))
+      datafile.write("years {}\n".format(allyears[:]))
+      datafile.write("data {}\n".format(simulation_data[isim,:,iplot]))
    #endif
 
    # I want to try stacking some bars in the inversion plot
-   if graphname in ("inversions_full", "inversions_test"):
+   if graphname in ("inversions_combined","inversions_full", "inversions_test"):
 
       temp_data=np.zeros((len(correction_simulations),ndesiredyears))
       for isim,csim in enumerate(correction_simulations):
@@ -850,48 +834,6 @@ for iplot,cplot in enumerate(desired_plots):
       #endfor
 
 
-   # I want to rearrange the order of the legends
-      # This only works if I already have all of these
-      if lerrorbars:
-         desired_legend_order=(\
-                               "Mean of EUROCOM (removing lakes/rivers)","Min/Max of EUROCOM",\
-                               "Mean of CarboScopeReg (removing lakes/rivers)",\
-                               "Mean of GCP (removing lakes/rivers)","Min/Max of GCP",\
-                               "UNFCCC_LULUCF","UNFCCC_LULUCF uncertainty",\
-                               "ULB_Inland_waters",\
-                            )
-      else:
-         desired_legend_order=(\
-                               "Mean of EUROCOM (removing lakes/rivers)","Min/Max of EUROCOM",\
-                               "Mean of CarboScopeReg (removing lakes/rivers)","Min/Max of CarboScopeReg",\
-                               "Mean of GCP (removing lakes/rivers)","Min/Max of GCP",\
-                               "UNFCCC_LULUCF","UNFCCC_LULUCF uncertainty",\
-                               "ULB_Inland_waters",\
-                            )
-      #endif
-
-      # run a quick check
-      for isim,csim in enumerate(desired_legend_order):
-         try:
-            legend_titles.index(csim) 
-         except:
-            print("{0} does not appear to be present in the simulations we have treated.".format(csim))
-            print("Please change desired_legend_order for graph {0}".format(graphname))
-            print(desired_legend_order)
-            print(legend_titles)
-            sys.exit()
-         #endtry
-      #endfor
-
-      # I cannot use a simple equals here, because the axes are references.  Using the equals copies the reference,
-      # so when the one of the references is modified, we lose the original value.  Thankfully, "copy" copies the
-      # actual object.
-      legend_axes_backup=copy.copy(legend_axes)
-      for isim,csim in enumerate(desired_legend_order):
-         legend_axes[isim]=copy.copy(legend_axes_backup[legend_titles.index(csim)])
-      #endif
-      legend_titles=desired_legend_order
-
       axsub.set_ylabel('Correction for inversions\n[Tg C/yr]')
       # I would like the limits of the secondary X axis to be the same as the first, only shifted down
       # so that the bottom is equal to zero.
@@ -910,6 +852,32 @@ for iplot,cplot in enumerate(desired_plots):
       ax1.set_ylim(ymin,ymax)
    #endif
 
+   # Use a catch-all to redo the legend if need be. This will overwrite anything done
+   # above if it's defined in the simulation set-up.
+   if desired_legend:
+      # run a quick check
+      for isim,csim in enumerate(desired_legend):
+         try:
+            legend_titles.index(csim) 
+         except:
+            print("{0} does not appear to be present in the simulations we have treated.".format(csim))
+            print("Please change desired_legend for graph {0}".format(graphname))
+            print(desired_legend)
+            print(legend_titles)
+            sys.exit()
+         #endtry
+      #endfor
+
+      # I cannot use a simple equals here, because the axes are references.  Using the equals copies the reference,
+      # so when the one of the references is modified, we lose the original value.  Thankfully, "copy" copies the
+      # actual object.
+      legend_axes_backup=copy.copy(legend_axes)
+      for isim,csim in enumerate(desired_legend):
+         legend_axes[isim]=copy.copy(legend_axes_backup[legend_titles.index(csim)])
+      #endif
+      legend_titles=desired_legend
+   #endif
+
    # We have some special lines here, which indicate the start of IPCC accounting periods, I believe?
    ax1.axvline(x=2005,color='peru', linestyle=':')
    ax1.axvline(x=2015,color='k', linestyle=':')
@@ -923,12 +891,20 @@ for iplot,cplot in enumerate(desired_plots):
    ax1.tick_params(axis='both', which='major', labelsize=14)
    ax1.tick_params(axis='both', which='minor', labelsize=14)
 
+   if graphname == "forestry_full" and lplot_areas:
+      # I want the bars to only take up the bottom third of the graph or so, so I want
+      # the full data to only take up the top two-thirds
+      ylimits=ax1.get_ylim()
+      yaxisrange=ylimits[1]-ylimits[0]
+      ax1.set_ylim(ylimits[0]-0.5*yaxisrange,ylimits[1])
+   #endif
+
 #   ax1.legend(legend_axes,legend_titles,bbox_to_anchor=(0,1.02,1,0.2), loc="lower left",mode="expand", borderaxespad=0, ncol=3,fontsize='large')
 
    # Now copy the full ax1 legend to ax2, and turn off that from ax1, just
    # to make the spacing a little bit better.
    # Also change the number of columns in the legend in case we have a lot of text.
-   if graphname in ("inversions_full", "inversions_test"):
+   if graphname in ("inversions_combined","inversions_full", "inversions_test"):
       ax2.legend(legend_axes,legend_titles,bbox_to_anchor=(0,0,1,1), loc="lower left",mode="expand", borderaxespad=0, ncol=2,fontsize='large')                     
    else:
       ax2.legend(legend_axes,legend_titles,bbox_to_anchor=(0,0,1,1), loc="lower left",mode="expand", borderaxespad=0, ncol=3,fontsize='large')                     
@@ -940,7 +916,9 @@ for iplot,cplot in enumerate(desired_plots):
    newax = fig.add_axes([0.1, 0.0, 0.05, 0.05], anchor='NE', zorder=-1)
    newax.imshow(img)
    newax.axis('off')
-   ax1.text(1.0,0.3, 'VERIFY Data: '+datasource, transform=newax.transAxes,fontsize=12,color='darkgray')
+   # In January 2020, we decided to change the data source tagline
+   #ax1.text(1.0,0.3, 'VERIFY Data: '+datasource, transform=newax.transAxes,fontsize=12,color='darkgray')
+   ax1.text(1.0,0.3, 'VERIFY Project', transform=newax.transAxes,fontsize=12,color='darkgray')
 
    if printfakewarning:
       if lshow_productiondata:

@@ -3,7 +3,7 @@ from datetime import date, timedelta
 from calendar import isleap
 import math
 import netCDF4 as nc
-
+import sys
 
 ##########################################################################
 def get_simulation_parameters(graphname,lshow_productiondata):
@@ -16,6 +16,8 @@ def get_simulation_parameters(graphname,lshow_productiondata):
    # Roxana proposes using this for all plots
    datasource='VERIFY Project'
 
+   overwrite_simulations={}
+   desired_legend=[]
 
    otherdir='/home/dods/verify/OTHER_PROJECTS/FCO2/TrendyLand-V7/'
    verifydir='/home/dods/verify/VERIFY_OUTPUT/FCO2/'
@@ -38,10 +40,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                   'TrendyV7_ORCHIDEE' : otherdir + 'Tier3BUPB_CO2_LandFlux_ORCHIDEE-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTot.nc', \
                   'TrendyV7_SDGVM' : otherdir + 'Tier3BUPB_CO2_LandFlux_SDGVM-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTot.nc', \
                   'TrendyV7_SURFEX' : otherdir + 'Tier3BUPB_CO2_LandFlux_SURFEX-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTot.nc', \
-                  'ORCHIDEE' : verifydir +'Tier3BUPB_CO2_LandFlux_ORCHIDEE-EU_lsce_LAND_EU_1M_V1_20191020_McGrath_WP3_CountryTot.nc', \
-                  'FLUXCOM-rsmeteo' : verifydir + 'Tier3BUDD_CO2_LandFlux_Fluxcom-rsmeteo_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTot.nc', \
-                  'FLUXCOM-rsonly-ann' : verifydir + 'Tier3BUDD_CO2_LandFlux_Fluxcom-rsonly-ann_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTot.nc', \
-                  'FLUXCOM-rsonly-RFmiss' : verifydir + 'Tier3BUDD_CO2_LandFlux_Fluxcom-rsonly-RFmiss_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTot.nc', \
+                  'ORCHIDEE' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTot.nc", \
                   'EPIC' : verifydir + 'Tier3BUPB_CO2_CropFluxes_EPIC-S1_IIASA_CRP_EU_1M_V1_20190911_BALKOVIC_WP3_CountryTot.nc', \
                   'JENA-REG-100km' : verifydir + 'Tier3TD_CO2_LandFlux_JENA-REG-100km_bgc-jena_LAND_GL_1M_V1_20191020_Gerbig_WP3_CountryTot.nc', \
                   'JENA-REG-200km' : verifydir + 'Tier3TD_CO2_LandFlux_JENA-REG-200km_bgc-jena_LAND_GL_1M_V1_20191020_Gerbig_WP3_CountryTot.nc', \
@@ -50,8 +49,15 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                   'BLUE' : '/home/dods/verify/OTHER_PROJECTS/FCO2/BLUE/Tier3BUPB_CO2_LandFlux_BLUE-2019_bgc-jena_LAND_GL_1M_V1_20191020_Pongratz_WP3_CountryTot.nc', \
                   'H&N' : '/home/dods/verify/OTHER_PROJECTS/FCO2/HN/Tier3BUDD_CO2_LandUseChange_HN-SX_JRC_FOR_EU_1Y_V1_20191212_PETRESCU_WPX_CountryTot.nc', \
                   'ORCHIDEE-MICT' : '/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/TESTFILES/MICT_TEST.nc', \
-                  'FAOSTAT' : '/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/FAOSTAT/FAOSTAT_CO2_LandUseTot_country_tot.nc', \
-                  'FAOSTAT_for' : '/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/FAOSTAT/FAOSTAT_CO2_all_data.nc', \
+                  # This dataset is a placeholder.  There are three variables
+                  # in the file that must be summed for the full LULUCF emissions
+                  # for FAOSTAT.
+                  'FAOSTAT_LULUCF' : '/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/FAOSTAT/FAOSTAT_CO2_all_data.nc', \
+                  'FAOSTAT_F-F' : '/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/FAOSTAT/FAOSTAT_CO2_all_data.nc', \
+                  # Ths sum of these three give FAOSTAT_LULUCF
+                  'FAOSTAT_For' : '/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/FAOSTAT/FAOSTAT_CO2_all_data.nc', \
+                  'FAOSTAT_Crp' : '/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/FAOSTAT/FAOSTAT_CO2_all_data.nc', \
+                  'FAOSTAT_Grs' : '/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/FAOSTAT/FAOSTAT_CO2_all_data.nc', \
                   'EDGARv4' : '/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/TESTFILES/EDGAR_TEST.nc', \
                   # This is the same as the VERIFY inverions.  And Cristoph does not like this version that he used.  So we will replace it with the mean of the VERIFY inverions.
                   'EUROCOM_Carboscope' : '/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_CarboScopeRegional_bgc-jena_LAND_EU_1M_V1_20191020_Gerbig_Grid-eurocom_CountryTot.nc', \
@@ -60,14 +66,18 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                   'EUROCOM_Chimere' :  '/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_CHIMERE-ORC_lsce_LAND_EU_1M_V1_20191020_Broquet_Grid-eurocom_CountryTot.nc', \
                   'ECOSSE_crops': "/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/TESTFILES/ECOSSE_crop_TEST.nc", \
                   'ECOSSE_grass': "/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/TESTFILES/ECOSSE_grass_TEST.nc", \
-                  'EFISCEN': "/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/TESTFILES/EFISCEN_TEST.nc",\
-                  'UNFCCC_for': "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_ForestRemain_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTot.nc", \
+                  'EFISCEN-Space': "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_treeNEP_EFISCEN-Space-SX_WENR_FOR_EU_1M_V1_20190716_SCHELHAAS_WP3_CountryTot.nc",\
+                  'UNFCCC_F-F': "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_ForestRemain_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTot.nc", \
                   'UNFCCC_grass': "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_GrasslandRemain_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTot.nc", \
                   'UNFCCC_crops': "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_CroplandRemain_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTot.nc", \
-                  'ORCHIDEE_for' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycleEcosystem_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTot.nc", \
-                  'EFISCEN' : "/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/TESTFILES/EFISCEN_TEST.nc", \
+                  'ORCHIDEE_F-F' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycleEcosystem_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTot.nc", \
+                  'EFISCEN' : "/home/dods/verify/OTHER_PROJECTS/FCO2/EFISCEN/Tier3BUDD_CO2_TreesLUH2v2_EFISCEN-SX_WENR_FOR_EU_1M_V1_20191212_SCHELHAAS_WPX_CountryTot.nc", \
+                  'EFISCEN-unscaled' : "/home/dods/verify/OTHER_PROJECTS/FCO2/EFISCEN/Tier3BUDD_CO2_Trees_EFISCEN-SX_WENR_FOR_EU_1M_V1_20191212_SCHELHAAS_WPX_CountryTot.nc", \
                   'CBM' : "/home/dods/verify/OTHER_PROJECTS/FCO2/CBM/Tier3BUDD_CO2_NBP_CBM-SX_JRC_FOR_EU_1Y_V1_20191212_PETRESCU_WPX_CountryTot.nc", \
-                  'FLUXCOM_for' : "/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/TESTFILES/FLUXCOM_for_TEST.nc", \
+                  'FLUXCOM_rsonlyRF' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-RFmissLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTot.nc", \
+                  'FLUXCOM_rsonlyANN' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-ANNnoPFTLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTot.nc", \
+                  'FLUXCOM_F-F_RF' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-RFmissLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTot.nc", \
+                  'FLUXCOM_F-F_ANN' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-ANNnoPFTLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTot.nc", \
                   'ORCHIDEE_grass' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycleEcosystem_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTot.nc", \
                   'FLUXCOM_grass' : "/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/TESTFILES/FLUXCOM_grass_TEST.nc", \
                   'ORCHIDEE_crops' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycleEcosystem_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTot.nc", \
@@ -86,6 +96,9 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                   'GCP_JENA' : '/home/dods/verify/OTHER_PROJECTS/FCO2/Inversions-GCP2019/Tier3TD_CO2_LandFlux_JENA-s76-4-3-2019_bgc-jena_LAND_GL_1M_V1_20191020_Christian_WPX_CountryTot.nc', \
                   'GCP_CTRACKER' : '/home/dods/verify/OTHER_PROJECTS/FCO2/Inversions-GCP2019/Tier3TD_CO2_LandFlux_CTRACKER-EU-v2019_wur_LAND_GL_1M_V1_20191020_Wouter_WPX_CountryTot.nc', \
                   'GCP_CAMS' : '/home/dods/verify/OTHER_PROJECTS/FCO2/Inversions-GCP2019/Tier3TD_CO2_LandFlux_CAMS-V18-2-2019_lsce_LAND_GL_1M_V1_20191020_Chevallier_WPX_CountryTot.nc', \
+                  'LUH2v2_FOREST' : '/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/WP3/luh2v2_ecosystem_area_2000_2018_CountryTot.nc', \
+                  'MS-NRT' : '/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/Tier2_CO2_LULUCF_MSNRT-SX_JRC_LAND_EU_1M_V1_20200205_PETRESCU_WPX_CountryTot.nc', \
+
                }
    
    # certain simulations will be treated in identical ways
@@ -110,12 +123,15 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                       'TrendyV7_SURFEX' : 'TRENDY', \
                       'ORCHIDEE' : 'VERIFY_BU', \
                       'FLUXCOM-rsmeteo' :  'VERIFY_BU', \
-                      'FLUXCOM-rsonly-ann' :  'VERIFY_BU', \
-                      'FLUXCOM-rsonly-RFmiss' :  'VERIFY_BU', \
+                      'FLUXCOM_rsonlyANN' :  'VERIFY_BU', \
+                      'FLUXCOM_rsonlyRF' :  'VERIFY_BU', \
                       'EPIC' :  'VERIFY_BU', \
                       'ORCHIDEE-MICT' :  'VERIFY_BU', \
-                      'FAOSTAT' :  'INVENTORY_NOERR', \
-                      'FAOSTAT_for' :  'INVENTORY_NOERR', \
+                      'FAOSTAT_LULUCF' :  'INVENTORY_NOERR', \
+                      'FAOSTAT_F-F' :  'INVENTORY_NOERR', \
+                      'FAOSTAT_For' :  'INVENTORY_NOERR', \
+                      'FAOSTAT_Crp' :  'INVENTORY_NOERR', \
+                      'FAOSTAT_Grs' :  'INVENTORY_NOERR', \
                       'EDGARv4' :  'INVENTORY_NOERR', \
                       'H&N' :  'NONVERIFY_BU', \
                       'JENA-REG-100km' :  'VERIFY_TD', \
@@ -129,14 +145,16 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                       'EUROCOM_Chimere' :  'REGIONAL_TD', \
                     'ECOSSE_crops': "VERIFY_BU", \
                     'ECOSSE_grass': "VERIFY_BU", \
-                    'EFISCEN': "VERIFY_BU", \
-                    'UNFCCC_for': "INVENTORY", \
+                    'EFISCEN-Space': "VERIFY_BU", \
+                    'UNFCCC_F-F': "INVENTORY", \
                     'UNFCCC_grass': "INVENTORY", \
                     'UNFCCC_crops': "INVENTORY", \
-                    'ORCHIDEE_for' : "VERIFY_BU", \
+                    'ORCHIDEE_F-F' : "VERIFY_BU", \
                     'EFISCEN' : "NONVERIFY_BU", \
+                    'EFISCEN-unscaled' : "NONVERIFY_BU", \
                     'CBM' : "NONVERIFY_BU", \
-                    'FLUXCOM_for' : "VERIFY_BU", \
+                    'FLUXCOM_F-F_RF' : "VERIFY_BU", \
+                    'FLUXCOM_F-F_ANN' : "VERIFY_BU", \
                   'ORCHIDEE_grass' : "VERIFY_BU", \
                   'FLUXCOM_grass' : "VERIFY_BU", \
                  'ORCHIDEE_crops' : "VERIFY_BU", \
@@ -153,7 +171,9 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                     'GCP_JENA' : 'GLOBAL_TD', \
                     'GCP_CTRACKER' : 'GLOBAL_TD', \
                     'GCP_CAMS' : 'GLOBAL_TD', \
-                  }
+                    'LUH2v2_FOREST' : 'OTHER', \
+                    'MS-NRT' : 'INVENTORY_NOERR', \
+                 }
 
    variables_master={ \
                       'UNFCCC_totincLULUCF' : 'FCO2_NBP', \
@@ -176,8 +196,8 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                       'TrendyV7_SURFEX' : 'FCO2_NBP', \
                       'ORCHIDEE' : 'FCO2_NBP', \
                       'FLUXCOM-rsmeteo' :  'FCO2_NEP', \
-                      'FLUXCOM-rsonly-ann' :  'FCO2_NEP', \
-                      'FLUXCOM-rsonly-RFmiss' :  'FCO2_NEP', \
+                      'FLUXCOM_rsonlyANN' :  'FCO2_NEP', \
+                      'FLUXCOM_rsonlyRF' :  'FCO2_NEP', \
                       'EPIC' :  'FCO2_NBP_CRO', \
                       'JENA-REG-100km' :  'FCO2_NBP', \
                       'JENA-REG-200km' :  'FCO2_NBP', \
@@ -187,22 +207,27 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                       'H&N' :  'FCO2_NBP', \
                       'ORCHIDEE-MICT' :  'CD_A', \
                       'EDGARv4' :  'CD_A', \
-                      'FAOSTAT' :  'FCO2_NBP', \
-                      'FAOSTAT_for' :  'FCO2_NBP_FOR', \
+                      'FAOSTAT_LULUCF' :  'FCO2_NBP_FOR', \
+                      'FAOSTAT_F-F' :  'FCO2_NBP_FOR', \
+                      'FAOSTAT_For' :  'FCO2_LUTOT_FOR', \
+                      'FAOSTAT_Crp' :  'FCO2_SOIL_CRO', \
+                      'FAOSTAT_Grs' :  'FCO2_SOIL_GRA', \
                       'EUROCOM_Carboscope' : 'FCO2_NBP', \
                       'EUROCOM_Flexinvert' : 'FCO2_NBP', \
                       'EUROCOM_Lumia' :  'FCO2_NBP', \
                       'EUROCOM_Chimere' :  'FCO2_NBP', \
                       'ECOSSE_crops': "FCO2_NBP", \
                     'ECOSSE_grass': "FCO2_NBP", \
-                    'EFISCEN': "FCO2_NBP", \
-                    'UNFCCC_for': "FCO2_NBP", \
+                    'EFISCEN-Space': "FCO2_NBP_FOR", \
+                    'UNFCCC_F-F': "FCO2_NBP", \
                     'UNFCCC_grass': "FCO2_NBP", \
                     'UNFCCC_crops': "FCO2_NBP", \
-                      'ORCHIDEE_for' : "FCO2_NBP_FOR", \
-                      'EFISCEN' : "FCO2_NBP", \
+                      'ORCHIDEE_F-F' : "FCO2_NBP_FOR", \
+                      'EFISCEN' : "FCO2_NEE_FOR", \
+                      'EFISCEN-unscaled' : "FCO2_NEE_FOR", \
                       'CBM' : "FCO2_NBP", \
-                      'FLUXCOM_for' : "FCO2_NEP", \
+                      'FLUXCOM_F-F_RF' : "FCO2_NEP", \
+                      'FLUXCOM_F-F_ANN' : "FCO2_NEP", \
                   'ORCHIDEE_grass' : "FCO2_NBP_GRS", \
                   'FLUXCOM_grass' : "FCO2_NEP", \
                  'ORCHIDEE_crops' : "FCO2_NBP_CRP", \
@@ -219,7 +244,9 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                     'GCP_JENA' : 'FCO2_NBP', \
                     'GCP_CTRACKER' : 'FCO2_NBP', \
                     'GCP_CAMS' : 'FCO2_NBP', \
-                  }
+                     'LUH2v2_FOREST' : 'FOREST_AREA', \
+                    'MS-NRT' : 'FCO2_NBP', \
+                 }
    
    plotmarker_master={ \
                        'UNFCCC_totincLULUCF' : '_', \
@@ -242,8 +269,8 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                        'TrendyV7_SURFEX' : 'D', \
                        'ORCHIDEE' : 'D', \
                        'FLUXCOM-rsmeteo' :  'o', \
-                       'FLUXCOM-rsonly-ann' :  'o', \
-                       'FLUXCOM-rsonly-RFmiss' :  'o', \
+                       'FLUXCOM_rsonlyANN' :  'o', \
+                       'FLUXCOM_rsonlyRF' :  'o', \
                        'EPIC' :  'X', \
                        'JENA-REG-100km' :  'P', \
                        'JENA-REG-200km' :  'P', \
@@ -253,22 +280,27 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                        'H&N' :  '^', \
                        'ORCHIDEE-MICT' :  'X', \
                        'EDGARv4' :  '_', \
-                       'FAOSTAT' :  '_', \
-                       'FAOSTAT_for' :  '_', \
+                       'FAOSTAT_LULUCF' :  'X', \
+                       'FAOSTAT_F-F' :  '_', \
+                       'FAOSTAT_For' :  'o', \
+                       'FAOSTAT_Crp' :  'P', \
+                       'FAOSTAT_Grs' :  'X', \
                        'EUROCOM_Carboscope' :  'P', \
                        'EUROCOM_Flexinvert' :  'P', \
                        'EUROCOM_Lumia' :  'P', \
                        'EUROCOM_Chimere' :  'P', \
                        'ECOSSE_crops': "P", \
                     'ECOSSE_grass': "P", \
-                    'EFISCEN': "P", \
-                    'UNFCCC_for': "_", \
+                    'EFISCEN-Space': "P", \
+                    'UNFCCC_F-F': "_", \
                     'UNFCCC_grass': "_", \
                     'UNFCCC_crops': "_", \
-                     'ORCHIDEE_for' : "o", \
+                     'ORCHIDEE_F-F' : "o", \
                      'EFISCEN' : "o", \
+                     'EFISCEN-unscaled' : "o", \
                      'CBM' : "o", \
-                     'FLUXCOM_for' : "o", \
+                     'FLUXCOM_F-F_RF' : "o", \
+                     'FLUXCOM_F-F_ANN' : "o", \
                   'ORCHIDEE_grass' : "o", \
                   'FLUXCOM_grass' : "o", \
                  'ORCHIDEE_crops' : "o", \
@@ -285,6 +317,8 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                     'GCP_JENA' : 'o', \
                     'GCP_CTRACKER' : 'o', \
                     'GCP_CAMS' : 'o', \
+                    'LUH2v2_FOREST' : 'o', \
+                    'MS-NRT' : 'o', \
                     }
    facec_master={ \
                   'UNFCCC_totincLULUCF' :  'black', \
@@ -307,8 +341,8 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                   'TrendyV7_SURFEX' :  'none', \
                   'ORCHIDEE' : 'blue', \
                   'FLUXCOM-rsmeteo' :  'blue', \
-                  'FLUXCOM-rsonly-ann' :  'orchid', \
-                  'FLUXCOM-rsonly-RFmiss' :  'darkviolet', \
+                  'FLUXCOM_rsonlyANN' :  'orchid', \
+                  'FLUXCOM_rsonlyRF' :  'darkviolet', \
                   'EPIC' :  'red', \
                   'JENA-REG-100km' :  'khaki', \
                   'JENA-REG-200km' :  'orange', \
@@ -318,22 +352,27 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                   'H&N' :  'green', \
                   'ORCHIDEE-MICT' :  'red', \
                   'EDGARv4' :  'blue', \
-                  'FAOSTAT' :  'green', \
-                  'FAOSTAT_for' :  'green', \
+                  'FAOSTAT_LULUCF' :  'green', \
+                  'FAOSTAT_F-F' :  'green', \
+                  'FAOSTAT_For' :  'blue', \
+                  'FAOSTAT_Crp' :  'red', \
+                  'FAOSTAT_Grs' :  'orange', \
                   'EUROCOM_Carboscope' :  'khaki', \
                   'EUROCOM_Flexinvert' :  'orange', \
                   'EUROCOM_Lumia' :  'darkorange', \
                   'EUROCOM_Chimere' :  'gold', \
                   'ECOSSE_crops': "brown", \
                     'ECOSSE_grass': "gold", \
-                    'EFISCEN': "green", \
-                    'UNFCCC_for': "green", \
+                    'EFISCEN-Space': "green", \
+                    'UNFCCC_F-F': "green", \
                     'UNFCCC_grass': "gold", \
                   'UNFCCC_crops': "brown", \
-                  'ORCHIDEE_for' : "forestgreen", \
+                  'ORCHIDEE_F-F' : "forestgreen", \
                   'EFISCEN' : "limegreen", \
+                  'EFISCEN-unscaled' : "limegreen", \
                   'CBM' : "mediumseagreen", \
-                  'FLUXCOM_for' : "lime", \
+                  'FLUXCOM_F-F_RF' : "lime", \
+                  'FLUXCOM_F-F_ANN' : "lime", \
                   'ORCHIDEE_grass' : "darkgoldenrod", \
                   'FLUXCOM_grass' : "goldenrod", \
                   'ORCHIDEE_crops' : "saddlebrown", \
@@ -350,7 +389,9 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                      'GCP_JENA' : 'sandybrown', \
                     'GCP_CTRACKER' : 'sandybrown', \
                     'GCP_CAMS' : 'sandybrown', \
-              }
+                     'LUH2v2_FOREST' : 'blue', \
+                     'MS-NRT' : 'red', \
+             }
 
    # set some default values, to save space.  Can be changed below.
    edgec_master={}
@@ -358,14 +399,17 @@ def get_simulation_parameters(graphname,lshow_productiondata):
    markersize_master={}
    productiondata_master={}
    displayname_master={}
+   displaylegend_master={}
    for simname in files_master.keys():
       edgec_master[simname]="black"
       uncert_color_master[simname]=facec_master[simname]
       markersize_master[simname]=60
       productiondata_master[simname]=True
       displayname_master[simname]=simname
+      displaylegend_master[simname]=True
    #endif
 
+   lplot_areas=False
    
    # Now define the actual simulation configs
    if graphname == 'full_global':
@@ -392,24 +436,65 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                             'UNFCCC_other_convert', \
                             'BLUE', \
                             'H&N', \
-                            'ORCHIDEE-MICT', \
-                            #'FAOSTAT', \
+                            'MS-NRT', \
+                            #'ORCHIDEE-MICT', \
          ]   
 #      datasource='UNFCCC/LMU/LSCE/FAO'
-      output_file_start="LUC_full_"
-      output_file_end="_2019_v1.png" 
+      output_file_start="LUC_"
+      output_file_end="_FCO2Nat_2019_v1.png" 
       titleending=" - CO2 emissions from land use change"
+      printfakewarning=False
 
       # Change some colors and symbols here
       facec_master['BLUE']='blue'
       facec_master['H&N']='green'
       facec_master['ORCHIDEE-MICT']='red'
-      facec_master['FAOSTAT']='red'
 
       plotmarker_master['BLUE']='^'
       plotmarker_master['H&N']='^'
       plotmarker_master['ORCHIDEE-MICT']='X'
-      plotmarker_master['FAOSTAT']='_'
+
+      uncert_color_master['UNFCCC_LUC']='darkseagreen'
+
+      if lshow_productiondata:
+         productiondata_master['ORCHIDEE-MICT']=False
+      #endif
+
+   elif graphname == "LULUCF_full":
+      desired_simulations=[ \
+                            # we read in data for LUC, but we replace it with the sectors below
+                            'UNFCCC_LULUCF', \
+                            'BLUE', \
+                            'H&N', \
+                            'MS-NRT', \
+                            #'ORCHIDEE-MICT', \
+                            'FAOSTAT_LULUCF', \
+                            'FAOSTAT_Crp', \
+                            'FAOSTAT_Grs', \
+                            'FAOSTAT_For', \
+         ]   
+#      datasource='UNFCCC/LMU/LSCE/FAO'
+      output_file_start="LULUCF_"
+      output_file_end="_FCO2Nat_2019_v1.png" 
+      titleending=" - CO2 emissions from land use, land use change, and forestry"
+      printfakewarning=False
+
+      # These simulations will be combined together.
+      overwrite_simulations["FAOSTAT_LULUCF"]=['FAOSTAT_Crp','FAOSTAT_Grs','FAOSTAT_For']
+      # So I don't want to generally plot the components
+      displaylegend_master['FAOSTAT_Crp']=False
+      displaylegend_master['FAOSTAT_Grs']=False
+      displaylegend_master['FAOSTAT_For']=False
+
+      # Change some colors and symbols here
+      facec_master['BLUE']='blue'
+      facec_master['H&N']='green'
+      facec_master['ORCHIDEE-MICT']='red'
+      facec_master['FAOSTAT_LULUCF']='orange'
+
+      plotmarker_master['BLUE']='^'
+      plotmarker_master['H&N']='^'
+      plotmarker_master['ORCHIDEE-MICT']='X'
 
       uncert_color_master['UNFCCC_LUC']='darkseagreen'
 
@@ -422,10 +507,10 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                             'ORCHIDEE', \
                             'ECOSSE_grass', \
                             'EFISCEN', \
-                            'UNFCCC_for', \
+                            'UNFCCC_F-F', \
                             'UNFCCC_grass', \
                             'UNFCCC_crops', \
-                            'FLUXCOM-rsmeteo', \
+                            'FLUXCOM_rsonlyANN', \
                             'EPIC', \
                             'TrendyV7_CABLE', \
                             'TrendyV7_CLASS', \
@@ -441,14 +526,22 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                             'TrendyV7_ORCHIDEE', \
                             'TrendyV7_SDGVM', \
                             'TrendyV7_SURFEX', \
-                         ]   
+                         ]  
+      desired_legends=[\
+                       "UNFCCC_F-F","UNFCCC_grass","UNFCCC_crops",\
+                       "Spread of TRENDY_v7",\
+                       "EFISCEN","ECOSSE_grass","EPIC",\
+                       "EPIC/ECOSSE/EFISCEN","ORCHIDEE","FLUXCOM_rsonlyANN",\
+                       ]
+
+ 
 #      datasource='UNFCCC/IIASA/WEnR/UAbdn/MPI-BGC/LSCE/TRENDY'
-      output_file_start="sectorplot_full_"
-      output_file_end="_2019_v1.png" 
+      output_file_start="AllSectorBU_"
+      output_file_end="_FCO2Nat_2019_v1.png" 
 
       plotmarker_master['EPIC']="P"
 
-      facec_master['UNFCCC_for']="green"
+      facec_master['UNFCCC_F-F']="green"
       facec_master['UNFCCC_grass']="gold"
       facec_master['UNFCCC_crops']="brown"
       facec_master['EPIC']="brown"
@@ -456,37 +549,52 @@ def get_simulation_parameters(graphname,lshow_productiondata):
       if lshow_productiondata:
          productiondata_master['ECOSSE_crops']=False
          productiondata_master['ECOSSE_grass']=False
-         productiondata_master['EFISCEN']=False
       #endif
 
    elif graphname == "forestry_full":
       desired_simulations=[ \
-                            'ORCHIDEE_for', \
+                            'ORCHIDEE_F-F', \
                             'EFISCEN', \
+#                            'EFISCEN-unscaled', \
+                            'EFISCEN-Space', \
                             'CBM', \
-                            'UNFCCC_for', \
-                            'FLUXCOM_for', \
-                            'FAOSTAT_for', \
+                            'UNFCCC_F-F', \
+                            'FLUXCOM_F-F_ANN', \
+                            'FLUXCOM_F-F_RF', \
+                            'FAOSTAT_F-F', \
+                            'LUH2v2_FOREST', \
                          ]   
 #      datasource='UNFCCC/MPI-BGC/JRC/WEnR/LSCE/FAOSTAT'
-      output_file_start="forestry_full_"
-      output_file_end="_2019_v1.png" 
+      printfakewarning=False
+      output_file_start="ForestRemain_"
+      output_file_end="_FCO2Nat_2019_v1.png" 
       titleending=" - CO2 emissions from forests remaining forests"
+      lplot_areas=True
 
       plotmarker_master['EFISCEN']="P"
       plotmarker_master['CBM']="X"
-      plotmarker_master['FLUXCOM_for']="s"
-      plotmarker_master['FAOSTAT_for']="d"
+      plotmarker_master['FLUXCOM_F-F_RF']="s"
+      plotmarker_master['FLUXCOM_F-F_ANN']="s"
+      plotmarker_master['FAOSTAT_F-F']="d"
 
-      edgec_master["ORCHIDEE_for"]="black"
+      edgec_master["ORCHIDEE_F-F"]="black"
       edgec_master["EFISCEN"]="black"
       edgec_master["CBM"]="black"
-      edgec_master["FLUXCOM_for"]="black"
-      edgec_master["FAOSTAT_for"]="black"
+      edgec_master["FLUXCOM_F-F_RF"]="black"
+      edgec_master["FLUXCOM_F-F_ANN"]="black"
+      edgec_master["FAOSTAT_F-F"]="black"
+      
+      facec_master["ORCHIDEE_F-F"]="black"
+      facec_master["EFISCEN-Space"]="blue"
+      facec_master["EFISCEN"]="skyblue"
+      facec_master["CBM"]="red"
+      facec_master["FLUXCOM_F-F_RF"]="orange"
+      facec_master["FLUXCOM_F-F_ANN"]="orangered"
+      facec_master["FAOSTAT_F-F"]="yellow"
 
-      if lshow_productiondata:
-         productiondata_master['EFISCEN']=False
-         productiondata_master['FLUXCOM_for']=False
+
+      #if lshow_productiondata:
+      #   productiondata_master['FLUXCOM_F-F']=False
       #endif
 
    elif graphname == "grassland_full":
@@ -548,6 +656,78 @@ def get_simulation_parameters(graphname,lshow_productiondata):
       facec_master['UNFCCC_biofuels']='red'
       facec_master['TNO_biofuels']='blue'
 
+   elif graphname == "inversions_combined":
+
+      titleending=" - CO2 natural emissions from land use, land use change, and forestry"
+
+      desired_simulations=[ \
+                            'UNFCCC_LULUCF', \
+                            'MS-NRT', \
+                            'ULB_Inland_waters', \
+                            'JENA-REG-100km', \
+                            'JENA-REG-200km', \
+                            'JENA-REG-Core100km', \
+                            'JENA-REG-Valid100km', \
+                            'EUROCOM_Carboscope', \
+                            'EUROCOM_Flexinvert', \
+                            'EUROCOM_Lumia', \
+                            'EUROCOM_Chimere', \
+                            'GCP_JENA', \
+                            'GCP_CTRACKER', \
+                            'GCP_CAMS', \
+                            'BLUE', \
+                            'H&N', \
+                            'MS-NRT', \
+                            #'ORCHIDEE-MICT', \
+                            'FAOSTAT_LULUCF', \
+                            'FAOSTAT_Crp', \
+                            'FAOSTAT_Grs', \
+                            'FAOSTAT_For', \
+      ]   
+      output_file_start="TopDownLULUCF_"
+      output_file_end="_FCO2Nat_2019_v1.png" 
+      edgec_master['MS-NRT']=facec_master['MS-NRT']
+
+      # The legend is tricky.  You can use names not definied in the above
+      # simulation list if they are defined later on.
+      desired_legend=[ \
+                            'UNFCCC_LULUCF', \
+                            'MS-NRT', \
+                            'ULB_Inland_waters', \
+                            'Mean of CarboScopeReg (removing lakes/rivers)', \
+                            'Mean of EUROCOM (removing lakes/rivers)',"Min/Max of EUROCOM",\
+                            'Mean of GCP (removing lakes/rivers)',"Min/Max of GCP", \
+                            'BLUE', \
+                            'H&N', \
+                            'MS-NRT', \
+                            'FAOSTAT_LULUCF', \
+      ]
+  
+      # These simulations will be combined together.
+      overwrite_simulations["FAOSTAT_LULUCF"]=['FAOSTAT_Crp','FAOSTAT_Grs','FAOSTAT_For']
+      # So I don't want to generally plot the components
+      displaylegend_master['FAOSTAT_Crp']=False
+      displaylegend_master['FAOSTAT_Grs']=False
+      displaylegend_master['FAOSTAT_For']=False
+
+      # Change some colors and symbols here
+      facec_master['BLUE']='blue'
+      facec_master['H&N']='green'
+      facec_master['FAOSTAT_LULUCF']='orange'
+
+      plotmarker_master['BLUE']='^'
+      plotmarker_master['H&N']='^'
+      plotmarker_master['ORCHIDEE-MICT']='X'
+
+      uncert_color_master['UNFCCC_LUC']='darkseagreen'
+
+      if lshow_productiondata:
+         productiondata_master['ORCHIDEE-MICT']=False
+      #endif
+
+      # No more fake data in these plots!
+      printfakewarning=False
+
    elif graphname == "inversions_verify":
       desired_simulations=[ \
                             'JENA-REG-100km', \
@@ -567,6 +747,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
          titleending=" - net emissions from land use and land use change - TEST (not complete dataset)"
          desired_simulations=[ \
                                'UNFCCC_LULUCF', \
+                               'MS-NRT', \
                                'ULB_Inland_waters', \
                                'JENA-REG-100km', \
                                'JENA-REG-200km', \
@@ -580,6 +761,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
          titleending=" - net emissions from land use and land use change"
          desired_simulations=[ \
                                'UNFCCC_LULUCF', \
+                               'MS-NRT', \
                                'ULB_Inland_waters', \
                                'JENA-REG-100km', \
                                'JENA-REG-200km', \
@@ -593,11 +775,12 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                                'GCP_CTRACKER', \
                                'GCP_CAMS', \
                            ]   
-         output_file_start="inversions_full_"
+         output_file_start="TopDownAndInventories_"
       #endif
 
 #      datasource='UNFCCC/GCP/EUROCOM/MPI-Jena/ULB'
-      output_file_end="_2019_v2.png" 
+      output_file_end="_FCO2Nat_2019_v2.png" 
+      edgec_master['MS-NRT']=facec_master['MS-NRT']
 
       # No more fake data in these plots!
       printfakewarning=False
@@ -609,7 +792,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
    #endif
 
 #   return linclude_inventories,desired_inventories,desired_others,desired_verify,datasource,output_file_start,output_file_end
-   return desired_simulations,files_master,simtype_master,plotmarker_master,variables_master,edgec_master,facec_master,uncert_color_master,markersize_master,productiondata_master,displayname_master,datasource,output_file_start,output_file_end,titleending,printfakewarning
+   return desired_simulations,files_master,simtype_master,plotmarker_master,variables_master,edgec_master,facec_master,uncert_color_master,markersize_master,productiondata_master,displayname_master,displaylegend_master,datasource,output_file_start,output_file_end,titleending,printfakewarning,lplot_areas,overwrite_simulations,desired_legend
 #enddef
 ##########################################################################
 
@@ -775,7 +958,7 @@ def readfile(filename,variablename,ndesiredyears):
 # from the whole list of data available after reading in from the files
 # I read in the uncertainties and the real data at the same time.
 # If there is no uncertainty, no worries.
-def group_input(inputvar,inputerr,desired_plots,luncert,ndesiredyears,numplot,countries65):
+def group_input(inputvar,inputerr,desired_plots,luncert,ndesiredyears,numplot,countries65,desired_simulation):
    outputvar=np.zeros((ndesiredyears,numplot))*np.nan
    outputerr=np.zeros((ndesiredyears,numplot))*np.nan
    for igroup in range(numplot):
@@ -841,9 +1024,80 @@ def group_input(inputvar,inputerr,desired_plots,luncert,ndesiredyears,numplot,co
             #endif
          #endfor
       #endif
+
+      # I am concerned about leakage with some plots.  For example, EFISCEN-Space only has data
+      # for three countries.  If our maps are not perfectly in line, a couple pixels make leak
+      # over to other countries.  This should be enforced in the CountryTot graphs, not here.
+      if desired_simulation == "EFISCEN-Space" and desired_plots[igroup] not in ("FRA","IRL","NLD"):
+         outputvar[:,igroup]=np.nan
+         outputerr[:,igroup]=np.nan
+      #endif
+
    #endfor
 
    return outputvar,outputerr
+#enddef
+####################################################################
+
+
+
+
+#####################################################################
+# This subroutine combines a specificed list of existing simulations
+# and puts the results into a specific simulation.
+# I use this because sometimes I need to combine variables from
+# a NetCDF file into a single simulation result.
+# It overwrites the existing simulation_data and returns it.
+def combine_simulations(overwrite_simulations,simulation_data,simulation_err,desired_simulations,graphname):
+
+   if not overwrite_simulations:
+      print("No simulations need to be combined.")
+      return simulation_data,simulation_err
+   #endif
+
+# In the case of the UNFCCC LUC, this is a sum of six different timeseries.
+# Those are all in different files, so I combine them here, propogate the
+# error, and then only print out this in the actual plot.
+   #temp_desired_sims=('UNFCCC_forest_convert','UNFCCC_grassland_convert','UNFCCC_cropland_convert','UNFCCC_wetland_convert','UNFCCC_settlement_convert','UNFCCC_other_convert')
+
+   for osim,temp_sims in overwrite_simulations.items():
+
+      ioverwrite=desired_simulations.index(osim)
+      if ioverwrite < 0:
+         print("******************************************************************")
+         print("For the graph {0}, you need to be sure to include the simulation {}!".format(graphname,osim))
+         print("******************************************************************")
+         sys.exit()
+      #endif
+
+      simulation_data[ioverwrite,:,:]=0.0
+      simulation_err[ioverwrite,:,:]=0.0
+      for isim,csim in enumerate(temp_sims):
+         simulation_data[ioverwrite,:,:]=simulation_data[ioverwrite,:,:]+simulation_data[desired_simulations.index(csim),:,:]
+         # Do a simple propogation of error, as well
+         simulation_err[ioverwrite,:,:]=simulation_err[ioverwrite,:,:]+(simulation_err[desired_simulations.index(csim),:,:]*simulation_data[desired_simulations.index(csim),:,:])**2
+      #endfor
+
+      # don't like doing this in a loop, but the sqrt function doesn't seem to work on arrays?
+      for iplot in range(len(simulation_err[0,0,:])):
+         for itime in range(len(simulation_err[0,:,0])):
+            simulation_err[ioverwrite,itime,iplot]=math.sqrt(simulation_err[ioverwrite,itime,iplot])/simulation_data[ioverwrite,itime,iplot]
+         #endfor
+      #endfor
+   
+      # make any zero elements nan so they don't plot.  Hopefully this doesn't lead to undesired
+      # results.
+      for iplot in range(len(simulation_err[0,0,:])):
+         for itime in range(len(simulation_err[0,:,0])):
+            if simulation_data[ioverwrite,itime,iplot] == 0.0:
+               simulation_data[ioverwrite,itime,iplot]= np.nan
+            #endif
+         #endfor
+      #endfor
+
+   #endfor
+   
+   return simulation_data,simulation_err
 #enddef
 ####################################################################
 
