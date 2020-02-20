@@ -24,7 +24,8 @@ import pandas as pd
 from netCDF4 import Dataset
 from matplotlib.ticker import MultipleLocator
 import matplotlib.gridspec as gridspec
-from plotting_subroutines import get_simulation_parameters,find_date,get_cumulated_array,readfile,group_input,combine_simulations
+from plotting_subroutines import get_simulation_parameters,find_date,get_cumulated_array,readfile,group_input,combine_simulations,calculate_country_areas,get_country_areas
+import re
 
 ##########################################################################
 # Here are some variables that are used throughout the code
@@ -44,13 +45,18 @@ lshow_productiondata=True
 lerrorbars=True
 
 # Creates a horizontal line across the graph at zero.
-lprintzero=False
+lprintzero=True
 
 # Make the Y-ranges on all the plots identical.
 lharmonize_y=False
 
+# Plot spatial fluxes or country totals? If the following variable is
+# false, we will divide all fluxes by the area of the country/region before
+# plotting, to give the flux per pixel.
+lplot_countrytot=True
+
 # This is a flag that will set a lot of the parameters, include which simulations we plot
-possible_graphnames=("test", "full_global", "full_verify", "LUC_full", "sectorplot_full", "forestry_full", "grassland_full", "crops_full", "inversions_full", "inversions_test","biofuels","inversions_verify","lulucf","LULUCF_full","inversions_combined")
+possible_graphnames=("test", "full_global", "full_verify", "LUC_full", "sectorplot_full", "forestry_full", "grassland_full", "crops_full", "inversions_full", "inversions_test","biofuels","inversions_verify","lulucf","LULUCF_full","inversions_combined","verifybu","fluxcom")
 try:
    graphname=sys.argv[1]
 except:
@@ -149,7 +155,7 @@ countrynames={ \
 ALA=countries65.index('ALA');ALB=countries65.index('ALB');AND=countries65.index('AND'); AUT=countries65.index('AUT');BEL=countries65.index('BEL');BGR=countries65.index('BGR');BIH=countries65.index('BIH');BLR=countries65.index('BLR');CHE=countries65.index('CHE');CYP=countries65.index('CYP');CZE=countries65.index('CZE');DEU=countries65.index('DEU');DNK=countries65.index('DNK');ESP=countries65.index('ESP');EST=countries65.index('EST');FIN=countries65.index('FIN');FRA=countries65.index('FRA');FRO=countries65.index('FRO');GBR=countries65.index('GBR');GGY=countries65.index('GGY');GRC=countries65.index('GRC');HRV=countries65.index('HRV');HUN=countries65.index('HUN');IMN=countries65.index('IMN');IRL=countries65.index('IRL');ISL=countries65.index('ISL');ITA=countries65.index('ITA');JEY=countries65.index('JEY');LIE=countries65.index('LIE');LTU=countries65.index('LTU');LUX=countries65.index('LUX');LVA=countries65.index('LVA');MDA=countries65.index('MDA');MKD=countries65.index('MKD'); MLT=countries65.index('MLT'); MNE=countries65.index('MNE'); NLD=countries65.index('NLD');NOR=countries65.index('NOR'); POL=countries65.index('POL');PRT=countries65.index('PRT');ROU=countries65.index('ROU');RUS=countries65.index('RUS');SJM=countries65.index('SJM');SMR=countries65.index('SMR');SRB=countries65.index('SRB');SVK=countries65.index('SVK');SVN=countries65.index('SVN');SWE=countries65.index('SWE'); TUR=countries65.index('TUR');UKR=countries65.index('UKR');BNL=countries65.index('BNL'); UKI=countries65.index('UKI');IBE=countries65.index('IBE');WEE=countries65.index('WEE');CEE=countries65.index('CEE');NOE=countries65.index('NOE');SOE=countries65.index('SOE');SEE=countries65.index('SEE');EAE=countries65.index('EAE');E15=countries65.index('E15');E27=countries65.index('E27');E28=countries65.index('E28');EUR=countries65.index('EUR'); EUT=countries65.index('EUT');KOS=countries65.index('KOS')
 
 # Only create plots for these countries/regions
-desired_plots=['FRA','E28']
+desired_plots=['FRA','E28','IRL','NLD']
 ####
 #desired_plots=countries65
 #desired_plots.remove('KOS')
@@ -172,7 +178,7 @@ plot_titles_master={}
 for cname in countrynames.keys():
    plot_titles_master[cname]=countrynames[cname]
 #endfor
-plot_titles_master["E28"]="EU27_2020"
+plot_titles_master["E28"]="EU27+UK"
 
 
 ##########################################################################
@@ -258,8 +264,8 @@ for isim,simname in enumerate(desired_simulations):
       # The fluxes for ORCHIDEE seemed inverted with regards to the TRENDY
       # sign convention.  Flip that for the chart.  Same for CBM and the
       # two EFISCEN models.
-      if desired_simulations[isim] in ("ORCHIDEE","ORCHIDEE_F-F","ORCHIDEE_grass","ORCHIDEE_crops", "CBM", "EFISCEN", "EFISCEN-Space","EFISCEN-unscaled"):
-         print("Flipping the sign of the ORCHIDEE VERIFY, EFISCEN, EFISCEN-Space, EFISCEN-unscaled, and CBM fluxes.")
+      if desired_simulations[isim] in ("ORCHIDEE","ORCHIDEE_F-F","ORCHIDEE_grass","ORCHIDEE_crops", "CBM", "EFISCEN", "EFISCEN-Space","EFISCEN-unscaled","ORCHIDEE-MICT"):
+         print("Flipping the sign of the {} fluxes.".format(desired_simulations[isim]))
          annfCO2=-annfCO2
       elif desired_simulations[isim] == "EUROCOM_Lumia":
          # One year in this inversion seems messed up.
@@ -456,7 +462,6 @@ if lverifyinv:
 # that there one simulation already in the dataset that will be overwritten.
 simulation_data[:,:,:],simulation_err[:,:,:]=combine_simulations(overwrite_simulations,simulation_data,simulation_err,desired_simulations,graphname)
 
-
 ######### Here is where we get to the actual plotting
 # set the titles
 plot_titles=[]
@@ -482,10 +487,24 @@ if lharmonize_y:
 # print all raw data for all the plots to this file.
 datafile=open("plotting_data.txt","w")
 
+# In case I want to scale by the area of the country, get the
+# country areas
+country_areas=get_country_areas()
+
 for iplot,cplot in enumerate(desired_plots):
 
    print("**** On plot {0} ****".format(plot_titles_master[cplot]))
    datafile.write("**** On plot {0} ****\n".format(plot_titles_master[cplot]))
+
+   # Create a dataframe for all of these simulations, and print it to a .csv file
+   # In order to do this, I should process all the data outside this loop
+   # and make sure it's stored in simulation_data.  This means having dummy
+   # variables in the simulation lists to hold the new data.
+   #### Below is a quick hack that gets most of the data, but not things like error bars
+   df=pd.DataFrame(data=simulation_data[:,:,iplot],index=desired_simulations,columns=allyears)
+   data_file_end=re.sub(r".png",r".csv",output_file_end)
+   df.to_csv(path_or_buf=output_file_start+desired_plots[iplot]+data_file_end,sep=",")
+   ####
 
    # In an effort to harmonize the spacing a bit, I create a three-panel
    # grid, and then put only the legend in the bottom panel.
@@ -498,6 +517,16 @@ for iplot,cplot in enumerate(desired_plots):
    # Try to combine all my different legends in one
    legend_axes=[]
    legend_titles=[]
+
+   # Do we scale the fluxes by the total area of the countries?
+   if not lplot_countrytot:
+      # The units of simulation data were in Tg C/yr.  This gives
+      # Tg C/yr/square meter of country.  We want g C/yr/square meter of
+      # country.
+      simulation_data[:,:,iplot]=simulation_data[:,:,iplot]/country_areas[countrynames[cplot]]*1e12
+      
+   #endif
+
 
    # This is to plot the inventories
    if linventories:
@@ -603,7 +632,7 @@ for iplot,cplot in enumerate(desired_plots):
          ax1.fill_between(np.array([allyears[iyear]-0.5,allyears[iyear]+0.5]),lowerrange[iyear],upperrange[iyear],color="lightgray",alpha=0.60)
       #endfor
       legend_axes.append(p1)
-      legend_titles.append("Spread of TRENDY_v7")
+      legend_titles.append("TRENDY v7 DGVMs")
  
       # I want to make sure the symbol shows up on top of the error bars.  Just used a simple thick horizontal bar in the same color as above.
       p1=ax1.scatter(allyears,trendymedian[:,iplot],marker="_",label="TRENDY_v7",facecolors="None", edgecolors="lightgray",s=60)
@@ -615,8 +644,8 @@ for iplot,cplot in enumerate(desired_plots):
       upperrange=globalinvmax[:,iplot]
       lowerrange=globalinvmin[:,iplot]
       for iyear in range(ndesiredyears):
-         p2=ax1.hlines(y=globalinvmean[iyear,iplot],xmin=allyears[iyear]-0.5,xmax=allyears[iyear]+0.5,color='gray',linestyle='--')
-         p1=mpl.patches.Rectangle((allyears[iyear]-0.5,lowerrange[iyear]),1,upperrange[iyear]-lowerrange[iyear], color="gray", alpha=0.20)
+         p2=ax1.hlines(y=globalinvmean[iyear,iplot],xmin=allyears[iyear]-0.5,xmax=allyears[iyear]+0.5,color='red',linestyle='--')
+         p1=mpl.patches.Rectangle((allyears[iyear]-0.5,lowerrange[iyear]),1,upperrange[iyear]-lowerrange[iyear], color="red", alpha=0.20)
          ax1.add_patch(p1)
       #endfor
       legend_axes.append(p2)
@@ -834,7 +863,12 @@ for iplot,cplot in enumerate(desired_plots):
       #endfor
 
 
-      axsub.set_ylabel('Correction for inversions\n[Tg C/yr]')
+      if not lplot_countrytot:
+         axsub.set_ylabel('Correction for inversions\n[g C/yr/(m2 of country)]')
+      else:
+         axsub.set_ylabel('Correction for inversions\n[Tg C/yr]')
+      #endif
+
       # I would like the limits of the secondary X axis to be the same as the first, only shifted down
       # so that the bottom is equal to zero.
       ylimits=ax1.get_ylim()
@@ -883,7 +917,11 @@ for iplot,cplot in enumerate(desired_plots):
    ax1.axvline(x=2015,color='k', linestyle=':')
 
    # Now a bunch of things changing the general appearence of the plot
-   ax1.set_ylabel('Tg C/yr', fontsize=14)
+   if not lplot_countrytot:
+      ax1.set_ylabel('g C/yr/(m2 of country)', fontsize=14)
+   else:
+      ax1.set_ylabel('Tg C/yr', fontsize=14)
+   #endif
    ax1.set_xlabel('Year', fontsize=14)
    ax1.set_xlim(1989.5,2023)
    ax1.xaxis.set_major_locator(MultipleLocator(5))
