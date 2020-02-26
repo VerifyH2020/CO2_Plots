@@ -11,6 +11,8 @@
 #   You can control the countries/regions which are plotted by
 #   modifying the desired_plots list.
 #
+#   As of Feb 27, 2020, we use the following plots: rm -f *png *csv && python PLOT_CO2_results.py forestry_full && python PLOT_CO2_results.py grassland_full && python PLOT_CO2_results.py crops_full && python PLOT_CO2_results.py inversions_full && python PLOT_CO2_results.py inversions_combined && python PLOT_CO2_results.py inversions_combinedbar && python PLOT_CO2_results.py LULUCF_trendy
+#
 ####################################################################
 #!/usr/bin/env python
 import matplotlib as mpl
@@ -56,9 +58,10 @@ lharmonize_y=False
 lplot_countrytot=True
 
 # This is a flag that will set a lot of the parameters, include which simulations we plot
-possible_graphnames=("test", "full_global", "full_verify", "LUC_full", "sectorplot_full", "forestry_full", "grassland_full", "crops_full", "inversions_full", "inversions_test","biofuels","inversions_verify","lulucf","LULUCF_full","inversions_combined","verifybu","fluxcom")
+possible_graphnames=("test", "full_global", "full_verify", "luc_full", "sectorplot_full", "forestry_full", "grassland_full", "crops_full", "inversions_full", "inversions_test","biofuels","inversions_verify","lulucf","lulucf_full","inversions_combined","inversions_combinedbar","verifybu","fluxcom","lucf_full","lulucf_trendy")
 try:
    graphname=sys.argv[1]
+   graphname=graphname.lower()
 except:
    graphname=""
 #endtry
@@ -155,7 +158,7 @@ countrynames={ \
 ALA=countries65.index('ALA');ALB=countries65.index('ALB');AND=countries65.index('AND'); AUT=countries65.index('AUT');BEL=countries65.index('BEL');BGR=countries65.index('BGR');BIH=countries65.index('BIH');BLR=countries65.index('BLR');CHE=countries65.index('CHE');CYP=countries65.index('CYP');CZE=countries65.index('CZE');DEU=countries65.index('DEU');DNK=countries65.index('DNK');ESP=countries65.index('ESP');EST=countries65.index('EST');FIN=countries65.index('FIN');FRA=countries65.index('FRA');FRO=countries65.index('FRO');GBR=countries65.index('GBR');GGY=countries65.index('GGY');GRC=countries65.index('GRC');HRV=countries65.index('HRV');HUN=countries65.index('HUN');IMN=countries65.index('IMN');IRL=countries65.index('IRL');ISL=countries65.index('ISL');ITA=countries65.index('ITA');JEY=countries65.index('JEY');LIE=countries65.index('LIE');LTU=countries65.index('LTU');LUX=countries65.index('LUX');LVA=countries65.index('LVA');MDA=countries65.index('MDA');MKD=countries65.index('MKD'); MLT=countries65.index('MLT'); MNE=countries65.index('MNE'); NLD=countries65.index('NLD');NOR=countries65.index('NOR'); POL=countries65.index('POL');PRT=countries65.index('PRT');ROU=countries65.index('ROU');RUS=countries65.index('RUS');SJM=countries65.index('SJM');SMR=countries65.index('SMR');SRB=countries65.index('SRB');SVK=countries65.index('SVK');SVN=countries65.index('SVN');SWE=countries65.index('SWE'); TUR=countries65.index('TUR');UKR=countries65.index('UKR');BNL=countries65.index('BNL'); UKI=countries65.index('UKI');IBE=countries65.index('IBE');WEE=countries65.index('WEE');CEE=countries65.index('CEE');NOE=countries65.index('NOE');SOE=countries65.index('SOE');SEE=countries65.index('SEE');EAE=countries65.index('EAE');E15=countries65.index('E15');E27=countries65.index('E27');E28=countries65.index('E28');EUR=countries65.index('EUR'); EUT=countries65.index('EUT');KOS=countries65.index('KOS')
 
 # Only create plots for these countries/regions
-desired_plots=['FRA','E28','IRL','NLD']
+desired_plots=['FRA','E28']
 ####
 #desired_plots=countries65
 #desired_plots.remove('KOS')
@@ -190,7 +193,7 @@ plot_titles_master["E28"]="EU27+UK"
 
 numplot=len(desired_plots)
 
-desired_simulations,files_master,simtype_master,plotmarker_master,variables_master,edgec_master,facec_master,uncert_color_master,markersize_master,productiondata_master,displayname_master,displaylegend_master,datasource,output_file_start,output_file_end,titleending,printfakewarning,lplot_areas,overwrite_simulations,desired_legend=get_simulation_parameters(graphname,lshow_productiondata)
+desired_simulations,files_master,simtype_master,plotmarker_master,variables_master,edgec_master,facec_master,uncert_color_master,markersize_master,productiondata_master,displayname_master,displaylegend_master,datasource,output_file_start,output_file_end,titleending,printfakewarning,lplot_areas,overwrite_simulations,overwrite_coeffs,overwrite_operations,desired_legend,flipdatasign_master=get_simulation_parameters(graphname,lshow_productiondata)
 
 
 # This is a generic code to read in all the simulations.  We may do different things based on the
@@ -212,6 +215,7 @@ markersize=[]
 productiondata=[]
 displayname=[]
 displaylegend=[]
+flipdatasign=[]
 for simulationname in desired_simulations:
    variables.append(variables_master[simulationname])
    files.append(files_master[simulationname])
@@ -224,6 +228,7 @@ for simulationname in desired_simulations:
    productiondata.append(productiondata_master[simulationname])
    displayname.append(displayname_master[simulationname])
    displaylegend.append(displaylegend_master[simulationname])
+   flipdatasign.append(flipdatasign_master[simulationname])
 #endfor
 
 
@@ -232,6 +237,12 @@ for simulationname in desired_simulations:
 simulation_data=np.zeros((numsims,ndesiredyears,numplot))*np.nan
 # Some of the files, like the inventories, have an error that we can read in
 simulation_err=np.zeros((numsims,ndesiredyears,numplot))*np.nan
+# and occasionally we want the min and the max values, in particular for
+# combinations of other simulations.  I use this for uncertainty as well.
+simulation_min=np.zeros((numsims,ndesiredyears,numplot))*np.nan
+simulation_max=np.zeros((numsims,ndesiredyears,numplot))*np.nan
+
+
 
 for isim,simname in enumerate(desired_simulations):  
    print("Reading in data for simulation: ",simname)
@@ -264,7 +275,7 @@ for isim,simname in enumerate(desired_simulations):
       # The fluxes for ORCHIDEE seemed inverted with regards to the TRENDY
       # sign convention.  Flip that for the chart.  Same for CBM and the
       # two EFISCEN models.
-      if desired_simulations[isim] in ("ORCHIDEE","ORCHIDEE_F-F","ORCHIDEE_grass","ORCHIDEE_crops", "CBM", "EFISCEN", "EFISCEN-Space","EFISCEN-unscaled","ORCHIDEE-MICT"):
+      if flipdatasign[isim]:
          print("Flipping the sign of the {} fluxes.".format(desired_simulations[isim]))
          annfCO2=-annfCO2
       elif desired_simulations[isim] == "EUROCOM_Lumia":
@@ -295,6 +306,10 @@ for isim,simname in enumerate(desired_simulations):
 
 # If something is equal to zero, I don't plot it.
 simulation_data[simulation_data == 0.0]=np.nan
+# Just a placeholder.  Will overwrite in some situations where we have
+# real uncertainty values, or a combination of simulations.
+simulation_min=simulation_data.copy()
+simulation_max=simulation_data.copy()
 
 # Check to see if we have inventory data.  If so, we do something different in plotting.
 ninv=simtype.count("INVENTORY")
@@ -411,12 +426,12 @@ for isim,simname in enumerate(desired_simulations):
 # After much discussion, we found the biofuel corrections to be too complicated.  So we will
 # NOT do that for 2020.
 # I have to use a strange array declaration here because if I declare something
-# like correction_simulations=("ULB_Inland_waters"), Python thinks
+# like correction_simulations=("ULB_lakes_rivers"), Python thinks
 # that it is a character array and loops over every letter.  Not what
 # we want.
 
-if graphname in ("inversions_combined",'inversions_full','inversions_test'):
-   correction_simulations=np.array(["ULB_Inland_waters"],dtype=object)
+if graphname in ("inversions_combined",'inversions_full','inversions_test',"inversions_combined","inversions_combinedbar"):
+   correction_simulations=np.array(["ULB_lakes_rivers"],dtype=object)
    correction_data=np.zeros((ndesiredyears,numplot))
    for isim,simname in enumerate(desired_simulations):  
       if simname in correction_simulations:
@@ -455,12 +470,11 @@ if lverifyinv:
    verifyinvmean=np.nanmean(verifyinv_data,axis=0)
    verifyinvmax=np.nanmax(verifyinv_data,axis=0)
    verifyinvmin=np.nanmin(verifyinv_data,axis=0)
-   printindices=np.where(allyears == 2006)
 #endif
 
 # Sometimes I need to sum several variables into one timeseries.  This does that, assuming
 # that there one simulation already in the dataset that will be overwritten.
-simulation_data[:,:,:],simulation_err[:,:,:]=combine_simulations(overwrite_simulations,simulation_data,simulation_err,desired_simulations,graphname)
+simulation_data[:,:,:],simulation_min[:,:,:],simulation_max[:,:,:],simulation_err[:,:,:]=combine_simulations(overwrite_simulations,overwrite_coeffs,overwrite_operations,simulation_data,simulation_min,simulation_max,simulation_err,desired_simulations,graphname)
 
 ######### Here is where we get to the actual plotting
 # set the titles
@@ -510,13 +524,16 @@ for iplot,cplot in enumerate(desired_plots):
    # grid, and then put only the legend in the bottom panel.
 
    fig=plt.figure(2,figsize=(13, 8))
-   gs = gridspec.GridSpec(3, 1, height_ratios=[4,1,1])
+   gs = gridspec.GridSpec(3, 1, height_ratios=[2.7,1,1])
    ax1=plt.subplot(gs[0])
    ax2 =plt.subplot(gs[2])
 
    # Try to combine all my different legends in one
    legend_axes=[]
    legend_titles=[]
+
+   # Use this to keep the symbols plotted above the bars
+   zorder_value=30
 
    # Do we scale the fluxes by the total area of the countries?
    if not lplot_countrytot:
@@ -527,13 +544,144 @@ for iplot,cplot in enumerate(desired_plots):
       
    #endif
 
+   # First, I plot a series of bars, if they are present.  I want the symbols to fall on top of these
+   # bars, so best to plot these first.
+   # This is to plot TRENDY, if present
+   if ltrendy:
+      upperrange=trendymax[:,iplot]
+      lowerrange=trendymin[:,iplot]
+      for iyear in range(ndesiredyears):
+         p1=mpl.patches.Rectangle((allyears[iyear]-0.5,lowerrange[iyear]),1,upperrange[iyear]-lowerrange[iyear], color="lightgray", alpha=0.6,zorder=1)
+         p2=ax1.hlines(y=trendymedian[iyear,iplot],xmin=allyears[iyear]-0.5,xmax=allyears[iyear]+0.5,color="gray",linestyle='--',zorder=2)
+         ax1.add_patch(p1)
+         #ax1.fill_between(np.array([allyears[iyear]-0.5,allyears[iyear]+0.5]),lowerrange[iyear],upperrange[iyear],color="lightgray",alpha=0.60)
+      #endfor
+      legend_axes.append(p2)
+      legend_titles.append("Median of TRENDY v7 DGVMs")
+      legend_axes.append(p1)
+      legend_titles.append("Min/Max of TRENDY v7 DGVMs")
+
+      # I want to make sure the symbol shows up on top of the error bars.  Just used a simple thick horizontal bar in the same color as above.
+      #p1=ax1.scatter(allyears,trendymedian[:,iplot],marker="_",label="TRENDY_v7",facecolors="None", edgecolors="lightgray",s=60)
+
+   #endif
+
+   # This is to plot global inversions together, if present
+   if lglobalinv:
+      upperrange=globalinvmax[:,iplot]
+      lowerrange=globalinvmin[:,iplot]
+      for iyear in range(ndesiredyears):
+         p2=ax1.hlines(y=globalinvmean[iyear,iplot],xmin=allyears[iyear]-0.5,xmax=allyears[iyear]+0.5,color='red',linestyle='--')
+         p1=mpl.patches.Rectangle((allyears[iyear]-0.5,lowerrange[iyear]),1,upperrange[iyear]-lowerrange[iyear], color="red", alpha=0.20)
+         ax1.add_patch(p1)
+      #endfor
+      legend_axes.append(p2)
+      legend_titles.append("Mean of GCP (removing ULB_lakes_rivers)")
+      legend_axes.append(p1)
+      legend_titles.append("Min/Max of GCP")
+      
+      # Write raw data to a file
+      datafile.write("**** On dataset Mean of GCP ****\n")
+      datafile.write("years {}\n".format(allyears[:]))
+      datafile.write("data {}\n".format(globalinvmean[:,iplot]))
+      datafile.write("upperbounds {}\n".format(upperrange[:]))
+      datafile.write("lowerbounds {}\n".format(lowerrange[:]))
+
+      # I want to make sure the symbol shows up on top of the error bars.  Just used a simple thick horizontal bar in the same color as above.
+      #p1=ax1.scatter(allyears,globalinvmean[:,iplot],marker="_",label="EUROCOM",facecolors="None", edgecolors="red",s=60)
+
+   #endif
+
+   # and the regional (VERIFY) inversions, if they are present
+   if lverifyinv and graphname != "inversions_verify":
+      upperrange=verifyinvmax[:,iplot]
+      lowerrange=verifyinvmin[:,iplot]
+      if not lerrorbars: # This is for rectangles, like the other inversions
+         for iyear in range(ndesiredyears):
+            p2=ax1.hlines(y=verifyinvmean[iyear,iplot],xmin=allyears[iyear]-0.5,xmax=allyears[iyear]+0.5,color='red',linestyle='--')
+            p1=mpl.patches.Rectangle((allyears[iyear]-0.5,lowerrange[iyear]),1,upperrange[iyear]-lowerrange[iyear], color="red", alpha=0.20)
+            ax1.add_patch(p1)
+         #endfor
+         legend_axes.append(p2)
+         legend_titles.append("Mean of CarboScopeReg (removing ULB_lakes_rivers)")
+         legend_axes.append(p1)
+         legend_titles.append("Min/Max of CarboScopeReg")
+      else:
+         # This is for a symbol with error bars
+         # Notice error bars must always be positive
+         errorbars=np.array((verifyinvmean[:,iplot]-lowerrange[:],upperrange[:]-verifyinvmean[:,iplot])).reshape(2,ndesiredyears)
+         p2=ax1.errorbar(allyears,verifyinvmean[:,iplot],yerr=errorbars,marker='s',mfc='orange',mec='black',ms=10,capsize=10,capthick=2,ecolor="black",linestyle='None',zorder=5)
+         legend_axes.append(p2)
+         legend_titles.append("Mean of CarboScopeReg (removing ULB_lakes_rivers)")
+
+      #endif
+      
+      # Write raw data to a file
+      datafile.write("**** On dataset Mean of CarboScopeReg (removing ULB_lakes_rivers) ****\n")
+      datafile.write("years {}\n".format(allyears[:]))
+      datafile.write("data {}\n".format(verifyinvmean[:,iplot]))
+      datafile.write("upperbounds {}\n".format(upperrange[:]))
+      datafile.write("lowerbounds {}\n".format(lowerrange[:]))
+
+      # I want to make sure the symbol shows up on top of the error bars.  Just used a simple thick horizontal bar in the same color as above.
+      #p1=ax1.scatter(allyears,verifyinvmean[:,iplot],marker="_",label="EUROCOM",facecolors="None", edgecolors="red",s=60)
+
+   #endif
+
+   # and the regional (NON-VERIFY) inversions, if they are present
+   if lregionalinv:
+      upperrange=regionalinvmax[:,iplot]
+      lowerrange=regionalinvmin[:,iplot]
+      for iyear in range(ndesiredyears):
+         p2=ax1.hlines(y=regionalinvmean[iyear,iplot],xmin=allyears[iyear]-0.5,xmax=allyears[iyear]+0.5,color='blue',linestyle='--')
+         p1=mpl.patches.Rectangle((allyears[iyear]-0.5,lowerrange[iyear]),1,upperrange[iyear]-lowerrange[iyear], color="blue", alpha=0.20)
+         ax1.add_patch(p1)
+      #endfor
+      legend_axes.append(p2)
+      legend_titles.append("Mean of EUROCOM (removing ULB_lakes_rivers)")
+      legend_axes.append(p1)
+      legend_titles.append("Min/Max of EUROCOM")
+ 
+      # Write raw data to a file
+      datafile.write("**** On dataset Mean of EUROCOM (removing ULB_lakes_rivers) ****\n")
+      datafile.write("years {}\n".format(allyears[:]))
+      datafile.write("data {}\n".format(regionalinvmean[:,iplot]))
+      datafile.write("upperbounds {}\n".format(upperrange[:]))
+      datafile.write("lowerbounds {}\n".format(lowerrange[:]))
+
+      # I want to make sure the symbol shows up on top of the error bars.  Just used a simple thick horizontal bar in the same color as above.
+      #p1=ax1.scatter(allyears,regionalinvmean[:,iplot],marker="_",label="EUROCOM",facecolors="None", edgecolors="red",s=60)
+
+   #endif
+
+   if "VERIFYBU" in desired_simulations:
+      idata=desired_simulations.index("VERIFYBU")
+      for iyear in range(ndesiredyears):
+         p2=ax1.hlines(y=simulation_data[idata,iyear,iplot],xmin=allyears[iyear]-0.5,xmax=allyears[iyear]+0.5,color='yellow',linestyle='--')
+         p1=mpl.patches.Rectangle((allyears[iyear]-0.5,simulation_min[idata,iyear,iplot]),1,simulation_max[idata,iyear,iplot]-simulation_min[idata,iyear,iplot], color="yellow", alpha=0.20)
+         ax1.add_patch(p1)
+      #endfor
+      legend_axes.append(p2)
+      legend_titles.append(displayname[idata])
+      legend_axes.append(p1)
+      legend_titles.append("Min/Max of VERIFY BU simulation")
+ 
+      # Write raw data to a file
+      datafile.write("**** On dataset Mean of VERIFY BU simulations ****\n")
+      datafile.write("years {}\n".format(allyears[:]))
+      datafile.write("data {}\n".format(simulation_data[idata,:,iplot]))
+      datafile.write("upperbounds {}\n".format(simulation_max[idata,:,iplot]))
+      datafile.write("lowerbounds {}\n".format(simulation_min[idata,:,iplot]))
+
+   #endif
+
 
    # This is to plot the inventories
    if linventories:
 
       if graphname == "sectorplot_full":
 
-         temp_desired_sims=("UNFCCC_F-F","UNFCCC_grass","UNFCCC_crops")
+         temp_desired_sims=("UNFCCC_FL-FL","UNFCCC_GL-GL","UNFCCC_CL-CL")
          temp_data=np.zeros((len(temp_desired_sims),ndesiredyears))
          for isim,csim in enumerate(temp_desired_sims):
             temp_data[isim,:]=simulation_data[desired_simulations.index(csim),:,iplot]
@@ -574,15 +722,15 @@ for iplot,cplot in enumerate(desired_plots):
 
       for isim,simname in enumerate(desired_simulations):  
 
-         if graphname in ("inversions_combined","inversions_full", "inversions_test") and desired_simulations[isim] in correction_simulations:
+         if graphname in ("inversions_combined","inversions_full", "inversions_test","inversions_combined","inversions_combinedbar") and desired_simulations[isim] in correction_simulations:
             continue
          #endif 
 
-         if graphname == 'LUC_full' and desired_simulations[isim] in ('UNFCCC_forest_convert','UNFCCC_grassland_convert','UNFCCC_cropland_convert','UNFCCC_wetland_convert','UNFCCC_settlement_convert','UNFCCC_other_convert'):
+         if not displaylegend[isim]:
             continue
          #endif
 
-         if graphname == "forestry_full" and desired_simulations[isim] == "LUH2v2_FOREST":
+         if graphname == "forestry_full" and desired_simulations[isim] in ("LUH2v2_FOREST","UNFCCC_FOREST"):
             continue
          #endif 
 
@@ -596,9 +744,9 @@ for iplot,cplot in enumerate(desired_plots):
             datafile.write("upperbounds {}\n".format(upperrange[:]))
             datafile.write("lowerbounds {}\n".format(lowerrange[:]))
             for iyear in range(ndesiredyears):
-               p1=mpl.patches.Rectangle((allyears[iyear]-0.5,lowerrange[iyear]),1,upperrange[iyear]-lowerrange[iyear], color=uncert_color[isim], alpha=0.30)
+               p1=mpl.patches.Rectangle((allyears[iyear]-0.5,lowerrange[iyear]),1,upperrange[iyear]-lowerrange[iyear], color=uncert_color[isim], alpha=0.30,zorder=zorder_value-2)
                ax1.add_patch(p1)
-               ax1.fill_between(np.array([allyears[iyear]-0.5,allyears[iyear]+0.5]),lowerrange[iyear],upperrange[iyear],color=uncert_color[isim],alpha=0.30)
+               #ax1.fill_between(np.array([allyears[iyear]-0.5,allyears[iyear]+0.5]),lowerrange[iyear],upperrange[iyear],color=uncert_color[isim],alpha=0.30,zorder=zorder_value-1)
             #endfor
 
             legend_axes.append(p1)
@@ -608,9 +756,9 @@ for iplot,cplot in enumerate(desired_plots):
             # If this is not real data, make it lighter.
             for iyear in range(ndesiredyears):
                if productiondata[isim]:
-                  p1=ax1.hlines(y=simulation_data[isim,iyear,iplot],xmin=allyears[iyear]-0.5,xmax=allyears[iyear]+0.5,color=facec[isim],linestyle='-',alpha=production_alpha)
+                  p1=ax1.hlines(y=simulation_data[isim,iyear,iplot],xmin=allyears[iyear]-0.5,xmax=allyears[iyear]+0.5,color=facec[isim],linestyle='-',alpha=production_alpha,zorder=zorder_value-1)
                else:
-                  p1=ax1.hlines(y=simulation_data[isim,iyear,iplot],xmin=allyears[iyear]-0.5,xmax=allyears[iyear]+0.5,color=facec[isim],linestyle='-',alpha=nonproduction_alpha)
+                  p1=ax1.hlines(y=simulation_data[isim,iyear,iplot],xmin=allyears[iyear]-0.5,xmax=allyears[iyear]+0.5,color=facec[isim],linestyle='-',alpha=nonproduction_alpha,zorder=zorder_value-1)
                #endif
             #endif
 
@@ -622,120 +770,15 @@ for iplot,cplot in enumerate(desired_plots):
       #endfor
    #endif
 
-   # This is to plot TRENDY, if present
-   if ltrendy:
-      upperrange=trendymax[:,iplot]
-      lowerrange=trendymin[:,iplot]
-      for iyear in range(ndesiredyears):
-         p1=mpl.patches.Rectangle((allyears[iyear]-0.5,lowerrange[iyear]),1,upperrange[iyear]-lowerrange[iyear], color="lightgray", alpha=0.30)
-         ax1.add_patch(p1)
-         ax1.fill_between(np.array([allyears[iyear]-0.5,allyears[iyear]+0.5]),lowerrange[iyear],upperrange[iyear],color="lightgray",alpha=0.60)
-      #endfor
-      legend_axes.append(p1)
-      legend_titles.append("TRENDY v7 DGVMs")
- 
-      # I want to make sure the symbol shows up on top of the error bars.  Just used a simple thick horizontal bar in the same color as above.
-      p1=ax1.scatter(allyears,trendymedian[:,iplot],marker="_",label="TRENDY_v7",facecolors="None", edgecolors="lightgray",s=60)
-
-   #endif
-
-# This is to plot global inversions together, if present
-   if lglobalinv:
-      upperrange=globalinvmax[:,iplot]
-      lowerrange=globalinvmin[:,iplot]
-      for iyear in range(ndesiredyears):
-         p2=ax1.hlines(y=globalinvmean[iyear,iplot],xmin=allyears[iyear]-0.5,xmax=allyears[iyear]+0.5,color='red',linestyle='--')
-         p1=mpl.patches.Rectangle((allyears[iyear]-0.5,lowerrange[iyear]),1,upperrange[iyear]-lowerrange[iyear], color="red", alpha=0.20)
-         ax1.add_patch(p1)
-      #endfor
-      legend_axes.append(p2)
-      legend_titles.append("Mean of GCP (removing lakes/rivers)")
-      legend_axes.append(p1)
-      legend_titles.append("Min/Max of GCP")
-      
-      # Write raw data to a file
-      datafile.write("**** On dataset Mean of GCP ****\n")
-      datafile.write("years {}\n".format(allyears[:]))
-      datafile.write("data {}\n".format(globalinvmean[:,iplot]))
-      datafile.write("upperbounds {}\n".format(upperrange[:]))
-      datafile.write("lowerbounds {}\n".format(lowerrange[:]))
-
-      # I want to make sure the symbol shows up on top of the error bars.  Just used a simple thick horizontal bar in the same color as above.
-      #p1=ax1.scatter(allyears,globalinvmean[:,iplot],marker="_",label="EUROCOM",facecolors="None", edgecolors="red",s=60)
-
-   #endif
-
-# and the regional (VERIFY) inversions, if they are present
-   if lverifyinv and graphname != "inversions_verify":
-      upperrange=verifyinvmax[:,iplot]
-      lowerrange=verifyinvmin[:,iplot]
-      if not lerrorbars: # This is for rectangles, like the other inversions
-         for iyear in range(ndesiredyears):
-            p2=ax1.hlines(y=verifyinvmean[iyear,iplot],xmin=allyears[iyear]-0.5,xmax=allyears[iyear]+0.5,color='red',linestyle='--')
-            p1=mpl.patches.Rectangle((allyears[iyear]-0.5,lowerrange[iyear]),1,upperrange[iyear]-lowerrange[iyear], color="red", alpha=0.20)
-            ax1.add_patch(p1)
-         #endfor
-         legend_axes.append(p2)
-         legend_titles.append("Mean of CarboScopeReg (removing lakes/rivers)")
-         legend_axes.append(p1)
-         legend_titles.append("Min/Max of CarboScopeReg")
-      else:
-         # This is for a symbol with error bars
-         # Notice error bars must always be positive
-         errorbars=np.array((verifyinvmean[:,iplot]-lowerrange[:],upperrange[:]-verifyinvmean[:,iplot])).reshape(2,ndesiredyears)
-         p2=ax1.errorbar(allyears,verifyinvmean[:,iplot],yerr=errorbars,marker='s',mfc='orange',mec='black',ms=10,capsize=10,capthick=2,ecolor="black",linestyle='None',zorder=5)
-         legend_axes.append(p2)
-         legend_titles.append("Mean of CarboScopeReg (removing lakes/rivers)")
-
-      #endif
-      
-      # Write raw data to a file
-      datafile.write("**** On dataset Mean of CarboScopeReg (removing lakes/rivers) ****\n")
-      datafile.write("years {}\n".format(allyears[:]))
-      datafile.write("data {}\n".format(verifyinvmean[:,iplot]))
-      datafile.write("upperbounds {}\n".format(upperrange[:]))
-      datafile.write("lowerbounds {}\n".format(lowerrange[:]))
-
-      # I want to make sure the symbol shows up on top of the error bars.  Just used a simple thick horizontal bar in the same color as above.
-      #p1=ax1.scatter(allyears,verifyinvmean[:,iplot],marker="_",label="EUROCOM",facecolors="None", edgecolors="red",s=60)
-
-   #endif
-
-# and the regional (NON-VERIFY) inversions, if they are present
-   if lregionalinv:
-      upperrange=regionalinvmax[:,iplot]
-      lowerrange=regionalinvmin[:,iplot]
-      for iyear in range(ndesiredyears):
-         p2=ax1.hlines(y=regionalinvmean[iyear,iplot],xmin=allyears[iyear]-0.5,xmax=allyears[iyear]+0.5,color='blue',linestyle='--')
-         p1=mpl.patches.Rectangle((allyears[iyear]-0.5,lowerrange[iyear]),1,upperrange[iyear]-lowerrange[iyear], color="blue", alpha=0.20)
-         ax1.add_patch(p1)
-      #endfor
-      legend_axes.append(p2)
-      legend_titles.append("Mean of EUROCOM (removing lakes/rivers)")
-      legend_axes.append(p1)
-      legend_titles.append("Min/Max of EUROCOM")
- 
-      # Write raw data to a file
-      datafile.write("**** On dataset Mean of EUROCOM (removing lakes/rivers) ****\n")
-      datafile.write("years {}\n".format(allyears[:]))
-      datafile.write("data {}\n".format(regionalinvmean[:,iplot]))
-      datafile.write("upperbounds {}\n".format(upperrange[:]))
-      datafile.write("lowerbounds {}\n".format(lowerrange[:]))
-
-      # I want to make sure the symbol shows up on top of the error bars.  Just used a simple thick horizontal bar in the same color as above.
-      #p1=ax1.scatter(allyears,regionalinvmean[:,iplot],marker="_",label="EUROCOM",facecolors="None", edgecolors="red",s=60)
-
-   #endif
-
    # This is to plot all the other simulations not covered by the special cases above
    for isim,simname in enumerate(desired_simulations):  
       if simtype[isim] in ("NONVERIFY_BU","INVENTORY_NOERR","VERIFY_BU") or desired_simulations[isim] == 'TrendyV7_ORCHIDEE' or graphname == "inversions_verify":
 
          # I do something differently for one of the plots
-         if graphname == "sectorplot_full" and desired_simulations[isim] in ("EPIC","ECOSSE_grass","EFISCEN"):
+         if graphname == "sectorplot_full" and desired_simulations[isim] in ("EPIC","ECOSSE_GL-GL","EFISCEN"):
             continue
          #endif
-         if graphname in ("inversions_combined","inversions_full", "inversions_test") and desired_simulations[isim] in correction_simulations:
+         if graphname in ("inversions_combined","inversions_full", "inversions_test","inversions_combined","inversions_combinedbar") and desired_simulations[isim] in correction_simulations:
             continue
          #endif      
 
@@ -745,9 +788,9 @@ for iplot,cplot in enumerate(desired_plots):
 
          # I use lighter symbols if the data is not real, i.e. I created a false dataset just to have something to plot
          if productiondata[isim]:
-            p1=ax1.scatter(allyears,simulation_data[isim,:,iplot],marker=plotmarker[isim],label=desired_simulations[isim],facecolors=facec[isim], edgecolors=edgec[isim],s=markersize[isim],alpha=production_alpha,zorder=1)
+            p1=ax1.scatter(allyears,simulation_data[isim,:,iplot],marker=plotmarker[isim],label=desired_simulations[isim],facecolors=facec[isim], edgecolors=edgec[isim],s=markersize[isim],alpha=production_alpha,zorder=zorder_value)
          else:
-            p1=ax1.scatter(allyears,simulation_data[isim,:,iplot],marker=plotmarker[isim],label=desired_simulations[isim],facecolors=facec[isim], edgecolors=edgec[isim],s=markersize[isim],alpha=nonproduction_alpha,zorder=1)
+            p1=ax1.scatter(allyears,simulation_data[isim,:,iplot],marker=plotmarker[isim],label=desired_simulations[isim],facecolors=facec[isim], edgecolors=edgec[isim],s=markersize[isim],alpha=nonproduction_alpha,zorder=zorder_value)
          #endif
          legend_axes.append(p1)
          legend_titles.append(displayname[isim])
@@ -763,14 +806,14 @@ for iplot,cplot in enumerate(desired_plots):
    # For this particular graph, I plot three of the VERIFY runs in a different way.
    if graphname == "sectorplot_full":
 
-      temp_desired_sims=("EPIC","ECOSSE_grass","EFISCEN")
+      temp_desired_sims=("EPIC","ECOSSE_GL-GL","EFISCEN")
       temp_data=np.zeros((len(temp_desired_sims),ndesiredyears))
       for isim,csim in enumerate(temp_desired_sims):
          temp_data[isim,:]=simulation_data[desired_simulations.index(csim),:,iplot]
       #endfor
 
       # plot the whole sum of these three runs
-      p1=ax1.scatter(allyears,np.nansum(temp_data,axis=0),marker="P",label="EPIC/ECOSSE/EFISCEN",facecolors="blue", edgecolors="blue",s=60,alpha=nonproduction_alpha)
+      p1=ax1.scatter(allyears,np.nansum(temp_data,axis=0),marker="P",label="EPIC/ECOSSE/EFISCEN",facecolors="blue", edgecolors="blue",s=60,alpha=production_alpha)
       legend_axes.append(p1)
       legend_titles.append("EPIC/ECOSSE/EFISCEN")
 
@@ -806,26 +849,41 @@ for iplot,cplot in enumerate(desired_plots):
    if graphname == "forestry_full" and lplot_areas:
 
       axsub = ax1.twinx()
-      csim="LUH2v2_FOREST"
-      isim=desired_simulations.index(csim)
+      
+      forest_areas=("LUH2v2_FOREST","UNFCCC_FOREST")
       barwidth=0.3
-      p1=axsub.bar(allyears, simulation_data[isim,:,iplot], color=facec[desired_simulations.index(csim)],width=barwidth,alpha=production_alpha*0.3)
-      legend_axes.append(p1)
-      legend_titles.append(csim)
+      offset=-barwidth/2.0
 
-      axsub.set_ylabel('Forest area for LUH2v2\n[m2]')
+      for forest_area in forest_areas:
+         if forest_area in desired_simulations:
+      
+            # This plots the LUH2v2 ESA-CCI forest areas
+            isim=desired_simulations.index(forest_area)
+            # convert from m**2 to kha
+            p1=axsub.bar(allyears+offset, simulation_data[isim,:,iplot]/1000.0/10000.0, color=facec[desired_simulations.index(forest_area)],width=barwidth,alpha=production_alpha*0.3)
+            legend_axes.append(p1)
+            legend_titles.append(displayname_master[forest_area])
+
+            offset=offset+barwidth
+         #endif
+      #endif
+
+      axsub.set_ylabel('Forest area \n[kha]')
+      
+
+      datafile.write("**** On dataset {0} ****\n".format(displayname[isim]))
+      datafile.write("years {}\n".format(allyears[:]))
+      datafile.write("data {}\n".format(simulation_data[isim,:,iplot]))
+
       # I want the bars to only take up the bottom third of the graph or so.
       ylimits=axsub.get_ylim()
       yaxisrange=ylimits[1]-ylimits[0]
       axsub.set_ylim(ylimits[0],ylimits[1]+3.0*yaxisrange)
 
-      datafile.write("**** On dataset {0} ****\n".format(displayname[isim]))
-      datafile.write("years {}\n".format(allyears[:]))
-      datafile.write("data {}\n".format(simulation_data[isim,:,iplot]))
    #endif
 
    # I want to try stacking some bars in the inversion plot
-   if graphname in ("inversions_combined","inversions_full", "inversions_test"):
+   if graphname in ("inversions_combined","inversions_full", "inversions_test","inversions_combined","inversions_combinedbar"):
 
       temp_data=np.zeros((len(correction_simulations),ndesiredyears))
       for isim,csim in enumerate(correction_simulations):
@@ -864,9 +922,9 @@ for iplot,cplot in enumerate(desired_plots):
 
 
       if not lplot_countrytot:
-         axsub.set_ylabel('Correction for inversions\n[g C/yr/(m2 of country)]')
+         axsub.set_ylabel(r'Correction for inversions\n[g C/yr/(m$^2$ of country)]')
       else:
-         axsub.set_ylabel('Correction for inversions\n[Tg C/yr]')
+         axsub.set_ylabel(r'Correction for inversions\n[Tg C yr$^{-1}$]')
       #endif
 
       # I would like the limits of the secondary X axis to be the same as the first, only shifted down
@@ -889,6 +947,8 @@ for iplot,cplot in enumerate(desired_plots):
    # Use a catch-all to redo the legend if need be. This will overwrite anything done
    # above if it's defined in the simulation set-up.
    if desired_legend:
+      print("Reording legend.")
+
       # run a quick check
       for isim,csim in enumerate(desired_legend):
          try:
@@ -898,7 +958,7 @@ for iplot,cplot in enumerate(desired_plots):
             print("Please change desired_legend for graph {0}".format(graphname))
             print(desired_legend)
             print(legend_titles)
-            sys.exit()
+            sys.exit(1)
          #endtry
       #endfor
 
@@ -918,9 +978,9 @@ for iplot,cplot in enumerate(desired_plots):
 
    # Now a bunch of things changing the general appearence of the plot
    if not lplot_countrytot:
-      ax1.set_ylabel('g C/yr/(m2 of country)', fontsize=14)
+      ax1.set_ylabel(r'g C yr$^{-1}$ m$^2$ of country)', fontsize=14)
    else:
-      ax1.set_ylabel('Tg C/yr', fontsize=14)
+      ax1.set_ylabel(r'Tg C yr$^{-1}$', fontsize=14)
    #endif
    ax1.set_xlabel('Year', fontsize=14)
    ax1.set_xlim(1989.5,2023)
@@ -942,7 +1002,7 @@ for iplot,cplot in enumerate(desired_plots):
    # Now copy the full ax1 legend to ax2, and turn off that from ax1, just
    # to make the spacing a little bit better.
    # Also change the number of columns in the legend in case we have a lot of text.
-   if graphname in ("inversions_combined","inversions_full", "inversions_test"):
+   if graphname in ("inversions_combined","inversions_full", "inversions_test","inversions_combined","inversions_combinedbar"):
       ax2.legend(legend_axes,legend_titles,bbox_to_anchor=(0,0,1,1), loc="lower left",mode="expand", borderaxespad=0, ncol=2,fontsize='large')                     
    else:
       ax2.legend(legend_axes,legend_titles,bbox_to_anchor=(0,0,1,1), loc="lower left",mode="expand", borderaxespad=0, ncol=3,fontsize='large')                     
@@ -969,7 +1029,7 @@ for iplot,cplot in enumerate(desired_plots):
    ax1.set_title(plot_titles[iplot],fontsize=16)
 
    if lprintzero:
-      ax1.hlines(y=0.0,xmin=allyears[0]-0.5,xmax=allyears[-1]+0.5,color="black",linestyle='-')
+      ax1.hlines(y=0.0,xmin=allyears[0]-0.5,xmax=allyears[-1]+0.5,color="black",linestyle='--',linewidth=0.1)
    #endif
 
    #plt.tight_layout(rect=[0, 0.05,1 , 1])
