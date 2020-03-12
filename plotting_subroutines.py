@@ -5,6 +5,8 @@ import math
 import netCDF4 as nc
 import sys
 from mpl_toolkits.basemap import maskoceans
+import matplotlib as mpl
+import pandas as pd
 
 ##########################################################################
 def get_simulation_parameters(graphname,lshow_productiondata):
@@ -37,6 +39,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                   'UNFCCC_totexcLULUCF' : invdir + 'Tier1_CO2_TotEmisExcLULUCF_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTot.nc', \
                   'UNFCCC_LULUCF' : invdir + 'Tier1_CO2_LULUCF_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTot.nc', \
                   
+                  'TrendyV7' : '/home/dods/verify/OTHER_PROJECTS/FCO2/TrendyLand-V7/Tier3BUPB_CO2_LandFlux_AllTrendyMedianMinMax-S3_exeter_LAND_GL_1M_V1_20191020_McGrath_Grid-mask11_CountryTot.nc', \
                   'TrendyV7_CABLE' : otherdir + 'Tier3BUPB_CO2_LandFlux_CABLE-POP-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTot.nc', \
                   'TrendyV7_CLASS' : otherdir + 'Tier3BUPB_CO2_LandFlux_CLASS-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTot.nc', \
                   'TrendyV7_CLM5' : otherdir + 'Tier3BUPB_CO2_LandFlux_CLM5-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTot.nc', \
@@ -55,6 +58,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                   'ORCHIDEE_RH' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTot.nc", \
                   'EPIC' : verifydir + 'Tier3BUPB_CO2_CropFluxes_EPIC-S1_IIASA_CRP_EU_1M_V1_20190911_BALKOVIC_WP3_CountryTot.nc', \
                   'EPIC_RH' : verifydir + 'Tier3BUPB_CO2_CropFluxes_EPIC-S1_IIASA_CRP_EU_1M_V1_20190911_BALKOVIC_WP3_CountryTot.nc', \
+                  'JENA-COMBINED' : verifydir + 'Tier3TD_CO2_LandFlux_AllJENA_bgc-jena_LAND_GL_1M_V1_20200304_McGrath_WP3_CountryTot.nc', \
                   'JENA-REG-100km' : verifydir + 'Tier3TD_CO2_LandFlux_JENA-REG-100km_bgc-jena_LAND_GL_1M_V1_20191020_Gerbig_WP3_CountryTot.nc', \
                   'JENA-REG-200km' : verifydir + 'Tier3TD_CO2_LandFlux_JENA-REG-200km_bgc-jena_LAND_GL_1M_V1_20191020_Gerbig_WP3_CountryTot.nc', \
                   'JENA-REG-Core100km' : verifydir + 'Tier3TD_CO2_LandFlux_JENA-REG-Core100km_bgc-jena_LAND_GL_1M_V1_20191020_Gerbig_WP3_CountryTot.nc', \
@@ -104,6 +108,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                   'UNFCCC_wetland_convert' : "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_WetlandConvert_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTot.nc", \
                   'UNFCCC_settlement_convert' : "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_SettlementConvert_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTot.nc", \
                   'UNFCCC_other_convert' : "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_OtherConvert_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTot.nc", \
+                  'UNFCCC_woodharvest' : "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_WoodHarvest_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTot.nc", \
                   'GCP_JENA' : '/home/dods/verify/OTHER_PROJECTS/FCO2/Inversions-GCP2019/Tier3TD_CO2_LandFlux_JENA-s76-4-3-2019_bgc-jena_LAND_GL_1M_V1_20191020_Christian_WPX_CountryTot.nc', \
                   'GCP_CTRACKER' : '/home/dods/verify/OTHER_PROJECTS/FCO2/Inversions-GCP2019/Tier3TD_CO2_LandFlux_CTRACKER-EU-v2019_wur_LAND_GL_1M_V1_20191020_Wouter_WPX_CountryTot.nc', \
                   'GCP_CAMS' : '/home/dods/verify/OTHER_PROJECTS/FCO2/Inversions-GCP2019/Tier3TD_CO2_LandFlux_CAMS-V18-2-2019_lsce_LAND_GL_1M_V1_20191020_Chevallier_WPX_CountryTot.nc', \
@@ -113,7 +118,6 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                   # These will all get overwritten below
                   'UNFCCC_LUC' : invdir + 'Tier1_CO2_LULUCF_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTot.nc', \
                   'UNFCCC_LUCF' : invdir + 'Tier1_CO2_LULUCF_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTot.nc', \
-                  'TrendyV7' : otherdir + 'Tier3BUPB_CO2_LandFlux_CABLE-POP-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTot.nc', \
                   'FAOSTAT_LULUCF' : '/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/FAOSTAT/FAOSTAT_CO2_all_data.nc', \
                   'FAOSTAT_FL-FL' : '/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/FAOSTAT/FAOSTAT_CO2_all_data.nc', \
                   'VERIFYBU' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTot.nc", \
@@ -127,7 +131,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                       'UNFCCC_LULUCF' : 'INVENTORY', \
                       'UNFCCC_LUC' : 'INVENTORY', \
                       'UNFCCC_LUCF' : 'INVENTORY', \
-                      'TrendyV7' : 'TRENDY', \
+                      'TrendyV7' : 'MINMAX', \
                       'TrendyV7_CABLE' : 'TRENDY', \
                       'TrendyV7_CLASS': 'TRENDY', \
                       'TrendyV7_CLM5' : 'TRENDY', \
@@ -159,6 +163,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                       'FAOSTAT_Grs' :  'INVENTORY_NOERR', \
                       'EDGARv4' :  'INVENTORY_NOERR', \
                       'H&N' :  'NONVERIFY_BU', \
+                      'JENA-COMBINED' :  'MINMAX', \
                       'JENA-REG-100km' :  'VERIFY_TD', \
                       'JENA-REG-200km' :  'VERIFY_TD', \
                       'JENA-REG-Core100km' :  'VERIFY_TD', \
@@ -197,6 +202,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                     'UNFCCC_wetland_convert' : "INVENTORY", \
                     'UNFCCC_settlement_convert' : "INVENTORY", \
                     'UNFCCC_other_convert' : "INVENTORY", \
+                    'UNFCCC_woodharvest' : "INVENTORY", \
                     'GCP_JENA' : 'GLOBAL_TD', \
                     'GCP_CTRACKER' : 'GLOBAL_TD', \
                     'GCP_CAMS' : 'GLOBAL_TD', \
@@ -235,6 +241,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                       'FLUXCOM_rsonlyRF_ns' :  'FCO2_NEP', \
                       'EPIC' :  'FCO2_NBP_CRO', \
                       'EPIC_RH' :  'rh', \
+                      'JENA-COMBINED' :  'FCO2_NBP', \
                       'JENA-REG-100km' :  'FCO2_NBP', \
                       'JENA-REG-200km' :  'FCO2_NBP', \
                       'JENA-REG-Core100km' :  'FCO2_NBP', \
@@ -281,6 +288,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                     'UNFCCC_wetland_convert' : "FCO2_NBP", \
                     'UNFCCC_settlement_convert' : "FCO2_NBP", \
                     'UNFCCC_other_convert' : "FCO2_NBP", \
+                    'UNFCCC_woodharvest' : "FCO2_NBP", \
                     'GCP_JENA' : 'FCO2_NBP', \
                     'GCP_CTRACKER' : 'FCO2_NBP', \
                     'GCP_CAMS' : 'FCO2_NBP', \
@@ -319,6 +327,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                        'FLUXCOM_rsonlyRF_ns' :  's', \
                        'EPIC' :  'o', \
                        'EPIC_RH' :  'o', \
+                       'JENA-COMBINED' :  'P', \
                        'JENA-REG-100km' :  'P', \
                        'JENA-REG-200km' :  'P', \
                        'JENA-REG-Core100km' :  'P', \
@@ -365,6 +374,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                     'UNFCCC_wetland_convert' : "o", \
                     'UNFCCC_settlement_convert' : "o", \
                     'UNFCCC_other_convert' : "o", \
+                    'UNFCCC_woodharvest' : "o", \
                     'GCP_JENA' : 'o', \
                     'GCP_CTRACKER' : 'o', \
                     'GCP_CAMS' : 'o', \
@@ -379,20 +389,20 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                   'UNFCCC_LUC' :  'green', \
                   'UNFCCC_LUCF' :  'green', \
                   'TrendyV7' :  'none', \
-                  'TrendyV7_CABLE' :  'none', \
-                  'TrendyV7_CLASS':  'none', \
-                  'TrendyV7_CLM5' :  'none', \
-                  'TrendyV7_DLEM' :  'none', \
-                  'TrendyV7_ISAM' :  'none', \
-                  'TrendyV7_JSBACH' :  'none', \
-                  'TrendyV7_JULES' :  'none', \
-                  'TrendyV7_LPJ' :  'none', \
-                  'TrendyV7_LPX' :  'none', \
-                  'TrendyV7_OCN' :  'none', \
-                  'TrendyV7_ORCHIDEE-CNP' :  'none', \
+                  'TrendyV7_CABLE' :  'red', \
+                  'TrendyV7_CLASS':  'green', \
+                  'TrendyV7_CLM5' :  'blue', \
+                  'TrendyV7_DLEM' :  'violet', \
+                  'TrendyV7_ISAM' :  'yellow', \
+                  'TrendyV7_JSBACH' :  'orange', \
+                  'TrendyV7_JULES' :  'brown', \
+                  'TrendyV7_LPJ' :  'gold', \
+                  'TrendyV7_LPX' :  'gray', \
+                  'TrendyV7_OCN' :  'limegreen', \
+                  'TrendyV7_ORCHIDEE-CNP' :  'yellowgreen', \
                   'TrendyV7_ORCHIDEE' :  'none', \
-                  'TrendyV7_SDGVM' :  'none', \
-                  'TrendyV7_SURFEX' :  'none', \
+                  'TrendyV7_SDGVM' :  'magenta', \
+                  'TrendyV7_SURFEX' :  'pink', \
                   'VERIFYBU' : 'blue', \
                   'ORCHIDEE' : 'dodgerblue', \
                   'ORCHIDEE_RH' : 'red', \
@@ -402,6 +412,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                   'FLUXCOM_rsonlyRF_ns' :  'yellowgreen', \
                   'EPIC' :  'lightcoral', \
                   'EPIC_RH' :  'pink', \
+                  'JENA-COMBINED' :  'blue', \
                   'JENA-REG-100km' :  'khaki', \
                   'JENA-REG-200km' :  'orange', \
                   'JENA-REG-Core100km' :  'darkorange', \
@@ -448,6 +459,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                     'UNFCCC_wetland_convert' : "sandybrown", \
                     'UNFCCC_settlement_convert' : "sandybrown", \
                     'UNFCCC_other_convert' : "sandybrown", \
+                    'UNFCCC_woodharvest' : "sandybrown", \
                      'GCP_JENA' : 'sandybrown', \
                     'GCP_CTRACKER' : 'sandybrown', \
                     'GCP_CAMS' : 'sandybrown', \
@@ -508,6 +520,16 @@ def get_simulation_parameters(graphname,lshow_productiondata):
       output_file_start="CO2_BU_VERIFYTD_"
       output_file_end="_2019_v1.png" 
    elif graphname == "test":
+      desired_simulations=[ \
+                            # we read in data for LUC, but we replace it with the sectors below
+                            'UNFCCC_LULUCF', \
+                            'BLUE', \
+                            'TrendyV7', \
+        ]   
+#      datasource='UNFCCC/LMU/LSCE/FAO'
+      output_file_start="TEST_"
+      output_file_end="_FCO2Nat_2019_v1.png" 
+      titleending=r" : CO$_2$ emissions from land use change"
 #      datasource='TRENDY/MPI-BGC/LSCE'
       output_file_start="test_"
       output_file_end="_2019_v1.png" 
@@ -683,20 +705,8 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                             'FAOSTAT_Crp', \
                             'FAOSTAT_Grs', \
                             'FAOSTAT_For', \
-                            'TrendyV7_CABLE', \
-                            'TrendyV7_CLASS', \
-                            'TrendyV7_CLM5', \
-                            'TrendyV7_DLEM', \
-                            'TrendyV7_ISAM', \
-                            'TrendyV7_JSBACH', \
-                            'TrendyV7_JULES', \
-                            'TrendyV7_LPJ', \
-                            'TrendyV7_LPX', \
-                            'TrendyV7_OCN', \
-                            'TrendyV7_ORCHIDEE-CNP', \
-                            'TrendyV7_ORCHIDEE', \
-                            'TrendyV7_SDGVM', \
-                            'TrendyV7_SURFEX', \
+                            'TrendyV7', \
+                      "TrendyV7_ORCHIDEE",\
          ]  
       
       desired_legend=[\
@@ -740,20 +750,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                             'FLUXCOM_rsonlyANN_os', \
                             'FLUXCOM_rsonlyRF_os', \
                             'EPIC', \
-                            'TrendyV7_CABLE', \
-                            'TrendyV7_CLASS', \
-                            'TrendyV7_CLM5', \
-                            'TrendyV7_DLEM', \
-                            'TrendyV7_ISAM', \
-                            'TrendyV7_JSBACH', \
-                            'TrendyV7_JULES', \
-                            'TrendyV7_LPJ', \
-                            'TrendyV7_LPX', \
-                            'TrendyV7_OCN', \
-                            'TrendyV7_ORCHIDEE-CNP', \
-                            'TrendyV7_ORCHIDEE', \
-                            'TrendyV7_SDGVM', \
-                            'TrendyV7_SURFEX', \
+                            'TrendyV7', \
                          ]  
       desired_legend=[\
                        "UNFCCC_FL-FL","UNFCCC_GL-GL","UNFCCC_CL-CL",\
@@ -771,6 +768,59 @@ def get_simulation_parameters(graphname,lshow_productiondata):
       plotmarker_master['EPIC']="P"
 
       facec_master['EPIC']="brown"
+
+      #if lshow_productiondata:
+      #   productiondata_master['ECOSSE_CL-CL']=False
+      #   productiondata_master['ECOSSE_GL-GL']=False
+      #endif
+
+   elif graphname == "unfccc_lulucf_bar":
+      desired_simulations=[ \
+                            'UNFCCC_LULUCF', \
+                            'UNFCCC_FL-FL', \
+                            'UNFCCC_GL-GL', \
+                            'UNFCCC_CL-CL', \
+                            'UNFCCC_forest_convert', \
+                            'UNFCCC_grassland_convert', \
+                            'UNFCCC_cropland_convert', \
+                            'UNFCCC_wetland_convert', \
+                            'UNFCCC_settlement_convert', \
+                            'UNFCCC_other_convert', \
+                            'UNFCCC_woodharvest', \
+                         ]  
+      # I cannot do this until all my simulations have been plotted
+      #desired_legend=[\
+      #                 displayname_master["UNFCCC_LULUCF"],\
+      #                'UNFCCC_FL-FL','UNFCCC_GL-GL','UNFCCC_CL-CL',\
+      #                'UNFCCC_forest_convert', \
+      #                      'UNFCCC_grassland_convert', \
+      #                      'UNFCCC_cropland_convert', \
+      #                      'UNFCCC_wetland_convert', \
+      #                      'UNFCCC_settlement_convert', \
+      #                      'UNFCCC_other_convert', \
+      #                 ]
+
+ 
+#      datasource='UNFCCC/IIASA/WEnR/UAbdn/MPI-BGC/LSCE/TRENDY'
+      output_file_start="UNFCCCLULUCFbar_"
+      output_file_end="_FCO2Nat_2019_v1.png" 
+      titleending=r" : CO$_2$ emission trends from land use, land use change, and forestry"
+
+      plotmarker_master['EPIC']="P"
+
+      facec_master['UNFCCC_LULUCF']="darkgray"
+      facec_master['UNFCCC_forest_convert']="darkgreen"
+      facec_master['UNFCCC_grassland_convert']="magenta"
+      facec_master['UNFCCC_cropland_convert']="violet"
+      facec_master['UNFCCC_wetland_convert']="blue"
+      facec_master['UNFCCC_settlement_convert']="dodgerblue"
+      facec_master['UNFCCC_other_convert']="brown"
+      facec_master['UNFCCC_woodharvest']="aqua"
+
+      displayname_master['UNFCCC_FL-FL']='FL-FL'
+      displayname_master['UNFCCC_GL-GL']='GL-GL'
+      displayname_master['UNFCCC_CL-CL']='CL-CL'
+      displayname_master['UNFCCC_woodharvest']='WH'
 
       #if lshow_productiondata:
       #   productiondata_master['ECOSSE_CL-CL']=False
@@ -830,6 +880,35 @@ def get_simulation_parameters(graphname,lshow_productiondata):
       #if lshow_productiondata:
       #   productiondata_master['FLUXCOM_FL-FL']=False
       #endif
+
+   elif graphname == "trendy":
+      desired_simulations=[ \
+                            'TrendyV7', \
+                            'TrendyV7_CABLE', \
+                            'TrendyV7_CLASS', \
+                            'TrendyV7_CLM5', \
+                            'TrendyV7_DLEM', \
+                            'TrendyV7_ISAM', \
+                            'TrendyV7_JSBACH', \
+                            'TrendyV7_JULES', \
+                            'TrendyV7_LPJ', \
+                            'TrendyV7_LPX', \
+                            'TrendyV7_OCN', \
+                            'TrendyV7_ORCHIDEE-CNP', \
+                            'TrendyV7_ORCHIDEE', \
+                            'TrendyV7_SDGVM', \
+                            'TrendyV7_SURFEX', \
+                         ]   
+      output_file_start="TRENDY_"
+      output_file_end="_FCO2Nat_2019_v1.png" 
+      titleending=r" : CO$_2$ emissions from all TRENDY v7 bottom-up models"
+      lplot_areas=True
+
+      plotmarker_master['EFISCEN']="P"
+
+      edgec_master["ORCHIDEE_FL-FL"]="black"
+      
+      facec_master["ORCHIDEE_FL-FL"]="black"
 
    elif graphname == "fluxcom":
       desired_simulations=[ \
@@ -1040,20 +1119,8 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                             'FAOSTAT_Crp', \
                             'FAOSTAT_Grs', \
                             'FAOSTAT_For', \
-                            'TrendyV7_CABLE', \
-                            'TrendyV7_CLASS', \
-                            'TrendyV7_CLM5', \
-                            'TrendyV7_DLEM', \
-                            'TrendyV7_ISAM', \
-                            'TrendyV7_JSBACH', \
-                            'TrendyV7_JULES', \
-                            'TrendyV7_LPJ', \
-                            'TrendyV7_LPX', \
-                            'TrendyV7_OCN', \
-                            'TrendyV7_ORCHIDEE-CNP', \
-                            'TrendyV7_ORCHIDEE', \
-                            'TrendyV7_SDGVM', \
-                            'TrendyV7_SURFEX', \
+                            'TrendyV7', \
+                          'TrendyV7_ORCHIDEE', \
       ]        
 
       output_file_end="_FCO2Nat_2019_v1.png" 
@@ -1147,6 +1214,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
 
    elif graphname == "inversions_verify":
       desired_simulations=[ \
+                            'JENA-COMBINED', \
                             'JENA-REG-100km', \
                             'JENA-REG-200km', \
                             'JENA-REG-Core100km', \
@@ -1214,6 +1282,23 @@ def get_simulation_parameters(graphname,lshow_productiondata):
       sys.exit(1)
    #endif
 
+   # Run some simple checks to make sure we don't crash later.
+   for simname in files_master.keys():
+      if not mpl.colors.is_color_like(edgec_master[simname]):
+         print("Do not recognize edge color {} for simulation {}.".format(edgec_master[simname],simname))
+         sys.exit(1)
+      #endif
+      if not mpl.colors.is_color_like(facec_master[simname]):
+         print("Do not recognize face color {} for simulation {}.".format(facec_master[simname],simname))
+         sys.exit(1)
+      #endif
+      if not mpl.colors.is_color_like(uncert_color_master[simname]):
+         print("Do not recognize uncert color {} for simulation {}.".format(uncert_color_master[simname],simname))
+         sys.exit(1)
+      #endif
+   #endif
+
+
 #   return linclude_inventories,desired_inventories,desired_others,desired_verify,datasource,output_file_start,output_file_end
    return desired_simulations,files_master,simtype_master,plotmarker_master,variables_master,edgec_master,facec_master,uncert_color_master,markersize_master,productiondata_master,displayname_master,displaylegend_master,datasource,output_file_start,output_file_end,titleending,printfakewarning,lplot_areas,overwrite_simulations,overwrite_coeffs,overwrite_operations,desired_legend,flipdatasign_master
 #enddef
@@ -1235,12 +1320,12 @@ def get_cumulated_array(data, **kwargs):
          d[1:] = cum[:-1]
          return d  
 
-def readfile(filename,variablename,ndesiredyears):
-   # The goal of this routine is to read in a slice from 1990
+def readfile(filename,variablename,ndesiredyears,lconvert_units,starting_year):
+   # The goal of this routine is to read in a slice from starting_year
    # until 2018.
    # The time axes for all these files starts as days from 1900-01-01,
    # the axis itself might start at a different year (1901, 1970).
-   # We need to find the indices corresponding to the year 1990.
+   # We need to find the indices corresponding to the year starting_year.
    FCO2=np.zeros((ndesiredyears,12,64))
    print("************************************************************")
    print("Reading in file: ",filename)
@@ -1250,14 +1335,19 @@ def readfile(filename,variablename,ndesiredyears):
 
    # we only need to convert units if we are not dealing with uncertainties,
    # since uncertainties are given as a fraction
-   if ncfile.variables[variablename].units == "kg C yr-1":
-      print("Converting units from {0} to Tg C yr-1".format(ncfile.variables[variablename].units))
-      FCO2_TOT=FCO2_file/1e+9   #kg CO2/yr -->  Tg C/ year
+   if lconvert_units:
+      if ncfile.variables[variablename].units == "kg C yr-1":
+         print("Converting units from {0} to Tg C yr-1".format(ncfile.variables[variablename].units))
+         FCO2_TOT=FCO2_file/1e+9   #kg CO2/yr -->  Tg C/ year
+      else:
+         print("Not changing units from file: ",ncfile.variables[variablename].units)
+         FCO2_TOT=FCO2_file*1.0
+         print("Shape of input array: ",FCO2_TOT.shape)
+         print("Shape of input array: ",FCO2_TOT.mask)
+      #endif
    else:
       print("Not changing units from file: ",ncfile.variables[variablename].units)
       FCO2_TOT=FCO2_file*1.0
-      print("Shape of input array: ",FCO2_TOT.shape)
-      print("Shape of input array: ",FCO2_TOT.mask)
    #endif
    timeperiod=ncfile.variables['time'][:]  ##days since 1900-01-01, middle of each month
    startday=np.float(timeperiod[0]);endday=np.float(timeperiod[-1])
@@ -1267,14 +1357,14 @@ def readfile(filename,variablename,ndesiredyears):
    print("Timeseries starts at: {0}/{1}".format(endmonth,endyear))
    
    # This is something I added to distinguish more clearly between the two sets of dates we have.
-   desired_startdate=date(1990,1,15)-date(1900,1,1)
+   desired_startdate=date(starting_year,1,15)-date(1900,1,1)
    desired_enddate=date(2018,12,15)-date(1900,1,1)
    data_startdate=date(startyear,startmonth,15)-date(1900,1,1)
    data_enddate=date(endyear,endmonth,15)-date(1900,1,1)
 
    # this is a slow way to do it, but it works.
    mm=1
-   yy=1990
+   yy=starting_year
    for iyear in range(ndesiredyears):
       for imonth in range(12):
          # does a member of our data exist in this month?
@@ -1380,10 +1470,15 @@ def readfile(filename,variablename,ndesiredyears):
 # This subroutine aims to select the countries/regions that you wish to plot
 # from the whole list of data available after reading in from the files
 # I read in the uncertainties and the real data at the same time.
-# If there is no uncertainty, no worries.
-def group_input(inputvar,inputerr,desired_plots,luncert,ndesiredyears,numplot,countries65,desired_simulation):
+# If there is no min/max or error values, no worries.
+# This is a bit tricky.  We can only propogate error if we have a symmetric distribution, which
+# we may not have for min/max values.  So I calculate min/max values after this routine.
+def group_input(inputvar,inputerr,inputmin,inputmax,desired_plots,luncert,ndesiredyears,numplot,countries65,desired_simulation):
    outputvar=np.zeros((ndesiredyears,numplot))*np.nan
    outputerr=np.zeros((ndesiredyears,numplot))*np.nan
+   outputmin=np.zeros((ndesiredyears,numplot))*np.nan
+   outputmax=np.zeros((ndesiredyears,numplot))*np.nan
+
    for igroup in range(numplot):
       indices=[]
       if desired_plots[igroup] in countries65:
@@ -1428,11 +1523,15 @@ def group_input(inputvar,inputerr,desired_plots,luncert,ndesiredyears,numplot,co
          # This is necessary because I initialize the arrays with nan
          if iindex == 0:
             outputvar[:,igroup]=inputvar[:,value]
+            outputmin[:,igroup]=inputmin[:,value]
+            outputmax[:,igroup]=inputmax[:,value]
             if luncert:
                outputerr[:,igroup]=(inputerr[:,value]*inputvar[:,value])**2
             #endif
          else:
             outputvar[:,igroup]=outputvar[:,igroup]+inputvar[:,value]
+            outputmin[:,igroup]=outputmin[:,igroup]+inputmin[:,value]
+            outputmax[:,igroup]=outputmax[:,igroup]+inputmax[:,value]
             if luncert:
                outputerr[:,igroup]=outputerr[:,igroup]+(inputerr[:,value]*inputvar[:,value])**2
             #endif
@@ -1454,11 +1553,13 @@ def group_input(inputvar,inputerr,desired_plots,luncert,ndesiredyears,numplot,co
       if desired_simulation == "EFISCEN-Space" and desired_plots[igroup] not in ("FRA","IRL","NLD"):
          outputvar[:,igroup]=np.nan
          outputerr[:,igroup]=np.nan
+         outputmin[:,igroup]=np.nan
+         outputmax[:,igroup]=np.nan
       #endif
 
    #endfor
 
-   return outputvar,outputerr
+   return outputvar,outputerr,outputmin,outputmax
 #enddef
 ####################################################################
 
@@ -1672,3 +1773,36 @@ def get_country_areas():
 #enddef
 ####################################################################
 
+#######################################
+# This loads some fake data so that we can work more quickly on 
+# the graphs.  I took this from results for EU-27+UK.
+def read_fake_data(ndesiredyears,simname):
+   outputvar=np.zeros((ndesiredyears))*np.nan
+   outputerr=np.zeros((ndesiredyears))*np.nan
+   outputmin=np.zeros((ndesiredyears))*np.nan
+   outputmax=np.zeros((ndesiredyears))*np.nan
+
+   base_name="fake_data"
+
+   # For the data itself
+   dfdata=pd.read_csv(filepath_or_buffer=base_name+".csv",index_col=0,header=0)
+   values=dfdata.loc[simname]
+   outputvar=values.tolist()
+
+   # For the data error
+   dfdata=pd.read_csv(filepath_or_buffer=base_name+"_err.csv",index_col=0,header=0)
+   values=dfdata.loc[simname]
+   outputerr=values.tolist()
+
+# For the data min
+   dfdata=pd.read_csv(filepath_or_buffer=base_name+"_min.csv",index_col=0,header=0)
+   values=dfdata.loc[simname]
+   outputerr=values.tolist()
+
+# For the data max
+   dfdata=pd.read_csv(filepath_or_buffer=base_name+"_max.csv",index_col=0,header=0)
+   values=dfdata.loc[simname]
+   outputerr=values.tolist()
+
+   return outputvar,outputerr,outputmin,outputmax
+#enddef
