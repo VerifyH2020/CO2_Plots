@@ -757,6 +757,9 @@ for iplot,cplot in enumerate(desired_plots):
 
    # Finally, print it all to the file.
    data_file_end=re.sub(r".png",r".csv",output_file_end)
+   # Some people think it's more classicial to have the years as
+   # the rows.  So do a quick transpose.
+   df=df.T
    df.to_csv(path_or_buf=output_file_start+desired_plots[iplot]+data_file_end,sep=",")
    
    
