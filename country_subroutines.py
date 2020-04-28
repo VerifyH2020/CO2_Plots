@@ -2,6 +2,10 @@ from netCDF4 import Dataset as NetCDFFile
 import sys
 import re
 import numpy as np
+from mpl_toolkits.basemap import Basemap
+import matplotlib.pyplot as plt
+
+
 
 # The purpose of this class is to store information about
 # countries and regions: their three letter ISO code, a 
@@ -129,7 +133,15 @@ def get_country_region_data(country_region_plotting_order=["NONE"],loutput_codes
 
     # A couple extra possiblities
     country_region_data["MDA"].add_possible_names('Moldova, Republic of')
+    country_region_data["MDA"].add_possible_names('Moldova')
     country_region_data["MKD"].add_possible_names('Macedonia, the former Yugoslav')
+    country_region_data["MKD"].add_possible_names('Macedonia')
+    country_region_data["CZE"].add_possible_names('Czech Rep')
+    country_region_data["CZE"].add_possible_names('CzechRepublic')
+    country_region_data["GBR"].add_possible_names('UK')
+    country_region_data["GBR"].add_possible_names('UnitedKingdom')
+    country_region_data["BIH"].add_possible_names('BosniaandHerzegovina')
+    country_region_data["RUS"].add_possible_names('Russia')
 
     # Now fill out the regional data
     region_names,country_list=get_region_data(country_names,country_region_data)
@@ -144,6 +156,7 @@ def get_country_region_data(country_region_plotting_order=["NONE"],loutput_codes
     country_region_data["E28"].add_possible_names('EU-28')
 
 
+
     # Now make sure that all the lists of countries which make up
     # the regions and countries are consistently using either long
     # names or ISO codes
@@ -151,12 +164,30 @@ def get_country_region_data(country_region_plotting_order=["NONE"],loutput_codes
 
     # print things out to make sure they look good
     if country_region_plotting_order[0] != "NONE":
-        print("Why here?")
-        print("fezfe ",country_region_plotting_order[0])
-        print_regions_and_countries(country_region_plotting_order,country_region_data,1,loutput_codes)
+        print("Why here? You must have requested data only on specific countries.")
+        print_regions_and_countries(country_region_plotting_order,country_region_data,4,loutput_codes)
     #endif
 
     return country_region_data
+#enddef
+
+# often times I have a country name and I want to know what the ISO code is
+def convert_country_to_code(cname,country_region_data):
+    output_code=""
+
+    for ccode in country_region_data.keys():
+        if ccode == country_region_data[ccode].long_name or ccode in country_region_data[ccode].possible_names:
+            output_code=ccode
+        #endif
+    #endif
+
+    if not output_code:
+        print("Could not find the ISO code for this country: ",cname)
+        sys.exit(1)
+    #endif
+
+    return output_code
+
 #enddef
 
 # This subroutine defines a list of regions and their 3-letter codes
@@ -213,9 +244,11 @@ def get_region_data(country_names,country_region_data):
         elif keyval == "NOE":
             country_list[keyval]=("Denmark","Estonia","Finland","Lithuania","Latvia", "Norway","Sweden")
         elif keyval == "SEE":
-            country_list[keyval]=("Albania","Bulgaria","Bosnia and Herzegovina","Cyprus","Georgia","Greece","Croatia","Moldova, Republic of","Macedonia, the former Yugoslav","Montenegro","Romania","Serbia", "Slovenia", "Turkey")
+            country_list[keyval]=("Albania","Bulgaria","Bosnia and Herzegovina","Cyprus","Georgia","Greece","Croatia","Macedonia, the former Yugoslav","Montenegro","Romania","Serbia", "Slovenia", "Turkey")
         elif keyval == "SEZ":
             country_list[keyval]=("Bulgaria","Cyprus","Greece","Croatia","Romania","Slovenia")
+        elif keyval == "SEA":
+            country_list[keyval]=('Albania', 'Bosnia and Herzegovina', "Georgia", 'Macedonia, the former Yugoslav', 'Montenegro', 'Serbia', "Turkey")
         elif keyval == "SWN":
             country_list[keyval]=("Italy","Malta","Portugal","Spain")
         elif keyval == "EAE":
@@ -229,9 +262,9 @@ def get_region_data(country_names,country_region_data):
         elif keyval == "E15":
             country_list[keyval]=("Austria","Belgium","Denmark","Finland","France","Germany","Greece","Ireland","Italy","Luxembourg","Netherlands","Portugal","Spain","Sweden","United Kingdom")
         elif keyval == "E27":
-            country_list[keyval]=("Austria","Belgium","Bulgaria","Croatia","Cyprus","Czech Republic","Denmark","Estonia","Finland","France","Germany","Greece","Hungary","Ireland","Italy","Lithuania","Luxembourg","Malta","Netherlands","Poland","Portugal","Romania","Slovakia","Slovenia","Spain","Sweden")
+            country_list[keyval]=("Austria","Belgium","Bulgaria","Croatia","Cyprus","Czech Republic","Denmark","Estonia","Finland","France","Germany","Greece","Hungary","Ireland","Italy","Latvia","Lithuania","Luxembourg","Malta","Netherlands","Poland","Portugal","Romania","Slovakia","Slovenia","Spain","Sweden")
         elif keyval == "E28":
-            country_list[keyval]=("Austria","Belgium","Bulgaria","Croatia","Cyprus","Czech Republic","Denmark","Estonia","Finland","France","Germany","Greece","Hungary","Ireland","Italy","Lithuania","Luxembourg","Malta","Netherlands","Poland","Portugal","Romania","Slovakia","Slovenia","Spain","Sweden","United Kingdom")
+            country_list[keyval]=("Austria","Belgium","Bulgaria","Croatia","Cyprus","Czech Republic","Denmark","Estonia","Finland","France","Germany","Greece","Hungary","Ireland","Italy","Latvia","Lithuania","Luxembourg","Malta","Netherlands","Poland","Portugal","Romania","Slovakia","Slovenia","Spain","Sweden","United Kingdom")
         elif keyval == "EUR":
             country_list[keyval]=("Aaland Islands","Albania","Andorra","Austria","Belgium","Bulgaria","Bosnia and Herzegovina","Belarus","Switzerland","Cyprus","Czech Republic","Germany","Denmark","Spain","Estonia","Finland","France","Faroe Islands","United Kingdom","Guernsey","Greece","Croatia","Hungary","Isle of Man","Ireland","Iceland","Italy","Jersey","Liechtenstein","Lithuania","Luxembourg","Latvia","Moldova, Republic of","Macedonia, the former Yugoslav","Malta","Montenegro","Netherlands","Norway","Poland","Portugal","Romania","Russian Federation","Svalbard and Jan Mayen","San Marino","Serbia","Slovakia","Slovenia","Sweden","Turkey","Ukraine")
         elif keyval == "WEA":
@@ -250,8 +283,6 @@ def get_region_data(country_names,country_region_data):
             country_list[keyval]=('FRA','AND')
         elif keyval == "UMB":
             country_list[keyval]=('UKR','MDA','BLR')
-        elif keyval == "SEA":
-            country_list[keyval]=('Albania', 'Bosnia and Herzegovina', 'Macedonia, the former Yugoslav', 'Montenegro', 'Serbia')
         elif keyval == "RUG":
             country_list[keyval]=('RUS','GEO')
         else:
@@ -349,14 +380,13 @@ def find_countries_and_regions_in_file(filename,country_region_data):
 
     # Print out any countries that we did not find as a warning.
     for cr_code,cr_data in country_region_data.items():
-        if cr_data.is_country:
-            if cr_data.file_index == cr_data.uninit_int:
-                print("WARNING: Did not find {} ({}) in the .nc country mask file.".format(cr_data.long_name,cr_code))
-            else:
-                if not cr_data.long_name_in_file:
-                    print("WARNING: Did not find a long name in the .nc country mask file for {} ({}).".format(cr_data.long_name,cr_code))
 
-                #endif
+        if cr_data.file_index == cr_data.uninit_int:
+            print("WARNING: Did not find {} ({}) in the .nc country mask file.".format(cr_data.long_name,cr_code))
+        else:
+            if not cr_data.long_name_in_file:
+                print("WARNING: Did not find a long name in the .nc country mask file for {} ({}).".format(cr_data.long_name,cr_code))
+                
             #endif
         #endif
     #endfor
@@ -502,6 +532,20 @@ def get_countries_and_regions_from_cr_dict(country_region_data):
     return cr_list
 #enddef
 
+# The same as above, but now only look for regions  
+def get_regions_from_cr_dict(country_region_data):
+
+    r_list={}
+
+    for ccode,cr_data in country_region_data.items():
+        if not cr_data.is_country:
+            r_list[cr_data.iso_code]=cr_data.long_name
+        #endif
+    #endif
+
+    return r_list
+#enddef
+
 # print the countries, regions, and composant countries in a nice
 # way that I can possible share with others or use in other
 # scripts
@@ -550,10 +594,105 @@ def print_regions_and_countries(country_region_plotting_order,country_region_dat
             #endif            
         #endfor
 
+    elif print_code == 4:
+
+        print("Listing only certain countries and regions.")
+        
+        for icount,country in enumerate(country_region_plotting_order):
+            ccode=country
+            cr_data=country_region_data[ccode]
+            if loutput_codes:
+                print("{1} ({0}) : ".format(ccode,cr_data.long_name),cr_data.composant_countries)
+            else:
+                clist=[]
+                for tempc in cr_data.composant_countries:
+                    clist.append(country_region_data[tempc].long_name)
+                #endif
+                print("{1} ({0}) : ".format(ccode,cr_data.long_name),clist)
+            #endif            
+        #endfor
+
+    elif print_code == 5:
+
+        filename="regions.csv"
+        print("Creating {} file for Robbie Andrew.".format(filename))
+        f=open(filename,"w+")
+
+        ncountries_max=len(country_region_plotting_order)
+        # Need on column for the index, one for the name, one for the code, and then
+        # however many may be used for the list of countries
+        
+        # I do not see a good way to do this with dataframes
+        for icount,country in enumerate(country_region_plotting_order):
+            ccode=country
+            cr_data=country_region_data[ccode]
+
+            print_string="{},{},{},".format(icount+1,country_region_data[ccode].long_name,ccode)
+            for jcount in range(ncountries_max):
+                if jcount < len(cr_data.composant_countries):
+                    print_string=print_string + country_region_data[cr_data.composant_countries[jcount]].long_name + ","
+                else:
+                    print_string=print_string + ","
+                #endif
+            #endfor
+            print_string=print_string + "\n"
+            f.write(print_string)
+        #endfor
+
+        f.close()
+
     else:
         print("I do not know this print code: ",print_code)
     #endif
 
     
 
+#enddef
+
+# NOTE:  I had to modify this routine, I think because it was global and the bounds went from
+# 180W:180E so there was overlap?
+def plot_map(data,lat,lon,plot_filename,plot_title):
+    # it seems that pcolormesh expects the boundaries of the polygons/mesh, not the centers.
+    # This function tries to create the boundaries from the lon and lat
+    def setBounds(nodes):
+        bounds = (nodes[1:] + nodes[:-1])/2.
+        bound0 = nodes[0] - (nodes[1]-nodes[0])/2.
+        boundN = nodes[-1] + (nodes[-1]-nodes[-2])/2.
+        return np.append(np.append(bound0, bounds), boundN)
+        
+    meshlat = np.clip(setBounds(lat), -90, 90)
+    meshlon = np.clip(setBounds(lon), -180, 180)
+
+    # this was the line that needed modification, reducing the array size
+    #meshlon, meshlat = np.meshgrid(meshlon[0:360], meshlat[0:180])
+    meshlon, meshlat = np.meshgrid(meshlon, meshlat)
+    #print("jfioez lon: ",meshlon.shape,lon)
+    #print("jfioez lat: ",meshlat.shape,lat)
+    #print("jfioez data: ",data.shape)
+
+    fig=plt.figure()
+
+    #rbb = np.loadtxt('cmaps/runoff-brownblue.txt')/255;
+    #rbb = mpl.colors.ListedColormap(rbb)
+    #map.pcolormesh(x,y,ch4_mean,vmin=0.0,vmax=100.0, rasterized=False, edgecolor='0.6', linewidth=0)
+    fig=plt.figure(figsize=(18, 16), dpi= 80, facecolor='w', edgecolor='k')
+    # In order to get the full resolution, I needed to download another package
+    # conda install -c conda-forge basemap-data-hires
+    map = Basemap(projection='cyl',llcrnrlon=-25.,llcrnrlat=35.,urcrnrlon=45.,urcrnrlat=73.,resolution='i') # projection, lat/lon extents and resolution of polygons to draw
+    # resolutions: c - crude, l - low, i - intermediate, h - high, f - full
+    #map.pcolormesh(x,y,ch4_mean)
+    
+    #print \"JIOFE\",data.shape
+    #print len(meshlon),len(meshlat)
+    map.drawcoastlines()
+    cmap = plt.cm.Reds # for difference maps it's better to use 'plt.cm.seismic'
+    cmesh = map.pcolormesh(meshlon, meshlat,data, shading="flat", cmap=cmap, latlon=True)
+    cbar = map.colorbar(cmesh, pad = 0.08)
+    
+    plt.title(plot_title)
+    
+
+#    plt.imshow(newnc["country_mask"][country_region_data_new[ccode].file_index,:,:], cmap='hot', interpolation='nearest')
+    fig.savefig(plot_filename)
+    plt.close()
 #enddef
