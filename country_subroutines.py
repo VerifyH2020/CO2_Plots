@@ -59,7 +59,7 @@ class countrydata:
 def get_country_codes_for_netCDF_file():
     # This is the order of country codes that I used to create
     # the country and regional masks.
-    return ["ALA", "ALB", "AND", "AUT", "BEL", "BGR", "BIH", "BLR", "CHE", "CYP", "CZE", "DEU", "DNK", "ESP", "EST", "FIN", "FRA", "FRO", "GBR", "GGY", "GEO", "GRC", "GRL", "HRV", "HUN", "IMN", "IRL", "ISL", "ITA", "JEY", "LIE", "LTU", "LUX", "LVA", "MDA", "MKD", "MLT", "MNE", "NLD", "NOR", "POL", "PRT", "ROU", "RUS", "SJM", "SMR", "SRB", "SVK", "SVN", "SWE", "TUR", "UKR", "BNL", "CSK", "CHL", "BLT", "NAC", "DSF", "UKI", "IBE", "WEE", "WEA", "CEE", "NOE", "SWN", "SEE", "SEA", "SEZ", "EAE", "EEA", "EER", "E12", "E15", "E27", "E28", "EUR"]
+    return ["ALA", "ALB", "AND", "AUT", "BEL", "BGR", "BIH", "BLR", "CHE", "CYP", "CZE", "DEU", "DNK", "ESP", "EST", "FIN", "FRA", "FRO", "GBR", "GGY", "GEO", "GRC", "GRL", "HRV", "HUN", "IMN", "IRL", "ISL", "ITA", "JEY", "LIE", "LTU", "LUX", "LVA", "MDA", "MKD", "MLT", "MNE", "NLD", "NOR", "POL", "PRT", "ROU", "RUS", "SJM", "SMR", "SRB", "SVK", "SVN", "SWE", "TUR", "UKR", "BNL", "CSK", "CHL", "BLT", "NAC", "DSF", "UKI", "IBE", "WEE", "WEA", "CEE", "NOE", "SOE", "SOY", "SOZ", "SWN", "SEE", "SEA", "SEZ", "EAE", "EEA", "EER", "E12", "E15", "E27", "E28", "EUR"]
 #enddef
 
 
@@ -69,60 +69,65 @@ def get_country_region_data(country_region_plotting_order=["NONE"],loutput_codes
     country_region_data={}
 
     # This gives the full country name as a function of the ISO-3166 code
-    country_names={ \
-                    "ALA": "Aaland Islands", \
-                    "ALB": "Albania", \
-                    "AND": "Andorra", \
-                    "AUT": "Austria", \
-                    "BEL": "Belgium", \
-                    "BGR": "Bulgaria", \
-                    "BIH": "Bosnia and Herzegovina", \
-                    "BLR": "Belarus", \
-                    "CHE": "Switzerland", \
-                    "CYP": "Cyprus", \
-                    "CZE": "Czech Republic", \
-                    "DEU": "Germany", \
-                    "DNK": "Denmark", \
-                    "ESP": "Spain", \
-                    "EST": "Estonia", \
-                    "FIN": "Finland", \
-                    "FRA": "France", \
-                    "FRO": "Faroe Islands", \
-                    "GBR": "United Kingdom", \
-                    "GGY": "Guernsey", \
-                    "GEO" : "Georgia", \
-                    "GRC": "Greece", \
-                    "GRL" : "Greenland", \
-                    "HRV": "Croatia", \
-                    "HUN": "Hungary", \
-                    "IMN": "Isle of Man", \
-                    "IRL" : "Ireland", \
-                    "ISL" : "Iceland", \
-                    "ITA" : "Italy", \
-                    "JEY" : "Jersey", \
-                    "LIE" : "Liechtenstein", \
-                    "LTU" : "Lithuania", \
-                    "LUX" : "Luxembourg", \
-                    "LVA" : "Latvia", \
-                    "MDA" : "Moldova, Republic of", \
-                    "MKD" : "Macedonia, the former Yugoslav", \
-                    "MLT" : "Malta", \
-                    "MNE" : "Montenegro", \
-                    "NLD" : "Netherlands", \
-                    "NOR" : "Norway", \
-                    "POL" : "Poland", \
-                    "PRT" : "Portugal", \
-                    "ROU" : "Romania", \
-                    "RUS" : "Russian Federation", \
-                    "SJM" : "Svalbard and Jan Mayen", \
-                    "SMR" : "San Marino", \
-                    "SRB" : "Serbia", \
-                    "SVK" : "Slovakia", \
-                    "SVN" : "Slovenia", \
-                    "SWE" : "Sweden", \
-                    "TUR" : "Turkey", \
-                    "UKR" : "Ukraine", \
-               }
+    
+    # This way lets me check if a key already exists before I add it, in order
+    # to prevent trying to use the same ISO code for two different countries.
+    # This is more of a problem for regions where we invent ISO codes, as
+    # opposed to countries which have them already uniquely assigned.
+    country_names={}
+    country_names=add_key_to_country_region_names("ALA","Aaland Islands",country_names)
+    country_names=add_key_to_country_region_names("ALB","Albania",country_names)
+    country_names=add_key_to_country_region_names("AND","Andorra",country_names)
+    country_names=add_key_to_country_region_names("AUT","Austria",country_names)
+    country_names=add_key_to_country_region_names("BEL","Belgium",country_names)
+    country_names=add_key_to_country_region_names("BGR","Bulgaria",country_names)
+    country_names=add_key_to_country_region_names("BIH","Bosnia and Herzegovina",country_names)
+    country_names=add_key_to_country_region_names("BLR","Belarus",country_names)
+    country_names=add_key_to_country_region_names("CHE","Switzerland",country_names)
+    country_names=add_key_to_country_region_names("CYP","Cyprus",country_names)
+    country_names=add_key_to_country_region_names("CZE","Czech Republic",country_names)
+    country_names=add_key_to_country_region_names("DEU","Germany",country_names)
+    country_names=add_key_to_country_region_names("DNK","Denmark",country_names)
+    country_names=add_key_to_country_region_names("ESP","Spain",country_names)
+    country_names=add_key_to_country_region_names("EST","Estonia",country_names)
+    country_names=add_key_to_country_region_names("FIN","Finland",country_names)
+    country_names=add_key_to_country_region_names("FRA","France",country_names)
+    country_names=add_key_to_country_region_names("FRO","Faroe Islands",country_names)
+    country_names=add_key_to_country_region_names("GBR","United Kingdom",country_names)
+    country_names=add_key_to_country_region_names("GGY","Guernsey",country_names)
+    country_names=add_key_to_country_region_names("GEO","Georgia",country_names)
+    country_names=add_key_to_country_region_names("GRC","Greece",country_names)
+    country_names=add_key_to_country_region_names("GRL","Greenland",country_names)
+    country_names=add_key_to_country_region_names("HRV","Croatia",country_names)
+    country_names=add_key_to_country_region_names("HUN","Hungary",country_names)
+    country_names=add_key_to_country_region_names("IMN","Isle of Man",country_names)
+    country_names=add_key_to_country_region_names("IRL","Ireland",country_names)
+    country_names=add_key_to_country_region_names("ISL","Iceland",country_names)
+    country_names=add_key_to_country_region_names("ITA","Italy",country_names)
+    country_names=add_key_to_country_region_names("JEY","Jersey",country_names)
+    country_names=add_key_to_country_region_names("LIE","Liechtenstein",country_names)
+    country_names=add_key_to_country_region_names("LTU","Lithuania",country_names)
+    country_names=add_key_to_country_region_names("LUX","Luxembourg",country_names)
+    country_names=add_key_to_country_region_names("LVA","Latvia",country_names)
+    country_names=add_key_to_country_region_names("MDA","Moldova, Republic of",country_names)
+    country_names=add_key_to_country_region_names("MKD","Macedonia, the former Yugoslav",country_names)
+    country_names=add_key_to_country_region_names("MLT","Malta",country_names)
+    country_names=add_key_to_country_region_names("MNE","Montenegro",country_names)
+    country_names=add_key_to_country_region_names("NLD","Netherlands",country_names)
+    country_names=add_key_to_country_region_names("NOR","Norway",country_names)
+    country_names=add_key_to_country_region_names("POL","Poland",country_names)
+    country_names=add_key_to_country_region_names("PRT","Portugal",country_names)
+    country_names=add_key_to_country_region_names("ROU","Romania",country_names)
+    country_names=add_key_to_country_region_names("RUS","Russian Federation",country_names)
+    country_names=add_key_to_country_region_names("SJM","Svalbard and Jan Mayen",country_names)
+    country_names=add_key_to_country_region_names("SMR","San Marino",country_names)
+    country_names=add_key_to_country_region_names("SRB","Serbia",country_names)
+    country_names=add_key_to_country_region_names("SVK","Slovakia",country_names)
+    country_names=add_key_to_country_region_names("SVN","Slovenia",country_names)
+    country_names=add_key_to_country_region_names("SWE","Sweden",country_names)
+    country_names=add_key_to_country_region_names("TUR","Turkey",country_names)
+    country_names=add_key_to_country_region_names("UKR","Ukraine",country_names)
+
 
     for ccode,cname in country_names.items():
         composant_countries=[]
@@ -153,6 +158,7 @@ def get_country_region_data(country_region_plotting_order=["NONE"],loutput_codes
     # And some possible extra region names.  These show up when we read in the name of an old .nc file.
     country_region_data["IBE"].add_possible_names('Spain + Portugal')
     country_region_data["SEE"].add_possible_names('South-Eastern Europe')
+    country_region_data["SOE"].add_possible_names('Southern Europe')
     country_region_data["E28"].add_possible_names('EU-28')
 
 
@@ -190,43 +196,75 @@ def convert_country_to_code(cname,country_region_data):
 
 #enddef
 
+# I am concerned about adding an existing key.  So add all
+# new keys with a wrapper that checks the existing dictionary.
+def add_key_to_country_region_names(keyname,keyvalue,names):
+    #country_region_data=add_country_region_data(ccode,cname,composant_countries)
+    #country_region_data[ccode]=countrydata(ccode,cname,composant_count
+
+    try:
+        testvar=names[keyname]
+        lexists=True
+    except:
+        lexists=False
+    #endtry
+
+    if lexists:
+        print("Key already exists in the country_region_data!")
+        print("Should not happen.  Check your 3-letter ISO codes, as one seems to be used more than once.")
+        print("Offending code: ",keyname,keyvalue)
+        sys.exit(1)
+    #endif
+
+    names[keyname]=keyvalue
+
+    return names
+
+#enddef
+
 # This subroutine defines a list of regions and their 3-letter codes
 # using a list of countries.  It returns both the region code,
 # the region name, and the list of the countries inside.
 def get_region_data(country_names,country_region_data):
-    region_names={ \
-                   # The following ISO codes don't really exist,
-                   # and were just cretaed by us for these regions
-                   "BNL" : "BENELUX", \
-                   "UKI" : "United Kingdom + Ireland", \
-                   "IBE" : "Iberia", \
-                   "WEE" : "Western Europe", \
-                   "WEA" : "Western Europe (alternative)", \
-                   "CEE" : "Central Europe", \
-                   "NOE" : "Northern Europe", \
-                   "SWN" : "South-Western Europe", \
-                   "SEE" : "South-Eastern Europe (all)", \
-                   "SEA" : "South-Eastern Europe (non-EU)", \
-                   "SEZ" : "South-Eastern Europe (EU)", \
-                   "EAE" : "Eastern Europe", \
-                   "EEA" : "Eastern Europe (alternative)", \
-                   "EER" : "Eastern Europe (including Russia)", \
- #                  "EAZ" : "Eastern Europe (UNFCCC submissions)", \
-                   "E12" : "EU-11+CHE", \
-                   "E15" : "EU-15", \
-                   "E27" : "EU-27", \
-                   "E28" : "EU-27+UK", \
-                   "EUR" : "all Europe", \
-                   "CSK" : "Former Czechoslovakia", \
-                   "CHL" : "Switzerland + Liechtenstein", \
-                   "BLT" : "Baltic countries", \
-                   "NAC" : "North Adriatic Countries", \
-                   "DSF" : "Denmark, Sweden, Finland", \
-                   "FMA" : "France, Monaco, Andorra", \
-                   "UMB" : "Ukraine, Rep. of Moldova, Belarus", \
-                   "RUG" : "Russia and Georgia", \
-                   }
-    
+
+
+    # I do it this way because I can check if a key already exists or
+    # not.  I don't want to overwrite a key with the same ISO code.
+    region_names={}
+    # The following ISO codes don't really exist,
+    # and were just cretaed by us for these regions
+    region_names=add_key_to_country_region_names("BNL","BENELUX",region_names)
+    region_names=add_key_to_country_region_names("UKI","United Kingdom + Ireland",region_names)
+    region_names=add_key_to_country_region_names("IBE","Iberia",region_names)
+    region_names=add_key_to_country_region_names("WEE","Western Europe",region_names)
+    region_names=add_key_to_country_region_names("WEA","Western Europe (alternative)",region_names)
+    region_names=add_key_to_country_region_names("CEE","Central Europe",region_names)
+    region_names=add_key_to_country_region_names("NOE","Northern Europe",region_names)
+    region_names=add_key_to_country_region_names("SOE","Southern Europe (all)",region_names)
+    region_names=add_key_to_country_region_names("SOY","Southern Europe (non-EU)",region_names)
+    region_names=add_key_to_country_region_names("SOZ","Southern Europe (EU)",region_names)
+    region_names=add_key_to_country_region_names("SWN","South-Western Europe",region_names)
+    region_names=add_key_to_country_region_names("SEE","South-Eastern Europe (all)",region_names)
+    region_names=add_key_to_country_region_names("SEA","South-Eastern Europe (non-EU)",region_names)
+    region_names=add_key_to_country_region_names("SEZ","South-Eastern Europe (EU)",region_names)
+    region_names=add_key_to_country_region_names("EAE","Eastern Europe",region_names)
+    region_names=add_key_to_country_region_names("EEA","Eastern Europe (alternative)",region_names)
+    region_names=add_key_to_country_region_names("EER","Eastern Europe (including Russia)",region_names)
+    region_names=add_key_to_country_region_names("E12","EU-11+CHE",region_names)
+    region_names=add_key_to_country_region_names("E15","EU-15",region_names)
+    region_names=add_key_to_country_region_names("E27","EU-27",region_names)
+    region_names=add_key_to_country_region_names("E28","EU-27+UK",region_names)
+    region_names=add_key_to_country_region_names("EUR","all Europe",region_names)
+    region_names=add_key_to_country_region_names("CSK","Former Czechoslovakia",region_names)
+    region_names=add_key_to_country_region_names("CHL","Switzerland + Liechtenstein",region_names)
+    region_names=add_key_to_country_region_names("BLT","Baltic countries",region_names)
+    region_names=add_key_to_country_region_names("NAC","North Adriatic Countries",region_names)
+    region_names=add_key_to_country_region_names("DSF","Denmark, Sweden, Finland",region_names)
+    region_names=add_key_to_country_region_names("FMA","France, Monaco, Andorra",region_names)
+    region_names=add_key_to_country_region_names("UMB","Ukraine, Rep. of Moldova, Belarus",region_names)
+    region_names=add_key_to_country_region_names("RUG","Russia and Georgia",region_names)
+
+
     country_list={}
 
     # Notice that in some of the regional country groups, I ignore some countries that are small.  Like Andorra or the Aaland Islands.
@@ -243,6 +281,12 @@ def get_region_data(country_names,country_region_data):
             country_list[keyval]=("Austria","Switzerland","Czech Republic","Germany","Hungary","Poland","Slovakia")
         elif keyval == "NOE":
             country_list[keyval]=("Denmark","Estonia","Finland","Lithuania","Latvia", "Norway","Sweden")
+        elif keyval == "SOE":
+            country_list[keyval]=("Albania","Bulgaria","Bosnia and Herzegovina","Cyprus","Georgia","Greece","Croatia","Macedonia, the former Yugoslav","Montenegro","Romania","Serbia", "Slovenia", "Turkey", "Italy","Malta","Portugal","Spain")
+        elif keyval == "SOY":
+            country_list[keyval]=('Albania', 'Bosnia and Herzegovina', "Georgia", 'Macedonia, the former Yugoslav', 'Montenegro', 'Serbia', "Turkey")
+        elif keyval == "SOZ":
+            country_list[keyval]=("Bulgaria","Cyprus","Greece","Croatia","Romania","Slovenia","Italy","Malta","Portugal","Spain")
         elif keyval == "SEE":
             country_list[keyval]=("Albania","Bulgaria","Bosnia and Herzegovina","Cyprus","Georgia","Greece","Croatia","Macedonia, the former Yugoslav","Montenegro","Romania","Serbia", "Slovenia", "Turkey")
         elif keyval == "SEZ":
@@ -323,6 +367,13 @@ def get_region_data(country_names,country_region_data):
 
     #endfor
     #print(modified_string)
+
+    # Sort the country list in alphabetical order, just because it's nicer.
+    for keyname,keyvalue in country_list.items():
+        temp_list=list(keyvalue)
+        temp_list.sort()
+        country_list[keyname]=tuple(temp_list)
+    #endfor
 
     return region_names,country_list
 #enddef
@@ -696,3 +747,59 @@ def plot_map(data,lat,lon,plot_filename,plot_title):
     fig.savefig(plot_filename)
     plt.close()
 #enddef
+
+# If you run this routine by itself, it will do a check of the  names to
+# make sure no common errors are commit.
+
+if __name__ == '__main__':
+
+    country_region_data=get_country_region_data()
+
+    # I am concerned about key repetition, but I deal with that above.  This
+    # prints out some lines useful for me, but only rarely.
+    if False:
+        for ccode,cr_data in country_region_data.items():
+            if not cr_data.is_country:
+                print("    region_names=add_key_to_country_region_names(\"{}\",\"{}\",region_names)".format(ccode,cr_data.long_name))
+            else:
+                print("    country_names=add_key_to_country_region_names(\"{}\",\"{}\",country_names)".format(ccode,cr_data.long_name))
+            #endif
+        #endfor
+    #endif
+
+    # Check to make sure that none of the long names are repeated.  Because
+    # I was once smart (even though I forget this), the long_name is already
+    # included in the possible_names.  So I just need to loop through those.
+    country_region_data=get_country_region_data()
+    for ccode,cr_data in country_region_data.items():
+        if cr_data.is_country:
+            print("Testing country: {} ({})".format(cr_data.long_name,ccode))
+        else:
+            print("Testing region: {} ({})".format(cr_data.long_name,ccode))
+        #endif
+
+        for country in cr_data.possible_names:
+            for ccode2,cr_data2 in country_region_data.items():
+                # The same country will obviously have the same names
+                if ccode == ccode2:
+                    continue
+                #endif
+                for country2 in cr_data2.possible_names:
+                    if country == country2:
+                        print("Two countries/regions have the same possible name!")
+                        print("{} ({})".format(country,ccode))
+                        print("{} ({})".format(country2,ccode2))
+                        sys.exit(1)
+                    #endif
+                #endfor
+            #endfor
+        #endfor
+    #endfor
+
+    # This is also a feature I need often: printing out the current countries
+    # and regions in the .nc country mask file.
+    country_region_plotting_order=get_country_codes_for_netCDF_file()
+    country_region_data=get_country_region_data(country_region_plotting_order,False)
+    print_regions_and_countries(country_region_plotting_order,country_region_data,3,False)
+
+#endif
