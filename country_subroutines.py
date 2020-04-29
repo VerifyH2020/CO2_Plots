@@ -1,3 +1,21 @@
+##########################################
+#
+# This file mostly contains subroutines that you can call from
+# other files, to create structures that contain various information
+# on countries and regions, indexed by 3-letter ISO codes.  For example,
+# the long name of the country/region, is a particular ISO code a country,
+# and the list of countries found in a give region.
+#
+# In addition, if you just run this file with
+#
+#   python country_subroutines.py
+#
+# it will do a quick check to make sure that no names are conflicting
+# and also print out a summary of the information found in the NetCDF file
+# that contains country and regional masks.
+#
+##########################################
+
 from netCDF4 import Dataset as NetCDFFile 
 import sys
 import re
