@@ -81,7 +81,7 @@ class Grid:
         south = max(-90, min(self.lat) - delta, zoom["south"] - delta)
         west = max(-180, min(self.lon) - delta, zoom["west"] - delta)
         east = min( 180, max(self.lon) + delta, zoom["east"] + delta)
-        m = Basemap(projection = "mill", llcrnrlat = south, urcrnrlat = north, llcrnrlon = west, urcrnrlon = east, resolution = "c")
+        m = Basemap(projection = "mill", llcrnrlat = south, urcrnrlat = north, llcrnrlon = west, urcrnrlon = east, resolution = "l")
         if drawcoast: m.drawcoastlines(linewidth=0.5)
         if drawgrid:
             if north-south > 150: parallels = [-80, -60, -30, 0, 30, 60, 80]
@@ -134,6 +134,7 @@ class Grid:
         print("Regrid has been set : %s" % self.regtask)
 
     def regrid(self, data, add_masked_area = False):
+        # If we have a time, lat, lon variable, do this
         if len(data.shape) == 3:
             nlat, nlon = self.reg.shape
             ntime = data.shape[0]
@@ -152,3 +153,102 @@ class Grid:
                         if newdata[k,i,j] is not np.ma.masked: newdata[k,i,j] /= totarea
             return newdata
 
+            # But sometimes we just have lat,lon without a time axis.  Still can regrid
+        elif len(data.shape) == 2:
+            nlat, nlon = self.reg.shape
+            newdata = np.ma.array(np.zeros((nlat, nlon)), mask=True)
+            for i in range(nlat):
+                for j in range(nlon):
+                    totarea = 0
+                    for n,m,subarea in self.reg[i,j]:
+                        if data[n,m] is not np.ma.masked:
+                            if newdata[i,j] is np.ma.masked: newdata[i,j] = 0
+                            newdata[i,j] += data[n,m] * subarea
+                            if data[n,m] is not np.ma.masked or add_masked_area:
+                                totarea += subarea
+                        if newdata[i,j] is not np.ma.masked: newdata[i,j] /= totarea
+            return newdata
+
+        # If we have a time, veget, lat, lon variable, do this
+        elif len(data.shape) == 4:
+            nlat, nlon = self.reg.shape
+            ntime = data.shape[0]
+            npfts = data.shape[1]
+            newdata = np.ma.array(np.zeros((ntime, npfts, nlat, nlon)), mask=True)
+            for k in range(ntime):
+                print(k)
+                for kk in range(npfts):
+                    print(kk)
+                    for i in range(nlat):
+                        for j in range(nlon):
+                            totarea = 0
+                            for n,m,subarea in self.reg[i,j]:
+                                if data[k,kk,n,m] is not np.ma.masked:
+                                    if newdata[k,kk,i,j] is np.ma.masked: newdata[k,kk,i,j] = 0
+                                    newdata[k,kk,i,j] += data[k,kk,n,m] * subarea
+                                    if data[k,kk,n,m] is not np.ma.masked or add_masked_area:
+                                        totarea += subarea
+                                if newdata[k,kk,i,j] is not np.ma.masked: newdata[k,kk,i,j] /= totarea
+            return newdata
+
+        # The regrid above deals with a mean for the whole pixel.  For some things,
+        # like forest area, we don't need the mean, we need a sum.  So we
+        # repartation based on areas, and then don't divide by the total.
+    def regrid_sum(self, data, add_masked_area = False):
+
+        # If we have a time, lat, lon variable, do this
+        if len(data.shape) == 3:
+            nlat, nlon = self.reg.shape
+            ntime = data.shape[0]
+            newdata = np.ma.array(np.zeros((ntime, nlat, nlon)), mask=True)
+            for k in range(ntime):
+                print(k)
+                for i in range(nlat):
+                    for j in range(nlon):
+                        #totarea = 0
+                        for n,m,subarea in self.reg[i,j]:
+                            if data[k,n,m] is not np.ma.masked:
+                                if newdata[k,i,j] is np.ma.masked: newdata[k,i,j] = 0
+                                newdata[k,i,j] += data[k,n,m] * subarea
+                            #if data[k,n,m] is not np.ma.masked or add_masked_area:
+                            #    totarea += subarea
+                        #if newdata[k,i,j] is not np.ma.masked: newdata[k,i,j] /= totarea
+            return newdata
+
+            # But sometimes we just have lat,lon without a time axis.  Still can regrid
+        elif len(data.shape) == 2:
+            nlat, nlon = self.reg.shape
+            newdata = np.ma.array(np.zeros((nlat, nlon)), mask=True)
+            for i in range(nlat):
+                for j in range(nlon):
+                    #totarea = 0
+                    for n,m,subarea in self.reg[i,j]:
+                        if data[n,m] is not np.ma.masked:
+                            if newdata[i,j] is np.ma.masked: newdata[i,j] = 0
+                            newdata[i,j] += data[n,m] * subarea
+                            #if data[n,m] is not np.ma.masked or add_masked_area:
+                            #    totarea += subarea
+                        #if newdata[i,j] is not np.ma.masked: newdata[i,j] /= totarea
+            return newdata
+
+        # If we have a time, veget, lat, lon variable, do this
+        elif len(data.shape) == 4:
+            nlat, nlon = self.reg.shape
+            ntime = data.shape[0]
+            npfts = data.shape[1]
+            newdata = np.ma.array(np.zeros((ntime, npfts, nlat, nlon)), mask=True)
+            for k in range(ntime):
+                print(k)
+                for kk in range(npfts):
+                    print(kk)
+                    for i in range(nlat):
+                        for j in range(nlon):
+                            #totarea = 0
+                            for n,m,subarea in self.reg[i,j]:
+                                if data[k,kk,n,m] is not np.ma.masked:
+                                    if newdata[k,kk,i,j] is np.ma.masked: newdata[k,kk,i,j] = 0
+                                    newdata[k,kk,i,j] += data[k,kk,n,m] * subarea
+                                    #if data[k,kk,n,m] is not np.ma.masked or add_masked_area:
+                                    #    totarea += subarea
+                                #if newdata[k,kk,i,j] is not np.ma.masked: newdata[k,kk,i,j] /= totarea
+            return newdata

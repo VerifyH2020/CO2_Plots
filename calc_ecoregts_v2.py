@@ -58,7 +58,7 @@ path_mask = "/home/dods/verify/VERIFY_INPUT/COUNTRY_MASKS/extended_country_regio
 # variable names to be processed as country means : CountryTot = sum(data * area * fraction) / sum(area * fraction)
 means = ["tas", "pr", "rsds", "mrso", "mrro", "evapotrans", "transpft", "landCoverFrac", "lai"]
 # variable names to be processed as country sums : CountryTot = sum(data)
-sums = ["CO2"]
+sums = ["CO2", "FOREST_AREA", "GRASSLAND_AREA", "CROPLAND_AREA"]
 # all other variables are proccessed as country totals : CountryTot = sum(data * area * fraction)
 
 # possible netcdf variable names for time/lat/lon

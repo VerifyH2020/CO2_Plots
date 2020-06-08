@@ -35,86 +35,87 @@ def get_simulation_parameters(graphname,lshow_productiondata):
    verifydir='/home/dods/verify/VERIFY_OUTPUT/FCO2/'
    invdir='/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/INVENTORIES/'
    files_master={ \
-                  'UNFCCC_totincLULUCF' : invdir + 'Tier1_CO2_TotEmisIncLULUCF_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTot.nc', \
-                  'UNFCCC_totexcLULUCF' : invdir + 'Tier1_CO2_TotEmisExcLULUCF_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTot.nc', \
+                  'UNFCCC_totincLULUCF' : invdir + 'Tier1_CO2_TotEmisIncLULUCF_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTotWithOutEEZ.nc', \
+                  'UNFCCC_totexcLULUCF' : invdir + 'Tier1_CO2_TotEmisExcLULUCF_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTotWithOutEEZ.nc', \
                   'UNFCCC_LULUCF' : '/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_LULUCF_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTotWithOutEEZ.nc', \
                   
-                  'TrendyV7' : '/home/dods/verify/OTHER_PROJECTS/FCO2/TrendyLand-V7/Tier3BUPB_CO2_LandFlux_AllTrendyMedianMinMax-S3_exeter_LAND_GL_1M_V1_20191020_McGrath_Grid-mask11_CountryTot.nc', \
-                  'TrendyV7_CABLE' : otherdir + 'Tier3BUPB_CO2_LandFlux_CABLE-POP-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTot.nc', \
-                  'TrendyV7_CLASS' : otherdir + 'Tier3BUPB_CO2_LandFlux_CLASS-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTot.nc', \
-                  'TrendyV7_CLM5' : otherdir + 'Tier3BUPB_CO2_LandFlux_CLM5-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTot.nc', \
-                  'TrendyV7_DLEM' : otherdir + 'Tier3BUPB_CO2_LandFlux_DLEM-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTot.nc', \
-                  'TrendyV7_ISAM' : otherdir + 'Tier3BUPB_CO2_LandFlux_ISAM-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTot.nc', \
-                  'TrendyV7_JSBACH' : otherdir + 'Tier3BUPB_CO2_LandFlux_JSBACH-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTot.nc', \
-                  'TrendyV7_JULES' : otherdir + 'Tier3BUPB_CO2_LandFlux_JULES-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTot.nc', \
-                  'TrendyV7_LPJ' : otherdir + 'Tier3BUPB_CO2_LandFlux_LPJ-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTot.nc', \
-                  'TrendyV7_LPX' : otherdir + 'Tier3BUPB_CO2_LandFlux_LPX-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTot.nc', \
-                  'TrendyV7_OCN' : otherdir + 'Tier3BUPB_CO2_LandFlux_OCN-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTot.nc', \
-                  'TrendyV7_ORCHIDEE-CNP' : otherdir + 'Tier3BUPB_CO2_LandFlux_ORCHIDEE-CNP-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTot.nc', \
-                  'TrendyV7_ORCHIDEE' : otherdir + 'Tier3BUPB_CO2_LandFlux_ORCHIDEE-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTot.nc', \
-                  'TrendyV7_SDGVM' : otherdir + 'Tier3BUPB_CO2_LandFlux_SDGVM-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTot.nc', \
-                  'TrendyV7_SURFEX' : otherdir + 'Tier3BUPB_CO2_LandFlux_SURFEX-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTot.nc', \
-                  'ORCHIDEE_S0' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S0_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTot.nc", \
-                  'ORCHIDEE_S1' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S1_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTot.nc", \
-                  'ORCHIDEE_S2' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S2_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTot.nc", \
-                  'ORCHIDEE' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTot.nc", \
-                  'ORCHIDEE_RH' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTot.nc", \
-                  'EPIC' : verifydir + 'Tier3BUPB_CO2_CropFluxes_EPIC-S1_IIASA_CRP_EU_1M_V1_20190911_BALKOVIC_WP3_CountryTot.nc', \
-                  'EPIC_RH' : verifydir + 'Tier3BUPB_CO2_CropFluxes_EPIC-S1_IIASA_CRP_EU_1M_V1_20190911_BALKOVIC_WP3_CountryTot.nc', \
-                  'EPIC_fHarvest' : verifydir + 'Tier3BUPB_CO2_CropFluxes_EPIC-S1_IIASA_CRP_EU_1M_V1_20190911_BALKOVIC_WP3_CountryTot.nc', \
-                  'EPIC_clch' : verifydir + 'Tier3BUPB_CO2_CropFluxes_EPIC-S1_IIASA_CRP_EU_1M_V1_20190911_BALKOVIC_WP3_CountryTot.nc', \
-                  'EPIC_npp' : verifydir + 'Tier3BUPB_CO2_CropFluxes_EPIC-S1_IIASA_CRP_EU_1M_V1_20190911_BALKOVIC_WP3_CountryTot.nc', \
-                  'JENA-COMBINED' : verifydir + 'Tier3TD_CO2_LandFlux_AllJENA_bgc-jena_LAND_GL_1M_V1_20200304_McGrath_WP3_CountryTot.nc', \
-                  'JENA-REG-100km' : verifydir + 'Tier3TD_CO2_LandFlux_JENA-REG-100km_bgc-jena_LAND_GL_1M_V1_20191020_Gerbig_WP3_CountryTot.nc', \
-                  'JENA-REG-200km' : verifydir + 'Tier3TD_CO2_LandFlux_JENA-REG-200km_bgc-jena_LAND_GL_1M_V1_20191020_Gerbig_WP3_CountryTot.nc', \
-                  'JENA-REG-Core100km' : verifydir + 'Tier3TD_CO2_LandFlux_JENA-REG-Core100km_bgc-jena_LAND_GL_1M_V1_20191020_Gerbig_WP3_CountryTot.nc', \
-                  'JENA-REG-Valid100km' : verifydir + 'Tier3TD_CO2_LandFlux_JENA-REG-Valid100km_bgc-jena_LAND_GL_1M_V1_20191020_Gerbig_WP3_CountryTot.nc', \
-                  'BLUE' : '/home/dods/verify/OTHER_PROJECTS/FCO2/BLUE/Tier3BUPB_CO2_LandFlux_BLUE-2019_bgc-jena_LAND_GL_1M_V1_20191020_Pongratz_WP3_CountryTotWithEEZ.nc', \
-                  'H&N' : '/home/dods/verify/OTHER_PROJECTS/FCO2/HN/Tier3BUDD_CO2_LandUseChange_HN-SX_JRC_FOR_EU_1Y_V1_20191212_PETRESCU_WPX_CountryTot.nc', \
-                  'ORCHIDEE-MICT' : '/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_LandUseChange_ORCHIDEEMICT-SX_LSCE_LAND_EU_1M_V1_20190925_YUE_WP3_CountryTot.nc', \
-                  'FAOSTAT_For' : '/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/FAOSTAT/FAOSTAT_CO2_all_data.nc', \
-                  'FAOSTAT_Crp' : '/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/FAOSTAT/FAOSTAT_CO2_all_data.nc', \
-                  'FAOSTAT_Grs' : '/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/FAOSTAT/FAOSTAT_CO2_all_data.nc', \
+                  'TrendyV7' : '/home/dods/verify/OTHER_PROJECTS/FCO2/TrendyLand-V7/Tier3BUPB_CO2_LandFlux_AllTrendyMedianMinMax-S3_exeter_LAND_GL_1M_V1_20191020_McGrath_Grid-mask11_CountryTotWithOutEEZ.nc', \
+                  'TrendyV7_CABLE' : otherdir + 'Tier3BUPB_CO2_LandFlux_CABLE-POP-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTotWithOutEEZ.nc', \
+                  'TrendyV7_CLASS' : otherdir + 'Tier3BUPB_CO2_LandFlux_CLASS-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTotWithOutEEZ.nc', \
+                  'TrendyV7_CLM5' : otherdir + 'Tier3BUPB_CO2_LandFlux_CLM5-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTotWithOutEEZ.nc', \
+                  'TrendyV7_DLEM' : otherdir + 'Tier3BUPB_CO2_LandFlux_DLEM-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTotWithOutEEZ.nc', \
+                  'TrendyV7_ISAM' : otherdir + 'Tier3BUPB_CO2_LandFlux_ISAM-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTotWithOutEEZ.nc', \
+                  'TrendyV7_JSBACH' : otherdir + 'Tier3BUPB_CO2_LandFlux_JSBACH-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTotWithOutEEZ.nc', \
+                  'TrendyV7_JULES' : otherdir + 'Tier3BUPB_CO2_LandFlux_JULES-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTotWithOutEEZ.nc', \
+                  'TrendyV7_LPJ' : otherdir + 'Tier3BUPB_CO2_LandFlux_LPJ-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTotWithOutEEZ.nc', \
+                  'TrendyV7_LPX' : otherdir + 'Tier3BUPB_CO2_LandFlux_LPX-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTotWithOutEEZ.nc', \
+                  'TrendyV7_OCN' : otherdir + 'Tier3BUPB_CO2_LandFlux_OCN-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTotWithOutEEZ.nc', \
+                  'TrendyV7_ORCHIDEE-CNP' : otherdir + 'Tier3BUPB_CO2_LandFlux_ORCHIDEE-CNP-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTotWithOutEEZ.nc', \
+                  'TrendyV7_ORCHIDEE' : otherdir + 'Tier3BUPB_CO2_LandFlux_ORCHIDEE-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTotWithOutEEZ.nc', \
+                  'TrendyV7_SDGVM' : otherdir + 'Tier3BUPB_CO2_LandFlux_SDGVM-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTotWithOutEEZ.nc', \
+                  'TrendyV7_SURFEX' : otherdir + 'Tier3BUPB_CO2_LandFlux_SURFEX-S3_exeter_LAND_GL_1M_V1_20191020_Sitch_Grid-mask11_CountryTotWithOutEEZ.nc', \
+                  'ORCHIDEE_S0' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S0_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ.nc", \
+                  'ORCHIDEE_S1' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S1_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ.nc", \
+                  'ORCHIDEE_S2' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S2_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ.nc", \
+                  'ORCHIDEE' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ.nc", \
+                  'ORCHIDEE_RH' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ.nc", \
+                  'EPIC' : verifydir + 'Tier3BUPB_CO2_CropFluxes_EPIC-S1_IIASA_CRP_EU_1M_V1_20190911_BALKOVIC_WP3_CountryTotWithEEZ.nc', \
+#                  'EPIC' : "/home/users/mmcgrath/CODE.OBELIX/PYTHON/EPIC_process_CountryTotWithEEZ.nc", \
+                  'EPIC_RH' : verifydir + 'Tier3BUPB_CO2_CropFluxes_EPIC-S1_IIASA_CRP_EU_1M_V1_20190911_BALKOVIC_WP3_CountryTotWithOutEEZ.nc', \
+                  'EPIC_fHarvest' : verifydir + 'Tier3BUPB_CO2_CropFluxes_EPIC-S1_IIASA_CRP_EU_1M_V1_20190911_BALKOVIC_WP3_CountryTotWithOutEEZ.nc', \
+                  'EPIC_clch' : verifydir + 'Tier3BUPB_CO2_CropFluxes_EPIC-S1_IIASA_CRP_EU_1M_V1_20190911_BALKOVIC_WP3_CountryTotWithOutEEZ.nc', \
+                  'EPIC_npp' : verifydir + 'Tier3BUPB_CO2_CropFluxes_EPIC-S1_IIASA_CRP_EU_1M_V1_20190911_BALKOVIC_WP3_CountryTotWithOutEEZ.nc', \
+                  'JENA-COMBINED' : verifydir + 'Tier3TD_CO2_LandFlux_AllJENA_bgc-jena_LAND_GL_1M_V1_20200304_McGrath_WP3_CountryTotWithEEZ.nc', \
+                  'JENA-REG-100km' : verifydir + 'Tier3TD_CO2_LandFlux_JENA-REG-100km_bgc-jena_LAND_GL_1M_V1_20191020_Gerbig_WP3_CountryTotWithEEZ.nc', \
+                  'JENA-REG-200km' : verifydir + 'Tier3TD_CO2_LandFlux_JENA-REG-200km_bgc-jena_LAND_GL_1M_V1_20191020_Gerbig_WP3_CountryTotWithEEZ.nc', \
+                  'JENA-REG-Core100km' : verifydir + 'Tier3TD_CO2_LandFlux_JENA-REG-Core100km_bgc-jena_LAND_GL_1M_V1_20191020_Gerbig_WP3_CountryTotWithEEZ.nc', \
+                  'JENA-REG-Valid100km' : verifydir + 'Tier3TD_CO2_LandFlux_JENA-REG-Valid100km_bgc-jena_LAND_GL_1M_V1_20191020_Gerbig_WP3_CountryTotWithEEZ.nc', \
+                  'BLUE' : '/home/dods/verify/OTHER_PROJECTS/FCO2/BLUE/Tier3BUPB_CO2_LandFlux_BLUE-2019_bgc-jena_LAND_GL_1M_V1_20191020_Pongratz_WP3_CountryTotWithOutEEZ.nc', \
+                  'H&N' : '/home/dods/verify/OTHER_PROJECTS/FCO2/HN/Tier3BUDD_CO2_LandUseChange_HN-SX_JRC_FOR_EU_1Y_V1_20191212_PETRESCU_WPX_CountryTotWithOutEEZ.nc', \
+                  'ORCHIDEE-MICT' : '/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_LandUseChange_ORCHIDEEMICT-SX_LSCE_LAND_EU_1M_V1_20190925_YUE_WP3_CountryTotWithOutEEZ.nc', \
+                  'FAOSTAT_For' : '/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/FAOSTAT/Tier1_CO2_AllFluxes_FAOSTAT-SX_FAO_LAND_EU_1M_V1_20191212_PETRASCU_WPX_CountryTotWithOutEEZ.nc', \
+                  'FAOSTAT_Crp' : '/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/FAOSTAT/Tier1_CO2_AllFluxes_FAOSTAT-SX_FAO_LAND_EU_1M_V1_20191212_PETRASCU_WPX_CountryTotWithOutEEZ.nc', \
+                  'FAOSTAT_Grs' : '/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/FAOSTAT/Tier1_CO2_AllFluxes_FAOSTAT-SX_FAO_LAND_EU_1M_V1_20191212_PETRASCU_WPX_CountryTotWithOutEEZ.nc', \
                   #'EDGARv4' : '/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/TESTFILES/EDGAR_TEST.nc', \
                   # This is the same as the VERIFY inverions.  And Cristoph does not like this version that he used.  So we will replace it with the mean of the VERIFY inverions.  I call this JENA-COMBINED above.
-                  'EUROCOM_Carboscope' : '/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_CarboScopeRegional_bgc-jena_LAND_EU_1M_V1_20191020_Gerbig_Grid-eurocom_CountryTot.nc', \
-                  'EUROCOM_Flexinvert' : '/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_FLEXINVERT_nilu_LAND_EU_1M_V1_20191020_Thompson_Grid-eurocom_CountryTot.nc', \
-                  'EUROCOM_Lumia' :  '/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_LUMIA-ORC_nateko_LAND_EU_1M_V1_20191020_Monteil_Grid-eurocom_CountryTot.nc', \
-                  'EUROCOM_Chimere' :  '/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_CHIMERE-ORC_lsce_LAND_EU_1M_V1_20191020_Broquet_Grid-eurocom_CountryTot.nc', \
-                  'EUROCOM_CTE' :  '/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_CTE_wur_LAND_EU_1M_V1_20191020_Ingrid_Grid-eurocom_CountryTot.nc', \
-                  'EUROCOM_EnKF' :  '/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_EnKF-RAMS_vu_LAND_EU_1M_V1_20191020_Antoon_Grid-eurocom_CountryTot.nc', \
-                  'EUROCOM_NAME' :  '/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_NAME-HB_bristol_LAND_EU_1M_V1_20191020_White_Grid-eurocom_CountryTot.nc', \
+                  'EUROCOM_Carboscope' : '/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_CarboScopeRegional_bgc-jena_LAND_EU_1M_V1_20191020_Gerbig_Grid-eurocom_CountryTotWithEEZ.nc', \
+                  'EUROCOM_Flexinvert' : '/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_FLEXINVERT_nilu_LAND_EU_1M_V1_20191020_Thompson_Grid-eurocom_CountryTotWithEEZ.nc', \
+                  'EUROCOM_Lumia' :  '/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_LUMIA-ORC_nateko_LAND_EU_1M_V1_20191020_Monteil_Grid-eurocom_CountryTotWithEEZ.nc', \
+                  'EUROCOM_Chimere' :  '/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_CHIMERE-ORC_lsce_LAND_EU_1M_V1_20191020_Broquet_Grid-eurocom_CountryTotWithEEZ.nc', \
+                  'EUROCOM_CTE' :  '/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_CTE_wur_LAND_EU_1M_V1_20191020_Ingrid_Grid-eurocom_CountryTotWithEEZ.nc', \
+                  'EUROCOM_EnKF' :  '/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_EnKF-RAMS_vu_LAND_EU_1M_V1_20191020_Antoon_Grid-eurocom_CountryTotWithEEZ.nc', \
+                  'EUROCOM_NAME' :  '/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_NAME-HB_bristol_LAND_EU_1M_V1_20191020_White_Grid-eurocom_CountryTotWithEEZ.nc', \
                   # All EUROCOM simulations combined
-                  'EUROCOM_ALL' : '/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_AllEUROCOMInversions_XXX_LAND_GL_1M_V1_202003021_McGrath_WP3_CountryTot.nc', \
-                  'ECOSSE_CL-CL': "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CropFluxes_ECOSSE-SX_UAbdn_CRP_EU_1M_V1_20200218_KUHNERT_WP3_CountryTot.nc",\
-                  'ECOSSE_GL-GL': "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_GrassFluxes_ECOSSE-SX_UAbdn_GRS_EU_1M_V1_20200218_KUHNERT_WP3_CountryTot.nc", \
-                  'ECOSSE_CL-CL_us': "/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/WP3/EU28_swheat_co2_CountryTot.nc",\
-                  'ECOSSE_GL-GL_us': "/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/WP3/EU28_gra_co2_CountryTot.nc", \
-                  'EFISCEN-Space': "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_treeNEP_EFISCEN-Space-SX_WENR_FOR_EU_1M_V1_20190716_SCHELHAAS_WP3_CountryTot.nc",\
+                  'EUROCOM_ALL' : '/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_AllEUROCOMInversions_XXX_LAND_GL_1M_V1_202003021_McGrath_WP3_CountryTotWithEEZ.nc', \
+                  'ECOSSE_CL-CL': "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CropFluxes_ECOSSE-SX_UAbdn_CRP_EU28_1M_V1_20200518_KUHNERT_WP3_CountryTotWithOutEEZ.nc",\
+                  'ECOSSE_GL-GL': "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_GrassFluxes_ECOSSE-SX_UAbdn_GRS_EU_1M_V1_20200218_KUHNERT_WP3_CountryTotWithOutEEZ.nc", \
+                  'ECOSSE_CL-CL_us': "/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/WP3/EU28_swheat_co2_CountryTotWithOutEEZ.nc",\
+                  'ECOSSE_GL-GL_us': "/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/WP3/EU28_gra_co2_CountryTotWithOutEEZ.nc", \
+                  'EFISCEN-Space': "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_treeNEP_EFISCEN-Space-SX_WENR_FOR_EU_1M_V1_20190716_SCHELHAAS_WP3_CountryTotWithOutEEZ.nc",\
                   'UNFCCC_FL-FL': "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_ForestRemain_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTotWithOutEEZ.nc", \
                   'UNFCCC_GL-GL': "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_GrasslandRemain_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTotWithOutEEZ.nc", \
                   'UNFCCC_CL-CL': "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_CroplandRemain_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTotWithOutEEZ.nc", \
-                  'ORCHIDEE_FL-FL' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycleEcosystem_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTot.nc", \
+                  'ORCHIDEE_FL-FL' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycleEcosystem_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ.nc", \
                   'EFISCEN' : "/home/dods/verify/OTHER_PROJECTS/FCO2/EFISCEN/Tier3BUDD_CO2_TreesLUH2v2_EFISCEN-SX_WENR_FOR_EU_1M_V1_20191212_SCHELHAAS_WPX_CountryTotWithOutEEZ.nc", \
                   'EFISCEN_NPP' : "/home/dods/verify/OTHER_PROJECTS/FCO2/EFISCEN/Tier3BUDD_CO2_TreesLUH2v2_EFISCEN-SX_WENR_FOR_EU_1M_V1_20191212_SCHELHAAS_WPX_CountryTotWithOutEEZ.nc", \
                   'EFISCEN_NEE' : "/home/dods/verify/OTHER_PROJECTS/FCO2/EFISCEN/Tier3BUDD_CO2_TreesLUH2v2_EFISCEN-SX_WENR_FOR_EU_1M_V1_20191212_SCHELHAAS_WPX_CountryTotWithOutEEZ.nc", \
                   'EFISCEN-unscaled' : "/home/dods/verify/OTHER_PROJECTS/FCO2/EFISCEN/Tier3BUDD_CO2_Trees_EFISCEN-SX_WENR_FOR_EU_1M_V1_20191212_SCHELHAAS_WPX_CountryTotWithOutEEZ.nc", \
-                  'CBM' : "/home/dods/verify/OTHER_PROJECTS/FCO2/CBM/Tier3BUDD_CO2_NBP_CBM-SX_JRC_FOR_EU_1Y_V1_20191212_PETRESCU_WPX_CountryTot.nc", \
-                  'FLUXCOM_rsonlyRF_os' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-RFmissLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTot.nc", \
-                  'FLUXCOM_rsonlyANN_os' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-ANNnoPFTLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTot.nc", \
-                  'FLUXCOM_rsonlyRF_ns' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-RFmissLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTot.nc", \
-                  'FLUXCOM_rsonlyANN_ns' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-ANNnoPFTLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTot.nc", \
-                  'FLUXCOM_FL-FL_RF' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-RFmissLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTot.nc", \
-                  'FLUXCOM_FL-FL_ANN' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-ANNnoPFTLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTot.nc", \
-                  'FLUXCOM_GL-GL_RF' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-RFmissLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTot.nc", \
-                  'FLUXCOM_GL-GL_ANN' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-ANNnoPFTLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTot.nc", \
-                  'FLUXCOM_CL-CL_RF' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-RFmissLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTot.nc", \
-                  'FLUXCOM_CL-CL_ANN' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-ANNnoPFTLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTot.nc", \
-                  'ORCHIDEE_GL-GL' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycleEcosystem_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTot.nc", \
-                  'ORCHIDEE_CL-CL' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycleEcosystem_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTot.nc", \
-                  'TNO_biofuels' : "/home/dods/verify/OTHER_PROJECTS/FCO2/TNO/Tier3BUDD_CO2_BiofuelEmissions_XXX-SX_TNO_XXX_EU_1M_V1_20191110_DERNIER_WPX_CountryTot.nc", \
-                  'UNFCCC_biofuels' : "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_Biofuels_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTot.nc", \
-                  'ULB_lakes_rivers' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_RiverLakeEmissions_XXXX-SX_ULB_INLWAT_EU_1M_V1_20190911_LAUERWALD_WP3_CountryTot.nc", \
+                  'CBM' : "/home/dods/verify/OTHER_PROJECTS/FCO2/CBM/Tier3BUDD_CO2_NBP_CBM-SX_JRC_FOR_EU_1Y_V1_20191212_PETRESCU_WPX_CountryTotWithOutEEZ.nc", \
+                  'FLUXCOM_rsonlyRF_os' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-RFmissLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTotWithOutEEZ.nc", \
+                  'FLUXCOM_rsonlyANN_os' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-ANNnoPFTLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTotWithOutEEZ.nc", \
+                  'FLUXCOM_rsonlyRF_ns' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-RFmissLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTotWithOutEEZ.nc", \
+                  'FLUXCOM_rsonlyANN_ns' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-ANNnoPFTLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTotWithOutEEZ.nc", \
+                  'FLUXCOM_FL-FL_RF' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-RFmissLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTotWithOutEEZ.nc", \
+                  'FLUXCOM_FL-FL_ANN' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-ANNnoPFTLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTotWithOutEEZ.nc", \
+                  'FLUXCOM_GL-GL_RF' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-RFmissLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTotWithOutEEZ.nc", \
+                  'FLUXCOM_GL-GL_ANN' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-ANNnoPFTLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTotWithOutEEZ.nc", \
+                  'FLUXCOM_CL-CL_RF' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-RFmissLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTotWithOutEEZ.nc", \
+                  'FLUXCOM_CL-CL_ANN' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-ANNnoPFTLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTotWithOutEEZ.nc", \
+                  'ORCHIDEE_GL-GL' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycleEcosystem_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ.nc", \
+                  'ORCHIDEE_CL-CL' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycleEcosystem_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ.nc", \
+                  'TNO_biofuels' : "/home/dods/verify/OTHER_PROJECTS/FCO2/TNO/Tier3BUDD_CO2_BiofuelEmissions_XXX-SX_TNO_XXX_EU_1M_V1_20191110_DERNIER_WPX_CountryTotWithOutEEZ.nc", \
+                  'UNFCCC_biofuels' : "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_Biofuels_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTotWithOutEEZ.nc", \
+                  'ULB_lakes_rivers' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_RiverLakeEmissions_XXXX-SX_ULB_INLWAT_EU_1M_V1_20190911_LAUERWALD_WP3_CountryTotWithOutEEZ.nc", \
                   'UNFCCC_forest_convert' : "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_ForestConvert_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTotWithOutEEZ.nc", \
                   'UNFCCC_grassland_convert' : "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_GrasslandConvert_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTotWithOutEEZ.nc", \
                   'UNFCCC_cropland_convert' : "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_CroplandConvert_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTotWithOutEEZ.nc", \
@@ -122,20 +123,24 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                   'UNFCCC_settlement_convert' : "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_SettlementConvert_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTotWithOutEEZ.nc", \
                   'UNFCCC_other_convert' : "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_OtherConvert_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTotWithOutEEZ.nc", \
                   'UNFCCC_woodharvest' : "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_HWP_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTotWithOutEEZ.nc", \
-                  'GCP_JENA' : '/home/dods/verify/OTHER_PROJECTS/FCO2/Inversions-GCP2019/Tier3TD_CO2_LandFlux_JENA-s76-4-3-2019_bgc-jena_LAND_GL_1M_V1_20191020_Christian_WPX_CountryTot.nc', \
-                  'GCP_CTRACKER' : '/home/dods/verify/OTHER_PROJECTS/FCO2/Inversions-GCP2019/Tier3TD_CO2_LandFlux_CTRACKER-EU-v2019_wur_LAND_GL_1M_V1_20191020_Wouter_WPX_CountryTot.nc', \
-                  'GCP_CAMS' : '/home/dods/verify/OTHER_PROJECTS/FCO2/Inversions-GCP2019/Tier3TD_CO2_LandFlux_CAMS-V18-2-2019_lsce_LAND_GL_1M_V1_20191020_Chevallier_WPX_CountryTot.nc', \
-                  'GCP_ALL' : '/home/dods/verify/OTHER_PROJECTS/FCO2/Inversions-GCP2019/Tier3TD_CO2_LandFlux_AllGCPInversions_XXX_LAND_GL_1M_V1_202003021_McGrath_WP3_CountryTot.nc', \
-                  'LUH2v2_FOREST' : '/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/WP3/luh2v2_ecosystem_area_2000_2018_CountryTot.nc', \
-                  'UNFCCC_FOREST' : '/home/dods/verify/OTHER_PROJECTS/NONFLUX/Tier1_XXXX_ForestArea_CRF2019-SX_UNFCCC_FOR_EU_1Y_V1_20200221_MCGRATH_WPX_CountryTot.nc', \
-                  'MS-NRT' : '/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/Tier2_CO2_LULUCF_MSNRT-SX_JRC_LAND_EU_1M_V1_20200205_PETRESCU_WPX_CountryTot.nc', \
+                  'GCP_JENA' : '/home/dods/verify/OTHER_PROJECTS/FCO2/Inversions-GCP2019/Tier3TD_CO2_LandFlux_JENA-s76-4-3-2019_bgc-jena_LAND_GL_1M_V1_20191020_Christian_WPX_CountryTotWithEEZ.nc', \
+                  'GCP_CTRACKER' : '/home/dods/verify/OTHER_PROJECTS/FCO2/Inversions-GCP2019/Tier3TD_CO2_LandFlux_CTRACKER-EU-v2019_wur_LAND_GL_1M_V1_20191020_Wouter_WPX_CountryTotWithEEZ.nc', \
+                  'GCP_CAMS' : '/home/dods/verify/OTHER_PROJECTS/FCO2/Inversions-GCP2019/Tier3TD_CO2_LandFlux_CAMS-V18-2-2019_lsce_LAND_GL_1M_V1_20191020_Chevallier_WPX_CountryTotWithEEZ.nc', \
+                  'GCP_ALL' : '/home/dods/verify/OTHER_PROJECTS/FCO2/Inversions-GCP2019/Tier3TD_CO2_LandFlux_AllGCPInversions_XXX_LAND_GL_1M_V1_202003021_McGrath_WP3_CountryTotWithEEZ.nc', \
+                  'LUH2v2_FOREST' : '/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/WP3/luh2v2_ecosystem_area_1990_2018_CountryTotWithOutEEZ.nc', \
+                  'UNFCCC_FOREST' : '/home/dods/verify/OTHER_PROJECTS/NONFLUX/Tier1_XXXX_ForestArea_CRF2019-SX_UNFCCC_FOR_EU_1Y_V1_20200221_MCGRATH_WPX_CountryTotWithOutEEZ.nc', \
+                  'LUH2v2_GRASS' : '/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/WP3/luh2v2_ecosystem_area_1990_2018_CountryTotWithOutEEZ.nc', \
+                  'UNFCCC_GRASS' : '/home/dods/verify/OTHER_PROJECTS/NONFLUX/Tier1_XXXX_GrasslandArea_CRF2019-SX_UNFCCC_GRS_EU_1Y_V1_20200221_MCGRATH_WPX_CountryTotWithOutEEZ.nc', \
+                  'LUH2v2_CROP' : '/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/WP3/luh2v2_ecosystem_area_1990_2018_CountryTotWithOutEEZ.nc', \
+                  'UNFCCC_CROP' : '/home/dods/verify/OTHER_PROJECTS/NONFLUX/Tier1_XXXX_CroplandArea_CRF2019-SX_UNFCCC_CRP_EU_1Y_V1_20200221_MCGRATH_WPX_CountryTotWithOutEEZ.nc', \
+                  'MS-NRT' : '/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/Tier2_CO2_LULUCF_MSNRT-SX_JRC_LAND_EU_1M_V1_20200205_PETRESCU_WPX_CountryTotWithOutEEZ.nc', \
                   # These will all get overwritten below
                   'UNFCCC_LUC' : invdir + 'Tier1_CO2_LULUCF_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTotWithOutEEZ.nc', \
                   'UNFCCC_LUCF' : invdir + 'Tier1_CO2_LULUCF_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTotWithOutEEZ.nc', \
-                  'FAOSTAT_LULUCF' : '/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/FAOSTAT/FAOSTAT_CO2_all_data.nc', \
-                  'FAOSTAT_FL-FL' : '/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/FAOSTAT/FAOSTAT_CO2_all_data.nc', \
-                  'VERIFYBU' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTot.nc", \
-                  'ORCHIDEE_LUC' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTot.nc", \
+                  'FAOSTAT_LULUCF' : '/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/FAOSTAT/Tier1_CO2_AllFluxes_FAOSTAT-SX_FAO_LAND_EU_1M_V1_20191212_PETRASCU_WPX_CountryTotWithOutEEZ.nc', \
+                  'FAOSTAT_FL-FL' : '/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/FAOSTAT/Tier1_CO2_AllFluxes_FAOSTAT-SX_FAO_LAND_EU_1M_V1_20191212_PETRASCU_WPX_CountryTotWithOutEEZ.nc', \
+                  'VERIFYBU' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ.nc", \
+                  'ORCHIDEE_LUC' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ.nc", \
 
                }
    
@@ -237,6 +242,10 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                     'GCP_ALL' : 'MINMAX', \
                     'LUH2v2_FOREST' : 'OTHER', \
                     'UNFCCC_FOREST' : 'OTHER', \
+                    'LUH2v2_GRASS' : 'OTHER', \
+                    'UNFCCC_GRASS' : 'OTHER', \
+                    'LUH2v2_CROP' : 'OTHER', \
+                    'UNFCCC_CROP' : 'OTHER', \
                     'MS-NRT' : 'INVENTORY_NOERR', \
                  }
 
@@ -273,10 +282,10 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                       'FLUXCOM_rsonlyANN_ns' :  'FCO2_NEP', \
                       'FLUXCOM_rsonlyRF_ns' :  'FCO2_NEP', \
                       'EPIC' :  'FCO2_NBP_CRO', \
-                      'EPIC_RH' :  'rh', \
-                      'EPIC_fHarvest' :  'fHarvest', \
-                      'EPIC_clch' :  'clch', \
-                      'EPIC_npp' :  'npp', \
+                      'EPIC_RH' :  'FCO2_RH_CRO', \
+                      'EPIC_fHarvest' :  'FCO2_FHARVEST_CRO', \
+                      'EPIC_clch' :  'FCO2_CLCH_CRO', \
+                      'EPIC_npp' :  'FCO2_NPP_CRO', \
                       'JENA-COMBINED' :  'FCO2_NBP', \
                       'JENA-REG-100km' :  'FCO2_NBP', \
                       'JENA-REG-200km' :  'FCO2_NBP', \
@@ -299,7 +308,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                       'EUROCOM_EnKF' :  'FCO2_NBP', \
                       'EUROCOM_NAME' :  'FCO2_NBP', \
                       'EUROCOM_ALL' :  'FCO2_NBP', \
-                      'ECOSSE_CL-CL': "FCO2_SOIL_CRO", \
+                      'ECOSSE_CL-CL': "FCO2_NEP_CRO", \
                     'ECOSSE_GL-GL': "FCO2_SOIL_GRA", \
                       'ECOSSE_CL-CL_us': "FCO2_SOIL_CRO", \
                     'ECOSSE_GL-GL_us': "FCO2_SOIL_GRA", \
@@ -337,6 +346,10 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                     'GCP_ALL' : 'FCO2_NBP', \
                      'LUH2v2_FOREST' : 'FOREST_AREA', \
                      'UNFCCC_FOREST' : 'AREA', \
+                     'LUH2v2_GRASS' : 'GRASSLAND_AREA', \
+                     'UNFCCC_GRASS' : 'AREA', \
+                     'LUH2v2_CROP' : 'CROPLAND_AREA', \
+                     'UNFCCC_CROP' : 'AREA', \
                     'MS-NRT' : 'FCO2_NBP', \
                  }
    
@@ -437,6 +450,10 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                     'GCP_ALL' : 's', \
                     'LUH2v2_FOREST' : 'o', \
                     'UNFCCC_FOREST' : 'o', \
+                    'LUH2v2_GRASS' : 'o', \
+                    'UNFCCC_GRASS' : 'o', \
+                    'LUH2v2_CROP' : 'o', \
+                    'UNFCCC_CROP' : 'o', \
                     'MS-NRT' : 'o', \
                     }
    facec_master={ \
@@ -536,6 +553,10 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                     'GCP_ALL' : 'red', \
                      'UNFCCC_FOREST' : 'blue', \
                     'LUH2v2_FOREST' : 'orange', \
+                     'UNFCCC_GRASS' : 'blue', \
+                    'LUH2v2_GRASS' : 'orange', \
+                     'UNFCCC_CROP' : 'blue', \
+                    'LUH2v2_CROP' : 'orange', \
                 'MS-NRT' : 'red', \
              }
 
@@ -598,6 +619,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
    flipdatasign_master["EFISCEN-Space"]=True
    flipdatasign_master["EFISCEN-unscaled"]=True
    flipdatasign_master["ORCHIDEE-MICT"]=True
+   flipdatasign_master["EPIC"]=True
 
    # Change the color of the error bars for some
    uncert_color_master['UNFCCC_LUC']='darkseagreen'
@@ -629,15 +651,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
    lplot_areas=False
    
    # Now define the actual simulation configs
-   if graphname == 'full_global':
-#      datasource='TRENDY/EUROCOM/MPI-BGC/LSCE/IIASA/UMunich'
-      output_file_start="CO2_BU_GLOBALTD_"
-      output_file_end="_2019_v1.png"
-   elif graphname == 'full_verify':
-#      datasource='TRENDY/MPI-BGC/LSCE/IIASA/UMunich'
-      output_file_start="CO2_BU_VERIFYTD_"
-      output_file_end="_2019_v1.png" 
-   elif graphname == "test":
+   if graphname == "test":
       desired_simulations=[ \
                             # we read in data for LUC, but we replace it with the sectors below
                             'UNFCCC_LULUCF', \
@@ -646,7 +660,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
         ]   
 #      datasource='UNFCCC/LMU/LSCE/FAO'
       output_file_start="TEST_"
-      output_file_end="_FCO2Nat_2019_v1.png" 
+      output_file_end="_FCO2land_2019_v1.png" 
       titleending=r" : CO$_2$ emissions from land use change"
 #      datasource='TRENDY/MPI-BGC/LSCE'
       output_file_start="test_"
@@ -671,7 +685,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
         ]   
 #      datasource='UNFCCC/LMU/LSCE/FAO'
       output_file_start="LUC_"
-      output_file_end="_FCO2Nat_2019_v1.png" 
+      output_file_end="_FCO2land_2019_v1.png" 
       titleending=r" : CO$_2$ emissions from land use change"
 
       # Change some colors and symbols here
@@ -737,7 +751,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
         ]   
 #      datasource='UNFCCC/LMU/LSCE/FAO'
       output_file_start="ORCHIDEE_"
-      output_file_end="_FCO2Nat_2019_v1.png" 
+      output_file_end="_FCO2land_2019_v1.png" 
       titleending=r" : CO$_2$ emissions from all ORCHIDEE simulations"
 
       # Change some colors and symbols here
@@ -785,7 +799,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
         ]   
 #      datasource='UNFCCC/LMU/LSCE/FAO'
       output_file_start="LUCF_"
-      output_file_end="_FCO2Nat_2019_v1.png" 
+      output_file_end="_FCO2land_2019_v1.png" 
       titleending=r" : CO$_2$ emissions from land use change and forestry"
 
       # Change some colors and symbols here
@@ -831,6 +845,25 @@ def get_simulation_parameters(graphname,lshow_productiondata):
       #   productiondata_master['ORCHIDEE-MICT']=False
       #endif
 
+      # This is simply meant to compare UNFCCC LULUCF with the MS-NRT data
+   elif graphname == "lulucf_msnrt":
+      desired_simulations=[ \
+                            'UNFCCC_LULUCF', \
+                            'MS-NRT', \
+         ]   
+      output_file_start="UNFCCC-LULUCF-MSNRT_"
+      output_file_end="_FCO2land_2019_v1.png" 
+      titleending=r" : CO$_2$ emissions from land use, land use change, and forestry"
+
+      # These simulations will be combined together.
+      #overwrite_simulations["FAOSTAT_LULUCF"]=['FAOSTAT_Crp','FAOSTAT_Grs','FAOSTAT_For']
+      #overwrite_operations["FAOSTAT_LULUCF"]="sum"
+      #overwrite_coeffs["FAOSTAT_LULUCF"]=[1.0,1.0,1.0]
+      # So I don't want to generally plot the components
+      #displaylegend_master['FAOSTAT_Crp']=False
+      #displaylegend_master['FAOSTAT_Grs']=False
+      #displaylegend_master['FAOSTAT_For']=False
+
    elif graphname == "lulucf_full":
       desired_simulations=[ \
                             # we read in data for LUC, but we replace it with the sectors below
@@ -847,7 +880,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
          ]   
 #      datasource='UNFCCC/LMU/LSCE/FAO'
       output_file_start="LULUCF_"
-      output_file_end="_FCO2Nat_2019_v1.png" 
+      output_file_end="_FCO2land_2019_v1.png" 
       titleending=r" : CO$_2$ emissions from land use, land use change, and forestry"
 
       # These simulations will be combined together.
@@ -879,17 +912,205 @@ def get_simulation_parameters(graphname,lshow_productiondata):
       desired_legend=[\
                       displayname_master["UNFCCC_LULUCF"],displayname_master["UNFCCC_LULUCF"]+ " uncertainty",\
                       displayname_master["MS-NRT"],\
-                      displayname_master["ORCHIDEE"],\
-             #         displayname_master["ORCHIDEE-MICT"],\
+             
                       displayname_master["FAOSTAT_LULUCF"],\
                       displayname_master["BLUE"],\
                       displayname_master["H&N"],\
                           displayname_master['TrendyV7'], displayname_err_master['TrendyV7'], \
-               #       displayname_master["TrendyV7_ORCHIDEE"],\
+                      displayname_master["ORCHIDEE"],\
+                      displayname_master["ORCHIDEE-MICT"],\
+                      displayname_master["TrendyV7_ORCHIDEE"],\
      ]
 #      datasource='UNFCCC/LMU/LSCE/FAO'
       output_file_start="LULUCFTrendy_"
-      output_file_end="_FCO2Nat_2019_v1.png" 
+      output_file_end="_FCO2land_2019_v1.png" 
+      titleending=r" : Bottom-up land use, land use change, and forestry CO$_2$ emissions"
+
+      # These simulations will be combined together.
+      overwrite_simulations["FAOSTAT_LULUCF"]=['FAOSTAT_Crp','FAOSTAT_Grs','FAOSTAT_For']
+      # So I don't want to generally plot the components
+      displaylegend_master['FAOSTAT_Crp']=False
+      displaylegend_master['FAOSTAT_Grs']=False
+      displaylegend_master['FAOSTAT_For']=False
+      overwrite_operations["FAOSTAT_LULUCF"]="sum"
+      overwrite_coeffs["FAOSTAT_LULUCF"]=[1.0,1.0,1.0]
+
+      # Change some colors and symbols here
+      facec_master["FAOSTAT_LULUCF"]="yellow"
+      plotmarker_master['FAOSTAT_LULUCF']='^'
+      facec_master["ORCHIDEE"]="black"
+      facec_master["ORCHIDEE-MICT"]="none"
+      facec_master["TrendyV7_ORCHIDEE"]="none"
+      edgec_master["TrendyV7_ORCHIDEE"]="dimgrey"
+      edgec_master["ORCHIDEE-MICT"]="black"
+      #displaylegend_master['ORCHIDEE-MICT']=False
+      #displaylegend_master['TrendyV7_ORCHIDEE']=False
+
+      # Plot these as bars
+      lplot_errorbar_master["TrendyV7"]=True
+
+   elif graphname == "orc_trendy":
+      desired_simulations=[ \
+                            # we read in data for LUC, but we replace it with the sectors below
+                            'UNFCCC_LULUCF', \
+                            'MS-NRT', \
+                            'ORCHIDEE', \
+                            'FAOSTAT_LULUCF', \
+                            'FAOSTAT_Crp', \
+                            'FAOSTAT_Grs', \
+                            'FAOSTAT_For', \
+                            'TrendyV7', \
+                      "TrendyV7_ORCHIDEE",\
+         ]  
+      
+      displayname_master["ORCHIDEE"]="ORCHIDEE-VERIFY"
+      desired_legend=[\
+                      displayname_master["FAOSTAT_LULUCF"],\
+                      displayname_master["UNFCCC_LULUCF"],displayname_master["UNFCCC_LULUCF"]+ " uncertainty",\
+                      displayname_master["MS-NRT"],\
+             
+                      displayname_master['TrendyV7'], displayname_err_master['TrendyV7'], \
+                      displayname_master["TrendyV7_ORCHIDEE"],\
+                      displayname_master["ORCHIDEE"],\
+     ]
+#      datasource='UNFCCC/LMU/LSCE/FAO'
+      output_file_start="LULUCFOrcTrendy_"
+      output_file_end="_FCO2land_2019_v1.png" 
+      titleending=r" : Bottom-up land use, land use change, and forestry CO$_2$ emissions"
+
+      # These simulations will be combined together.
+      overwrite_simulations["FAOSTAT_LULUCF"]=['FAOSTAT_Crp','FAOSTAT_Grs','FAOSTAT_For']
+      # So I don't want to generally plot the components
+      displaylegend_master['FAOSTAT_Crp']=False
+      displaylegend_master['FAOSTAT_Grs']=False
+      displaylegend_master['FAOSTAT_For']=False
+      overwrite_operations["FAOSTAT_LULUCF"]="sum"
+      overwrite_coeffs["FAOSTAT_LULUCF"]=[1.0,1.0,1.0]
+
+      # Change some colors and symbols here
+      facec_master["FAOSTAT_LULUCF"]="yellow"
+      plotmarker_master['FAOSTAT_LULUCF']='^'
+      facec_master["ORCHIDEE"]="black"
+      facec_master["ORCHIDEE-MICT"]="none"
+      facec_master["TrendyV7_ORCHIDEE"]="none"
+      edgec_master["TrendyV7_ORCHIDEE"]="dimgrey"
+      edgec_master["ORCHIDEE-MICT"]="black"
+      #displaylegend_master['ORCHIDEE-MICT']=False
+      #displaylegend_master['TrendyV7_ORCHIDEE']=False
+
+      # Plot these as bars
+      lplot_errorbar_master["TrendyV7"]=True
+
+   elif graphname == "unfccc_fao_trendy":
+      desired_simulations=[ \
+                            # we read in data for LUC, but we replace it with the sectors below
+                            'UNFCCC_LULUCF', \
+                            'MS-NRT', \
+                            'FAOSTAT_LULUCF', \
+                            'FAOSTAT_Crp', \
+                            'FAOSTAT_Grs', \
+                            'FAOSTAT_For', \
+                            'TrendyV7', \
+                            "TrendyV7_ORCHIDEE",\
+         ]  
+      
+      desired_legend=[\
+                      displayname_master["FAOSTAT_LULUCF"],\
+                      displayname_master["UNFCCC_LULUCF"],displayname_master["UNFCCC_LULUCF"]+ " uncertainty",\
+                      displayname_master["MS-NRT"],\
+             
+                      displayname_master['TrendyV7'], displayname_err_master['TrendyV7'], \
+                      displayname_master["TrendyV7_ORCHIDEE"],\
+     ]
+#      datasource='UNFCCC/LMU/LSCE/FAO'
+      output_file_start="UNFCCCFAOTrendy_"
+      output_file_end="_FCO2land_2019_v1.png" 
+      titleending=r" : Bottom-up land use, land use change, and forestry CO$_2$ emissions"
+
+      # These simulations will be combined together.
+      overwrite_simulations["FAOSTAT_LULUCF"]=['FAOSTAT_Crp','FAOSTAT_Grs','FAOSTAT_For']
+      # So I don't want to generally plot the components
+      displaylegend_master['FAOSTAT_Crp']=False
+      displaylegend_master['FAOSTAT_Grs']=False
+      displaylegend_master['FAOSTAT_For']=False
+      overwrite_operations["FAOSTAT_LULUCF"]="sum"
+      overwrite_coeffs["FAOSTAT_LULUCF"]=[1.0,1.0,1.0]
+
+      # Change some colors and symbols here
+      facec_master["FAOSTAT_LULUCF"]="yellow"
+      plotmarker_master['FAOSTAT_LULUCF']='^'
+      facec_master["ORCHIDEE"]="black"
+      facec_master["ORCHIDEE-MICT"]="none"
+      facec_master["TrendyV7_ORCHIDEE"]="none"
+      edgec_master["TrendyV7_ORCHIDEE"]="dimgrey"
+      edgec_master["ORCHIDEE-MICT"]="black"
+      #displaylegend_master['ORCHIDEE-MICT']=False
+      #displaylegend_master['TrendyV7_ORCHIDEE']=False
+
+      # Plot these as bars
+      lplot_errorbar_master["TrendyV7"]=True
+
+   elif graphname == "unfccc_fao":
+      desired_simulations=[ \
+                            # we read in data for LUC, but we replace it with the sectors below
+                            'UNFCCC_LULUCF', \
+                            'MS-NRT', \
+                            'FAOSTAT_LULUCF', \
+                            'FAOSTAT_Crp', \
+                            'FAOSTAT_Grs', \
+                            'FAOSTAT_For', \
+         ]  
+      
+      desired_legend=[\
+                      displayname_master["FAOSTAT_LULUCF"],\
+                      displayname_master["UNFCCC_LULUCF"],displayname_master["UNFCCC_LULUCF"]+ " uncertainty",\
+                      displayname_master["MS-NRT"],\
+             
+     ]
+#      datasource='UNFCCC/LMU/LSCE/FAO'
+      output_file_start="UNFCCCFAO_"
+      output_file_end="_FCO2land_2019_v1.png" 
+      titleending=r" : Bottom-up land use, land use change, and forestry CO$_2$ emissions"
+
+      # These simulations will be combined together.
+      overwrite_simulations["FAOSTAT_LULUCF"]=['FAOSTAT_Crp','FAOSTAT_Grs','FAOSTAT_For']
+      # So I don't want to generally plot the components
+      displaylegend_master['FAOSTAT_Crp']=False
+      displaylegend_master['FAOSTAT_Grs']=False
+      displaylegend_master['FAOSTAT_For']=False
+      overwrite_operations["FAOSTAT_LULUCF"]="sum"
+      overwrite_coeffs["FAOSTAT_LULUCF"]=[1.0,1.0,1.0]
+
+      # Change some colors and symbols here
+      facec_master["FAOSTAT_LULUCF"]="yellow"
+      plotmarker_master['FAOSTAT_LULUCF']='^'
+      facec_master["ORCHIDEE"]="black"
+      facec_master["ORCHIDEE-MICT"]="none"
+      facec_master["TrendyV7_ORCHIDEE"]="none"
+      edgec_master["TrendyV7_ORCHIDEE"]="dimgrey"
+      edgec_master["ORCHIDEE-MICT"]="black"
+      #displaylegend_master['ORCHIDEE-MICT']=False
+      #displaylegend_master['TrendyV7_ORCHIDEE']=False
+
+      # Plot these as bars
+      lplot_errorbar_master["TrendyV7"]=True
+
+   elif graphname == "fao":
+      desired_simulations=[ \
+                            # we read in data for LUC, but we replace it with the sectors below
+                            'FAOSTAT_LULUCF', \
+                            'FAOSTAT_Crp', \
+                            'FAOSTAT_Grs', \
+                            'FAOSTAT_For', \
+         ]  
+      
+      desired_legend=[\
+#                      "blah",\
+                      displayname_master["FAOSTAT_LULUCF"],\
+                   ]
+#      datasource='UNFCCC/LMU/LSCE/FAO'
+      output_file_start="FAO_"
+      output_file_end="_FCO2land_2019_v1.png" 
       titleending=r" : Bottom-up land use, land use change, and forestry CO$_2$ emissions"
 
       # These simulations will be combined together.
@@ -938,7 +1159,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
  
 #      datasource='UNFCCC/IIASA/WEnR/UAbdn/MPI-BGC/LSCE/TRENDY'
       output_file_start="AllSectorBU_"
-      output_file_end="_FCO2Nat_2019_v1.png" 
+      output_file_end="_FCO2land_2019_v1.png" 
       titleending=r" : CO$_2$ emissions from land use (land remaining land)"
 
       plotmarker_master['EPIC']="P"
@@ -979,7 +1200,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
  
 #      datasource='UNFCCC/IIASA/WEnR/UAbdn/MPI-BGC/LSCE/TRENDY'
       output_file_start="UNFCCCLULUCFbar_"
-      output_file_end="_FCO2Nat_2019_v1.png" 
+      output_file_end="_FCO2land_2019_v1.png" 
       titleending=r" : CO$_2$ emission trends from land use, land use change, and forestry"
 
       plotmarker_master['EPIC']="P"
@@ -1022,7 +1243,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                          ]   
 #      datasource='UNFCCC/MPI-BGC/JRC/WEnR/LSCE/FAOSTAT'
       output_file_start="VerifyBU_"
-      output_file_end="_FCO2Nat_2019_v1.png" 
+      output_file_end="_FCO2land_2019_v1.png" 
       titleending=r" : CO$_2$ emissions from all VERIFY bottom-up models"
       lplot_areas=True
 
@@ -1076,7 +1297,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                             'TrendyV7_SURFEX', \
                          ]   
       output_file_start="TRENDY_"
-      output_file_end="_FCO2Nat_2019_v1.png" 
+      output_file_end="_FCO2land_2019_v1.png" 
       titleending=r" : CO$_2$ emissions from all TRENDY v7 bottom-up models"
       lplot_areas=True
 
@@ -1100,7 +1321,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                             'FLUXCOM_GL-GL_ANN', \
                          ]   
       output_file_start="FLUXCOM_"
-      output_file_end="_FCO2Nat_2019_v1.png" 
+      output_file_end="_FCO2land_2019_v1.png" 
       titleending=r" : CO$_2$ emissions from FLUXCOM with both the original and new LUH2v2-ESACCI land cover fractions"
 
       plotmarker_master['FLUXCOM_rsonlyRF_os']="s"
@@ -1176,7 +1397,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
 
 #      datasource='UNFCCC/MPI-BGC/JRC/WEnR/LSCE/FAOSTAT'
       output_file_start="ForestRemain_"
-      output_file_end="_FCO2Nat_2019_v1.png" 
+      output_file_end="_FCO2land_2019_v1.png" 
       titleending=r" : FL-FL bottom-up net CO$_2$ emissions"
       lplot_areas=True
 
@@ -1188,30 +1409,39 @@ def get_simulation_parameters(graphname,lshow_productiondata):
    elif graphname == "grassland_full":
       desired_simulations=[ \
                             'ORCHIDEE_GL-GL', \
-                         #   'ORCHIDEE_RH', \
-                           # 'ECOSSE_GL-GL', \
+                            #'ORCHIDEE_RH', \
+                            'ECOSSE_GL-GL', \
                           #  'ECOSSE_GL-GL_us', \
                             'UNFCCC_GL-GL', \
                            # 'FLUXCOM_GL-GL_ANN', \
                            # 'FLUXCOM_GL-GL_RF', \
+                            'LUH2v2_GRASS', \
+                            'UNFCCC_GRASS', \
                          ]   
 #      datasource='UNFCCC/MPI-BGC/UAbdn/LSCE'
       output_file_start="GrasslandRemain_"
-      output_file_end="_FCO2Nat_2019_v1.png" 
+      output_file_end="_FCO2land_2019_v1.png" 
       titleending=r" : GL-GL bottom-up net CO$_2$ emissions"
 
       # Change some things from the above
+      displayname_master['UNFCCC_GRASS']='UNFCCC_GL-GL area'
+      displayname_master['LUH2v2_GRASS']='LUH2v2-ESACCI_GL-GL area (used in ORCHIDEE)'
+      lplot_areas=True
 
+      displayname_master['ECOSSE_GL-GL']='ECOSSE GL-GL RH'
 
       #if lshow_productiondata:
       #   productiondata_master['ECOSSE_GL-GL']=False
       #endif
       desired_legend=[\
                        "UNFCCC_GL-GL","UNFCCC_GL-GL uncertainty",\
-                       'ORCHIDEE_GL-GL', \
-                      # 'ECOSSE_GL-GL', \
+                       displayname_master['ORCHIDEE_GL-GL'], \
+                       #displayname_master['ORCHIDEE_RH'], \
+                       displayname_master['ECOSSE_GL-GL'], \
                       # 'FLUXCOM_GL-GL_ANN', \
                       # 'FLUXCOM_GL-GL_RF', \
+                       displayname_master['LUH2v2_GRASS'], \
+                       displayname_master['UNFCCC_GRASS'], \
                        ]
 
 
@@ -1227,39 +1457,47 @@ def get_simulation_parameters(graphname,lshow_productiondata):
 
 
       output_file_start="EPICComparison_"
-      output_file_end="_FCO2Nat_2019_v1.png" 
+      output_file_end="_FCO2land_2019_v1.png" 
       titleending=r" : CL-CL CO$_2$ emissions"
 
    elif graphname == "crops_full":
       desired_simulations=[ \
                             'ORCHIDEE_CL-CL', \
                            # 'ORCHIDEE_RH', \
-                        #    'ECOSSE_CL-CL', \
+                            'ECOSSE_CL-CL', \
                        #     'ECOSSE_CL-CL_us', \
                             'UNFCCC_CL-CL', \
                         #    'FLUXCOM_CL-CL_ANN', \
                         #    'FLUXCOM_CL-CL_RF', \
                             'EPIC', \
                            # 'EPIC_RH', \
+                            'LUH2v2_CROP', \
+                            'UNFCCC_CROP', \
                          ]   
+
+      displayname_master['UNFCCC_CROP']='UNFCCC_CL-CL area'
+      displayname_master['LUH2v2_CROP']='LUH2v2-ESACCI_CL-CL area (used in ORCHIDEE)'
+
       desired_legend=[\
                        "UNFCCC_CL-CL","UNFCCC_CL-CL uncertainty",\
                        'ORCHIDEE_CL-CL', \
-                    #   'ECOSSE_CL-CL', \
+                       'ECOSSE_CL-CL', \
                        'EPIC_CL-CL', \
                      #  'FLUXCOM_CL-CL_ANN', \
                      #  'FLUXCOM_CL-CL_RF', \
                      # 'ORCHIDEE_RH', \
                      # 'EPIC_RH', \
-
+                      displayname_master['LUH2v2_CROP'], \
+                       displayname_master['UNFCCC_CROP'], \
                        ]
 
 #      datasource='UNFCCC/IIASA/MPI-BGC/UAbdn/LSCE'
       output_file_start="CroplandRemain_"
-      output_file_end="_FCO2Nat_2019_v1.png" 
+      output_file_end="_FCO2land_2019_v1.png" 
       titleending=r" : CL-CL bottom-up net CO$_2$ emissions"
 
       # Change some things from the above
+      lplot_areas=True
                            
       displayname_master['EPIC']='EPIC_CL-CL'
 
@@ -1358,7 +1596,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                           'TrendyV7_ORCHIDEE', \
       ]        
 
-      output_file_end="_FCO2Nat_2019_v1.png" 
+      output_file_end="_FCO2land_2019_v1.png" 
 
       if graphname == "inversions_combined":
          titleending=r" : Reconciliation of top-down vs. bottom-up net natural CO$_2$ fluxes"
@@ -1379,8 +1617,8 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                           displayname_master['H&N'], \
                           displayname_master['TrendyV7'], displayname_err_master['TrendyV7'], \
                           displayname_master['ORCHIDEE'], \
-            #              'TrendyV7_ORCHIDEE', \
-            #              'ORCHIDEE-MICT', \
+                          displayname_master['TrendyV7_ORCHIDEE'], \
+                          displayname_master['ORCHIDEE-MICT'], \
                     #      'FLUXCOM_rsonlyANN_os', \
                     #      'FLUXCOM_rsonlyRF_os',
                        ]
@@ -1415,6 +1653,9 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                           displayname_master['H&N'], \
                           displayname_master['VERIFYBU'], \
                           displayname_err_master['VERIFYBU'], \
+                          displayname_master['ORCHIDEE'], \
+                          displayname_master['TrendyV7_ORCHIDEE'], \
+                          displayname_master['ORCHIDEE-MICT'], \
                        ]
 
          # These simulations will be combined together.
@@ -1423,15 +1664,19 @@ def get_simulation_parameters(graphname,lshow_productiondata):
          overwrite_operations["VERIFYBU"]="mean"
 
          # So I don't want to generally plot the components
-         displaylegend_master['ORCHIDEE-MICT']=False
-         displaylegend_master['ORCHIDEE']=False
+         displaylegend_master['ORCHIDEE-MICT']=True
+         displaylegend_master['ORCHIDEE']=True
          displaylegend_master['BLUE']=False
          displaylegend_master['FLUXCOM_rsonlyANN_os']=False
          displaylegend_master['FLUXCOM_rsonlyRF_os']=False
 
-         displaylegend_master['TrendyV7_ORCHIDEE']=False
+         displaylegend_master['TrendyV7_ORCHIDEE']=True
 
       #endif
+
+      displaylegend_master['ORCHIDEE-MICT']=True
+      displaylegend_master['ORCHIDEE']=True      
+      displaylegend_master['TrendyV7_ORCHIDEE']=True
 
       # These simulations will be combined together.
       overwrite_simulations["FAOSTAT_LULUCF"]=['FAOSTAT_Crp','FAOSTAT_Grs','FAOSTAT_For']
@@ -1514,7 +1759,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
       ]
 
 #      datasource='UNFCCC/GCP/EUROCOM/MPI-Jena/ULB'
-      output_file_end="_FCO2Nat_2019_v2.png" 
+      output_file_end="_FCO2land_2019_v2.png" 
       edgec_master['MS-NRT']=facec_master['MS-NRT']
 
       # A couple of these plots will be displayed as bars instead of symbols
@@ -1578,7 +1823,11 @@ def readfile(filename,variablename,ndesiredyears,lconvert_units,starting_year,en
    # The time axes for all these files starts as days from 1900-01-01,
    # the axis itself might start at a different year (1901, 1970).
    # We need to find the indices corresponding to the year starting_year.
-   FCO2=np.zeros((ndesiredyears,12,64))
+   # The 79 here is the number of countries and regions we have in the
+   # CountryTot.nc files, so if that changes, this must change.  By hardcoding
+   # it here, this serves as a check that we are using the files we think
+   # we are using.
+   FCO2=np.zeros((ndesiredyears,12,79))*np.nan
    print("************************************************************")
    print("Reading in file: ",filename)
    print("************************************************************")
@@ -1631,6 +1880,7 @@ def readfile(filename,variablename,ndesiredyears,lconvert_units,starting_year,en
             else:
                lastdaymonth=date(yy,mm,28)-date(1900,1,1)
             #endif
+         #endif
 
          for jtime,jval in enumerate(ncfile.variables['time'][:]):
             if jval >= firstdaymonth.days and jval <= lastdaymonth.days:
@@ -1728,7 +1978,7 @@ def readfile(filename,variablename,ndesiredyears,lconvert_units,starting_year,en
 # If there is no min/max or error values, no worries.
 # This is a bit tricky.  We can only propogate error if we have a symmetric distribution, which
 # we may not have for min/max values.  So I calculate min/max values after this routine.
-def group_input(inputvar,inputerr,inputmin,inputmax,desired_plots,luncert,ndesiredyears,nplots,countries65,desired_simulation):
+def group_input(inputvar,inputerr,inputmin,inputmax,desired_plots,luncert,ndesiredyears,nplots,all_regions_countries,desired_simulation):
    
    # Notice that the inputvar will be the size of the number of regions
    # in the .nc file, while outputvar will be the size of a number
@@ -1740,95 +1990,99 @@ def group_input(inputvar,inputerr,inputmin,inputmax,desired_plots,luncert,ndesir
 
    for igroup in range(nplots):
       indices=[]
-      if desired_plots[igroup] in countries65:
-         #outputvar[:,igroup]=inputvar[:,countries65.index(desired_plots[igroup])]
-         indices.append(countries65.index(desired_plots[igroup]))
+      if desired_plots[igroup] in all_regions_countries:
+         #outputvar[:,igroup]=inputvar[:,all_regions_countries.index(desired_plots[igroup])]
+         indices.append(all_regions_countries.index(desired_plots[igroup]))
       elif desired_plots[igroup] == "EU-28":
          #outputvar[:,igroup]=inputvar[:,E28]
-         indices.append(countries65.index('E28'))
+         indices.append(all_regions_countries.index('E28'))
       elif desired_plots[igroup] == "EAE2":
          # This is from Hui Yang, for the Eastern Europe taskforce
          # European Russia, Estonia, Latvia, Lithuania, Belarus, Poland, Ukraine
          # Ignore European Russia, since we just have the totals for Russia
-         indices.append(countries65.index('EST'))
-         indices.append(countries65.index('LVA'))
-         indices.append(countries65.index('LTU'))
-         indices.append(countries65.index('BLR'))
-         indices.append(countries65.index('POL'))
-         indices.append(countries65.index('UKR'))
+         indices.append(all_regions_countries.index('EST'))
+         indices.append(all_regions_countries.index('LVA'))
+         indices.append(all_regions_countries.index('LTU'))
+         indices.append(all_regions_countries.index('BLR'))
+         indices.append(all_regions_countries.index('POL'))
+         indices.append(all_regions_countries.index('UKR'))
       elif desired_plots[igroup] == "WEE2":
          # This is from Hui Yang, for the Eastern Europe taskforce
          # Belgium, France, Netherlands, Germany, Switzerland, UK, Spain, Portugal
-         indices.append(countries65.index('BEL'))
-         indices.append(countries65.index('FRA'))
-         indices.append(countries65.index('NLD'))
-         indices.append(countries65.index('DEU'))
-         indices.append(countries65.index('CHE'))
-         indices.append(countries65.index('GBR'))
-         indices.append(countries65.index('ESP'))
-         indices.append(countries65.index('PRT'))
+         indices.append(all_regions_countries.index('BEL'))
+         indices.append(all_regions_countries.index('FRA'))
+         indices.append(all_regions_countries.index('NLD'))
+         indices.append(all_regions_countries.index('DEU'))
+         indices.append(all_regions_countries.index('CHE'))
+         indices.append(all_regions_countries.index('GBR'))
+         indices.append(all_regions_countries.index('ESP'))
+         indices.append(all_regions_countries.index('PRT'))
+         #################################################
+         # note that most of the 3-letter codes below should be obsolete, now in the 
+         # NetCDF file
+         #################################################
       elif desired_plots[igroup] == "CSK":
          # This is from Roxana
          # Former Czechoslovakia (CSK)
          # Czechia (CZE), Slovakia (SVK)
-         indices.append(countries65.index('CZE'))
-         indices.append(countries65.index('SVK'))
+         indices.append(all_regions_countries.index('CZE'))
+         indices.append(all_regions_countries.index('SVK'))
       elif desired_plots[igroup] == "CHL":
          # This is from Roxana
          # Switzerland + Liechtenstein (CHL)
          # Switzerland (CHE), Liechtenstein (LIE)
-         indices.append(countries65.index('CHE'))
-         indices.append(countries65.index('LIE'))
+         indices.append(all_regions_countries.index('CHE'))
+         indices.append(all_regions_countries.index('LIE'))
       elif desired_plots[igroup] == "BLT":
          # This is from Roxana
          # Baltic countries (BLT)
          # Estonia (EST), Lithuania (LTU), Latvia (LVA)
-         indices.append(countries65.index('EST'))
-         indices.append(countries65.index('LTU'))
-         indices.append(countries65.index('LVA'))
+         indices.append(all_regions_countries.index('EST'))
+         indices.append(all_regions_countries.index('LTU'))
+         indices.append(all_regions_countries.index('LVA'))
       elif desired_plots[igroup] == "NAC":
          # This is from Roxana
          # North Adriatic Countries (NAC)
          # Slovenia (SVN), Croatia (HRV)
-         indices.append(countries65.index('SVN'))
-         indices.append(countries65.index('HRV'))
+         indices.append(all_regions_countries.index('SVN'))
+         indices.append(all_regions_countries.index('HRV'))
       elif desired_plots[igroup] == "DSF":
          # This is from Roxana
          # Denmark, Sweden, Finland (DSF)
          # Sweden (SWE), Denmark (DNK), Finland (FIN)
-         indices.append(countries65.index('SWE'))
-         indices.append(countries65.index('DNK'))
-         indices.append(countries65.index('FIN'))
+         indices.append(all_regions_countries.index('SWE'))
+         indices.append(all_regions_countries.index('DNK'))
+         indices.append(all_regions_countries.index('FIN'))
       elif desired_plots[igroup] == "FMA":
          # This is from Roxana
          # France, Monaco, Andorra (FMA)
          # France (FRA), Monaco (MCO), Andorra (AND)
          # Note that Monaco is already combined with France in our
          # mask.
-         indices.append(countries65.index('FRA'))
-         indices.append(countries65.index('AND'))
+         indices.append(all_regions_countries.index('FRA'))
+         indices.append(all_regions_countries.index('AND'))
       elif desired_plots[igroup] == "UMB":
          # This is from Roxana
          # Ukraine, Rep. of Moldova, Belarus (UMB)
          # Ukraine (UKR), Moldova, Republic of (MDA), Belarus (BLR)
-         indices.append(countries65.index('UKR'))
-         indices.append(countries65.index('MDA'))
-         indices.append(countries65.index('BLR'))
+         indices.append(all_regions_countries.index('UKR'))
+         indices.append(all_regions_countries.index('MDA'))
+         indices.append(all_regions_countries.index('BLR'))
       elif desired_plots[igroup] == "SEA":
          # This is from Roxana
          # South-Eastern Europe alternate (SEA)
          # Serbia (SRB), Montenegro (MNE),Kosovo (RKS), Bosnia and Herzegovina (BIH), Albania (ALB), Macedonia, the former Yugoslav (MKD)
          # Notice that Kosovo is included in Serbia and Montenegro in our mask.
-         indices.append(countries65.index('SRB'))
-         indices.append(countries65.index('MNE'))
-         indices.append(countries65.index('BIH'))
-         indices.append(countries65.index('ALB'))
-         indices.append(countries65.index('MKD'))
+         indices.append(all_regions_countries.index('SRB'))
+         indices.append(all_regions_countries.index('MNE'))
+         indices.append(all_regions_countries.index('BIH'))
+         indices.append(all_regions_countries.index('ALB'))
+         indices.append(all_regions_countries.index('MKD'))
       elif desired_plots[igroup] == "IBE2":
          # This is a test to compare against the IBE from the file, just to
          # see if the results are the same.
-         indices.append(countries65.index('ESP'))
-         indices.append(countries65.index('PRT'))
+         indices.append(all_regions_countries.index('ESP'))
+         indices.append(all_regions_countries.index('PRT'))
       else:
          print("Do not know what this country group is!")
          print(desired_plots[igroup])
@@ -1984,7 +2238,8 @@ def combine_simulations(overwrite_simulations,overwrite_coeffs,overwrite_operati
 # France but France in Google likely has overseas territories).
 def calculate_country_areas():
 
-   src = nc.Dataset("/home/dods/verify/VERIFY_INPUT/COUNTRY_MASKS/eurocomCountryMaskEEZ_304x560.nc","r")
+#   src = nc.Dataset("/home/dods/verify/VERIFY_INPUT/COUNTRY_MASKS/eurocomCountryMaskEEZ_304x560.nc","r")
+   src = nc.Dataset("/home/dods/verify/VERIFY_INPUT/COUNTRY_MASKS/extended_eurocomCountryMaskEEZ_304x560_35.06N72.94N_24.94W44.94E.nc","r")
    latcoord="lat"
    loncoord="lon"
    names = src.variables["country_name"][:]
@@ -2008,7 +2263,7 @@ def calculate_country_areas():
       #filtered_mask[ filtered_mask > 0.0 ]=1.0
       #print(np.nansum(filtered_mask[:,:]))
 
-      print("country_areas[\"{0}\"]={1}".format(cname,area))
+      print("   country_areas[\"{0}\"]={1}".format(cname,area))
    #endfor
 
    src.close()
@@ -2018,6 +2273,9 @@ def calculate_country_areas():
    
 
 def get_country_areas():
+
+   # This is taken from our map with 79 regions.
+
 
    country_areas={}
    country_areas["Aaland Islands"]=1578897664.0
@@ -2040,12 +2298,14 @@ def get_country_areas():
    country_areas["Faroe Islands"]=1354416512.0
    country_areas["United Kingdom"]=245327314944.0
    country_areas["Guernsey"]=125637592.0
+   country_areas["Georgia"]=56721285120.0
    country_areas["Greece"]=131507568640.0
+   country_areas["Greenland"]=28462256128.0
    country_areas["Croatia"]=56145813504.0
    country_areas["Hungary"]=92676333568.0
    country_areas["Isle of Man"]=718484352.0
    country_areas["Ireland"]=69942263808.0
-   country_areas["Iceland"]=8021662720.0
+   country_areas["Iceland"]=101657755648.0
    country_areas["Italy"]=299969642496.0
    country_areas["Jersey"]=126276816.0
    country_areas["Liechtenstein"]=164011744.0
@@ -2061,29 +2321,42 @@ def get_country_areas():
    country_areas["Poland"]=311556964352.0
    country_areas["Portugal"]=87435624448.0
    country_areas["Romania"]=236436160512.0
-   country_areas["Russian Federation"]=571430600704.0
+   country_areas["Russian Federation"]=1995897176064.0
    country_areas["Svalbard and Jan Mayen"]=251208448.0
    country_areas["San Marino"]=59646068.0
    country_areas["Serbia"]=88679014400.0
    country_areas["Slovakia"]=48968114176.0
    country_areas["Slovenia"]=19864659968.0
    country_areas["Sweden"]=447214321664.0
-   country_areas["Turkey"]=400744775680.0
-   country_areas["Ukraine"]=472574918656.0
+   country_areas["Turkey"]=791915069440.0
+   country_areas["Ukraine"]=596645642240.0
    country_areas["BENELUX"]=68883161088.0
-   country_areas["United Kingdom + Ireland"]=315988049920.0
-   country_areas["Spain + Portugal"]=585773481984.0
-   country_areas["Western Europe"]=932417175552.0
-   country_areas["Central Europe"]=1013188198400.0
-   country_areas["Northern Europe"]=1327828828160.0
-   country_areas["Southern Europe"]=886562684928.0
-   country_areas["South-Eastern Europe"]=1201827872768.0
-   country_areas["Eastern Europe"]=1250015051776.0
-   country_areas["EU-15"]=3217714053120.0
-   country_areas["EU-27"]=4298198482944.0
-   country_areas["EU-28"]=4354344222720.0
-   country_areas["all Europe"]=6611839483904.0
-   country_areas["Europe"]=6621466984448.0
+   country_areas["Former Czechoslovakia"]=127384567808.0
+   country_areas["Switzerland + Liechtenstein"]=41757442048.0
+   country_areas["Baltic countries"]=174474510336.0
+   country_areas["North Adriatic Countries"]=76010471424.0
+   country_areas["Denmark, Sweden, Finland"]=825983631360.0
+   country_areas["United Kingdom + Ireland"]=315269578752.0
+   country_areas["Iberia"]=585773481984.0
+   country_areas["Western Europe"]=931446718464.0
+   country_areas["Western Europe (alternative)"]=1842534678528.0
+   country_areas["Central Europe"]=1013024096256.0
+   country_areas["Northern Europe"]=1326249934848.0
+   country_areas["Southern Europe (all)"]=2502051495936.0
+   country_areas["Southern Europe (non-EU)"]=1054263214080.0
+   country_areas["Southern Europe (EU)"]=1447788412928.0
+   country_areas["South-Western Europe"]=886055698432.0
+   country_areas["South-Eastern Europe (all)"]=1615995863040.0
+   country_areas["South-Eastern Europe (non-EU)"]=1054263214080.0
+   country_areas["South-Eastern Europe (EU)"]=561732714496.0
+   country_areas["Eastern Europe"]=2832275603456.0
+   country_areas["Eastern Europe (alternative)"]=1288686665728.0
+   country_areas["Eastern Europe (including Russia)"]=3284583317504.0
+   country_areas["EU-11+CHE"]=2273153908736.0
+   country_areas["EU-15"]=3214493614080.0
+   country_areas["EU-27"]=4105796583424.0
+   country_areas["EU-27+UK"]=4351123783680.0
+   country_areas["all Europe"]=8654811561984.0
 
    return country_areas
 #enddef
@@ -2099,26 +2372,97 @@ def read_fake_data(ndesiredyears,simname):
    outputmax=np.zeros((ndesiredyears))*np.nan
 
    base_name="fake_data"
-
-   # For the data itself
    dfdata=pd.read_csv(filepath_or_buffer=base_name+".csv",index_col=0,header=0)
-   values=dfdata.loc[simname]
-   outputvar=values.tolist()
 
-   # For the data error
-   dfdata=pd.read_csv(filepath_or_buffer=base_name+"_err.csv",index_col=0,header=0)
-   values=dfdata.loc[simname]
-   outputerr=values.tolist()
+   #print("column names ",dfdata.columns)
 
-# For the data min
-   dfdata=pd.read_csv(filepath_or_buffer=base_name+"_min.csv",index_col=0,header=0)
-   values=dfdata.loc[simname]
-   outputerr=values.tolist()
+   # check to see if the following timeseries exist.
+   try:
+      values=dfdata.loc[:,simname]
+      outputvar=values.tolist()
+   except:
+      print("Could not find data for {}.".format(simname))
+   #endif
 
-# For the data max
-   dfdata=pd.read_csv(filepath_or_buffer=base_name+"_max.csv",index_col=0,header=0)
-   values=dfdata.loc[simname]
-   outputerr=values.tolist()
+   # check to see if the following timeseries exist.
+   try:
+      values=dfdata.loc[:,"{}_MIN".format(simname)]
+      outputmin=values.tolist()
+   except:
+      print("Could not find minimum data for {}.".format(simname))
+   #endif
+
+   # check to see if the following timeseries exist.
+   try:
+      values=dfdata.loc[:,"{}_MAX".format(simname)]
+      outputmax=values.tolist()
+   except:
+      print("Could not find maximum data for {}.".format(simname))
+   #endif
+
+   # check to see if the following timeseries exist.
+   try:
+      values=dfdata.loc[:,"{}_ERR".format(simname)]
+      outputerr=values.tolist()
+   except:
+      print("Could not find error data for {}.".format(simname))
+   #endif
 
    return outputvar,outputerr,outputmin,outputmax
 #enddef
+
+#####
+def print_test_data(ltest_data,simulation_data,simulation_err,simulation_min,simulation_max,itest_sim,itest_plot,desired_simulations,desired_plots,checkpoint_string):
+
+   if ltest_data:
+      print("**************************************************")
+      print(checkpoint_string)
+      print("Simulation: ",desired_simulations[itest_sim])
+      print("Plot: ",desired_plots[itest_plot])
+      print("simulation data  ",simulation_data[itest_sim,:,itest_plot])
+      print("simulation err ",simulation_err[itest_sim,:,itest_plot])
+      print("simulation min ",simulation_err[itest_sim,:,itest_plot])
+      print("simulation max ",simulation_err[itest_sim,:,itest_plot])
+      print("**************************************************")
+   #endif
+#####
+
+
+#### Not sure this is currently working
+def create_sectorplot_full():
+   temp_desired_sims=("EPIC","ECOSSE_GL-GL","EFISCEN")
+   temp_data=np.zeros((len(temp_desired_sims),ndesiredyears))
+   for isim,csim in enumerate(temp_desired_sims):
+      temp_data[isim,:]=simulation_data[desired_simulations.index(csim),:,iplot]
+   #endfor
+      
+   # plot the whole sum of these three runs
+   p1=ax1.scatter(allyears,np.nansum(temp_data,axis=0),marker="P",label="EPIC/ECOSSE/EFISCEN",facecolors="blue", edgecolors="blue",s=60,alpha=production_alpha)
+   legend_axes.append(p1)
+   legend_titles.append("EPIC/ECOSSE/EFISCEN")
+
+   # This is where things get really clever.  I want to show stacked bars of the three component fluxes.  However, there
+   # are sometimes positive, and sometimes negative values, which means I cannot always use the same base of the bars.
+   # I am adapting code I found on stackexchange
+
+   # Take negative and positive data apart and cumulate
+   cumulated_data = get_cumulated_array(temp_data, min=0)
+   cumulated_data_neg = get_cumulated_array(temp_data, max=0)
+         
+   # Re-merge negative and positive data.
+   row_mask = (temp_data<0)
+   cumulated_data[row_mask] = cumulated_data_neg[row_mask]
+   data_stack = cumulated_data
+
+   temp_data[temp_data == 0.0]=np.nan
+
+   barwidth=0.3
+   for isim,csim in enumerate(temp_desired_sims):
+      if productiondata[desired_simulations.index(csim)]:
+         p1=ax1.bar(allyears, temp_data[isim,:], bottom=data_stack[isim,:], color=facec[desired_simulations.index(csim)],width=barwidth,alpha=production_alpha)
+      else:
+         p1=ax1.bar(allyears, temp_data[isim,:], bottom=data_stack[isim,:], color=facec[desired_simulations.index(csim)],width=barwidth,alpha=nonproduction_alpha)
+      #endif
+      legend_axes.append(p1)
+      legend_titles.append(csim)
+   #endfor

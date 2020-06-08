@@ -157,10 +157,13 @@ def get_country_region_data(country_region_plotting_order=["NONE"],loutput_codes
     # A couple extra possiblities
     country_region_data["MDA"].add_possible_names('Moldova, Republic of')
     country_region_data["MDA"].add_possible_names('Moldova')
+    country_region_data["MDA"].add_possible_names('Republic of Moldova')
     country_region_data["MKD"].add_possible_names('Macedonia, the former Yugoslav')
     country_region_data["MKD"].add_possible_names('Macedonia')
+    country_region_data["MKD"].add_possible_names('North Macedonia')
     country_region_data["CZE"].add_possible_names('Czech Rep')
     country_region_data["CZE"].add_possible_names('CzechRepublic')
+    country_region_data["CZE"].add_possible_names('Czechia')
     country_region_data["GBR"].add_possible_names('UK')
     country_region_data["GBR"].add_possible_names('UnitedKingdom')
     country_region_data["BIH"].add_possible_names('BosniaandHerzegovina')
@@ -178,6 +181,9 @@ def get_country_region_data(country_region_plotting_order=["NONE"],loutput_codes
     country_region_data["SEE"].add_possible_names('South-Eastern Europe')
     country_region_data["SOE"].add_possible_names('Southern Europe')
     country_region_data["E28"].add_possible_names('EU-28')
+    country_region_data["E28"].add_possible_names("'EU-28'")
+    country_region_data["E28"].add_possible_names("'European Union (Convention)'")
+    country_region_data["E28"].add_possible_names("European Union (Convention)")
 
 
 
@@ -200,7 +206,7 @@ def convert_country_to_code(cname,country_region_data):
     output_code=""
 
     for ccode in country_region_data.keys():
-        if ccode == country_region_data[ccode].long_name or ccode in country_region_data[ccode].possible_names:
+        if cname == country_region_data[ccode].long_name or cname in country_region_data[ccode].possible_names:
             output_code=ccode
         #endif
     #endif
@@ -696,10 +702,10 @@ def print_regions_and_countries(country_region_plotting_order,country_region_dat
             ccode=country
             cr_data=country_region_data[ccode]
 
-            print_string="{},{},{},".format(icount+1,country_region_data[ccode].long_name,ccode)
+            print_string="{},\"{}\",{},".format(icount+1,country_region_data[ccode].long_name,ccode)
             for jcount in range(ncountries_max):
                 if jcount < len(cr_data.composant_countries):
-                    print_string=print_string + country_region_data[cr_data.composant_countries[jcount]].long_name + ","
+                    print_string=print_string + "\"{}\",".format(country_region_data[cr_data.composant_countries[jcount]].long_name)
                 else:
                     print_string=print_string + ","
                 #endif
