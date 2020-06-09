@@ -1,9 +1,115 @@
 import numpy as np
-
+import matplotlib.pyplot as plt
+import matplotlib
+import sys
+from matplotlib.colors import ListedColormap, LinearSegmentedColormap
+from matplotlib.lines import Line2D
+import re
 
 # This is a plot which looks different from all the rest.  It's a series
 # of stacked bar plots.
-def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,syear_average,eyear_average,xplot_min,xplot_max,ndesiredyears,allyears,ax1,facec,production_alpha,legend_axes,legend_titles,displayname,canvas):
+def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,syear_average,eyear_average,xplot_min,xplot_max,ndesiredyears,allyears,ax1,facec,production_alpha,legend_axes,legend_titles,displayname,canvas,output_file_end):
+
+
+    #####
+    # A couple options for showing different versions.
+
+    # If true, we will always have the value 0.0 in the plot.
+    # If false, focus more on the transitions.
+    # lshow_full_bars=False
+
+    # A choice has to be made here: do I use the LULUCF totals, 
+    # or the sum of the subsectors? 
+    # luse_subsector_sums=True
+
+    # If this is True, print out the LULUCF totals as a single gray bar. 
+    # If false, print out all the subsector totals.
+    #lplot_lulucf_tot_bars=True
+    
+    # Use a geometric color gradient.  This shows more color, less white/gray.
+    #lgeom_gradient=True
+
+    # Find out the version number of the plot.
+    m=re.search(r'_[vV](\d+)\.png',output_file_end)
+    if m:
+        # The sector code we will extract from the .csv file
+        version_number=m.group(1)
+    else:
+        print("Unable to find the version number of this plot!")
+        print("Output file name: ",output_file_end)
+        print("Looking for something like _v4.png")
+        sys.exit(1)
+    #endif
+
+    # v2 = geometric gradient, focus on transitions, subsector sums, plot
+    # subsector totals instead of gray LULUCF bar
+    if version_number == "2":
+        lshow_full_bars=False
+        luse_subsector_sums=True
+        lplot_lulucf_tot_bars=False
+        lgeom_gradient=True
+    # v3 = linear gradient, focus on transitions, subsector sums, plot
+    # subsector totals instead of gray LULUCF bar
+    elif version_number == "3":
+        lshow_full_bars=False
+        luse_subsector_sums=True
+        lplot_lulucf_tot_bars=False
+        lgeom_gradient=False
+    # v4 = geometric gradient, show whole bar, subsector sums, plot
+    # subsector totals instead of gray LULUCF bar
+    elif version_number == "4":
+        lshow_full_bars=True
+        luse_subsector_sums=True
+        lplot_lulucf_tot_bars=False
+        lgeom_gradient=True
+    # v5 = linear gradient, show whole bar, subsector sums, plot
+    # subsector totals instead of gray LULUCF bar
+    elif version_number == "5":
+        lshow_full_bars=False
+        luse_subsector_sums=True
+        lplot_lulucf_tot_bars=False
+        lgeom_gradient=False
+    # v6 = geometric gradient, focus on transitions, subsector sums, plot
+    # gray LULUCF bar
+    elif version_number == "6":
+        lshow_full_bars=False
+        luse_subsector_sums=True
+        lplot_lulucf_tot_bars=True
+        lgeom_gradient=True
+    # v7 = linear gradient, focus on transitions, subsector sums, plot
+    # gray LULUCF bar
+    elif version_number == "7":
+        lshow_full_bars=False
+        luse_subsector_sums=True
+        lplot_lulucf_tot_bars=True
+        lgeom_gradient=False
+    # v8 = geometric gradient, show whole bar, subsector sums, plot
+    # gray LULUCF bar
+    elif version_number == "8":
+        lshow_full_bars=True
+        luse_subsector_sums=True
+        lplot_lulucf_tot_bars=True
+        lgeom_gradient=True
+    # v9 = linear gradient, show whole bar, subsector sums, plot
+    # gray LULUCF bar
+    elif version_number == "9":
+        lshow_full_bars=True
+        luse_subsector_sums=True
+        lplot_lulucf_tot_bars=True
+        lgeom_gradient=False
+    else:
+        print("Not sure how to handle this version number of this plot!")
+        print("Output file name: ",output_file_end)
+        print("Found version numbers: ",version_number)
+        sys.exit(1)
+    #endif
+
+    # v6 = geometric gradient, focus on transtions, gray bar for LULUCF tot
+    # v7 = linear gradient, focus on transtions, gray bar for LULUCF tot
+    # v8 = geometric gradient, show whole bar, gray bar for LULUCF tot
+    # v9 = linear gradient, show whole bar, gray bar for LULUCF tot
+
+    #####
 
     # This stores some of the text objects, so I can use
     # them later to set the plot limits.  Note that I cannot
@@ -20,12 +126,14 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
                           'UNFCCC_cropland_convert', \
                           'UNFCCC_wetland_convert', \
                           'UNFCCC_settlement_convert', \
-                          'UNFCCC_other_convert']
+                          'UNFCCC_other_convert', \
+                          'UNFCCC_woodharvest']
     for csim in required_simulations:
         if csim not in desired_simulations:
             print("Need to include {} in the simulation list!".format(csim))
         #endif
     #endif
+
 
     tot_index=desired_simulations.index("UNFCCC_LULUCF")
 
@@ -33,10 +141,38 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
     test_vals=simulation_data[tot_index,:,iplot]
     check_vals=np.where(np.isnan(test_vals),True,False)
     if check_vals.all():
-        print("No data for {}.  Skipping this country/region.".format(desired_simulations[isim]))
+        print("No data for {}.  Skipping this country/region.".format(desired_simulations[tot_index]))
         #print(test_vals)
         #print(check_vals)
-        return True
+        return True,ax1
+    #endif
+
+    # It's not clear that UNFCCC_LULUCF will actually be the sum of all these
+    # other categories.
+    new_sum_vals=np.zeros((len(required_simulations),len(test_vals)))*np.nan
+    for isim,csim in enumerate(required_simulations):
+        if csim == 'UNFCCC_LULUCF':
+            continue
+        #endif
+
+        
+        temp_index=desired_simulations.index(csim)
+        print(csim,temp_index,simulation_data[temp_index,:,iplot])
+        new_sum_vals[isim,:]=simulation_data[temp_index,:,iplot]
+    #endfor
+    new_sum_vals=np.nansum(new_sum_vals,axis=0)
+    # the above command leaves 0.0 where all elements were NaN.  That's not what I want.
+    new_sum_vals=np.where(new_sum_vals == 0.0, np.nan, new_sum_vals)
+
+    close_array=np.isclose(new_sum_vals,simulation_data[tot_index,:,iplot],rtol=0.0001)
+    if not close_array.all():
+        print("The LULUCF values are not close enough to the sum of all the subsectors!")
+        print("LULUCF: ",simulation_data[tot_index,:,iplot])
+        print("Subsectors: ",new_sum_vals)
+        #for isim,csim in enumerate(desired_simulations):
+        #    print("Diff: ",new_sum_vals-simulation_data[tot_index,:,iplot])
+        #    print("{}: ".format(csim),simulation_data[isim,:,iplot])
+        #endfor
     #endif
 
     # Print out each of the bars for the average.  
@@ -90,14 +226,23 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
     #endfor
     temp_data=simulation_data[:,data_mask,iplot].copy()
 
+    if luse_subsector_sums:
+        lulucf_total_values=new_sum_vals[data_mask].copy()
+    else:
+        lulucf_total_values=simulation_data[tot_index,data_mask,iplot].copy()
+    #endif
+
+
     # The LULUCF values are the full values.  For the rest of the bars, though, I plot the difference
     # between the values.  So the other arrays are one shorter than this array.
     ndiffs=temp_data.shape[1]-1
     diff_array=np.zeros((temp_data.shape[0],ndiffs),dtype=float)
+    lulucf_total_diffs=np.zeros((ndiffs),dtype=float)
     percent_diff_array=np.zeros((temp_data.shape[0],ndiffs),dtype=float)
     for iyear in range(ndiffs):
         diff_array[:,iyear]=temp_data[:,iyear+1]-temp_data[:,iyear]
         percent_diff_array[:,iyear]=diff_array[:,iyear]/abs(temp_data[:,iyear])*100
+        lulucf_total_diffs[iyear]=lulucf_total_values[iyear+1]-lulucf_total_values[iyear]
     #endif
 
     # This gets tricky for the net gain and net loss.  I need to loop over all the possible data at every point
@@ -105,9 +250,162 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
 
     netsims=['UNFCCC_forest_convert','UNFCCC_grassland_convert','UNFCCC_cropland_convert','UNFCCC_wetland_convert','UNFCCC_settlement_convert','UNFCCC_other_convert']
 
-    lulucf_bars=ax1.bar(plotting_positions, temp_data[tot_index,:], color=facec[desired_simulations.index("UNFCCC_LULUCF")],width=barwidth,alpha=production_alpha)
-    legend_axes.append(lulucf_bars)
-    legend_titles.append(displayname[tot_index])
+    # I will do some odd manipulations and will have to rescale the plotting axes after.
+    # So keep track of the min and max values.
+    plotmin=np.nanmin(lulucf_total_values[:])
+    plotmax=np.nanmax(lulucf_total_values[:])
+    # Since we are doing bar plots, we need to make sure the bottom of the bar
+    # is included in our viewing window.
+    # If I remove this, I can zoom in on where things actually happen.
+    #plotmax=max(plotmax,0.0)
+    #plotmin=min(plotmin,0.0)
+
+    #print("jiofez
+    # I am going to try to create gradient bars to better show the direction of changes.
+    # These are taking from https://matplotlib.org/3.1.1/gallery/lines_bars_and_markers/gradient_bar.html
+    # I had to adapt it for my purposes.
+    def gradient_image(ax, extent, cmap, direction=0.0, cmap_range=(0, 1)):
+        #"""
+        #Draw a gradient image based on a colormap.
+        #
+        #Parameters
+        #----------
+        #ax : Axes
+        #    The axes to draw on.
+        #extent
+        #    The extent of the image as (xmin, xmax, ymin, ymax).
+        #    By default, this is in Axes coordinates but may be
+        #    changed using the *transform* kwarg.
+        #direction : float
+        #    The direction of the gradient. This is a number in
+        #    range 0 (=vertical) to 1 (=horizontal).
+        #cmap_range : float, float
+        #    The fraction (cmin, cmax) of the colormap that should be
+        #    used for the gradient, where the complete colormap is (0, 1).
+        #**kwargs
+        #    Other parameters are passed on to `.Axes.imshow()`.
+        #    In particular useful is *cmap*.
+        #"""
+
+        #
+        phi = direction * np.pi / 2
+        v = np.array([np.cos(phi), np.sin(phi)])
+        X = np.array([[v @ [1, 0], v @ [1, 1]],
+                      [v @ [0, 0], v @ [0, 1]]])
+        a, b = cmap_range
+        X = a + (b - a) / X.max() * X
+        im = ax.imshow(X, extent=extent, interpolation='bicubic',
+                       vmin=0, vmax=1, cmap=cmap,aspect='auto')
+        return im
+    #enddef
+
+
+    # notice I've changed this to just take a single value of x,y!
+    def gradient_bar(ax, left, right, bottom, top, color_value, transition_color):
+
+        # I want to create my own colormap that goes from the input color to white.
+        N = 256
+        vals = np.ones((N, 4))
+        rgbvals=matplotlib.colors.to_rgba(color_value)
+        grayvals=matplotlib.colors.to_rgba(transition_color)
+
+        # I want the color to draw the eye in the direction the value is going.
+        # For negative values, the color should be at the bottom.  For positive
+        # values, the color should be at the top.
+        # Notice that, since bottom and top are defined with the real value
+        # of plot_value, there is nothing to do here!  The "top" value will be
+        # below the "bottom" value in the case of a negative plot_value.
+
+        # I want more color than gray/white, so use a geometric sequence.
+        # Such a sequence cannot include 0.0, though.
+        grayvals=np.where(np.asarray(grayvals) < 0.01,0.01,grayvals)
+        rgbvals=np.where(np.asarray(rgbvals) < 0.01,0.01,rgbvals)
+
+        if lgeom_gradient:
+            vals[:, 0] = np.geomspace(grayvals[0], rgbvals[0], N)
+            vals[:, 1] = np.geomspace(grayvals[1], rgbvals[1], N)
+            vals[:, 2] = np.geomspace(grayvals[2], rgbvals[2], N)
+        else:
+            vals[:, 0] = np.linspace(grayvals[0], rgbvals[0], N)
+            vals[:, 1] = np.linspace(grayvals[1], rgbvals[1], N)
+            vals[:, 2] = np.linspace(grayvals[2], rgbvals[2], N)
+        #endif
+
+        newcmp = ListedColormap(vals)
+
+
+        gradient_image(ax, (left, right, bottom, top), newcmp)
+
+    #enddef
+
+    if lplot_lulucf_tot_bars:
+        lulucf_bars=ax1.bar(plotting_positions, lulucf_total_values[:], color=facec[desired_simulations.index("UNFCCC_LULUCF")],width=barwidth,alpha=production_alpha)
+        #legend_axes.append(lulucf_bars)
+        #legend_titles.append(displayname[tot_index])
+    else:
+        # The subsector totals can be either positive or negative.  So try something where I plot the negative values
+        # on the left (taking up 1/2 of the column) and the positive values on the right (taking up the other 1/2).
+        
+        for iyear in range(len(plotting_positions)):
+
+            xval=plotting_positions[iyear]
+
+            # First, negative values
+            yval=0.0
+            for isim,simname in enumerate(required_simulations):
+                if simname == "UNFCCC_LULUCF":
+                    continue
+                #endif
+                plot_value=temp_data[isim,iyear]
+
+                color_value=facec[isim]
+                if plot_value <= 0.0:
+                    # Net loss
+                    #print("vcxv loss ",netsims[jsim],xval,yval,plot_value)
+                    #p1=ax1.bar(xval-barwidth/4.0, plot_value, bottom=yval,color=color_value,width=barwidth/2.0,alpha=production_alpha)
+                    p1=gradient_bar(ax1,xval-barwidth/2.0, xval, yval, plot_value+yval, color_value, facec[desired_simulations.index("UNFCCC_LULUCF")])
+                    #if displayname[isim] not in legend_titles:
+                    #    legend_axes.append(p1)
+                    #    legend_titles.append(displayname[isim])
+                    #endif
+                    yval=yval+plot_value
+                    if yval > plotmax:
+                        plotmax=yval
+                    elif yval <= plotmin:
+                        plotmin=yval
+                    #endif
+                #endif
+            #endfor
+
+            # now, positive values
+            for isim,simname in enumerate(required_simulations):
+                if simname == "UNFCCC_LULUCF":
+                    continue
+                #endif
+                plot_value=temp_data[isim,iyear]
+
+                color_value=facec[isim]
+                if plot_value > 0.0:
+                    p1=gradient_bar(ax1,xval+barwidth/2.0, xval, yval, plot_value+yval, color_value, facec[desired_simulations.index("UNFCCC_LULUCF")])
+                    #p1=ax1.bar(xval+barwidth/4.0, plot_value, bottom=yval,color=color_value,width=barwidth/2.0,alpha=production_alpha)
+                    #if displayname[isim] not in legend_titles:
+                    #    legend_axes.append(p1)
+                    #    legend_titles.append(displayname[isim])
+                    #endif
+                    yval=yval+plot_value
+                    if yval > plotmax:
+                        plotmax=yval
+                    elif yval <= plotmin:
+                        plotmin=yval
+                    #endif
+                #endif
+            #endfor
+
+        #endfor
+
+        print("Trying this!")
+    #endif
+    ###############
 
     # These are routines to put text above and below the bars.
     # Notice that I pass the result of the ax1.bar here.  Even if
@@ -147,7 +445,7 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
         for idx,rect in enumerate(rects):
             height = rect.get_height()
             bottom_point=rect.get_y()
-            print("In bottom label! ",height,bottom_point,height+bottom_point)
+#            print("In bottom label! ",height,bottom_point,height+bottom_point)
             # I add some space for padding
             if height < 0.0:
                 text_obj=ax1.text(rect.get_x() + rect.get_width()/2., height+bottom_point,
@@ -163,25 +461,18 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
         #endfor
     #enddef
 
-    # I will do some odd manipulations and will have to rescale the plotting axes after.
-    # So keep track of the min and max values.
-    plotmin=temp_data[tot_index,:].min()
-    plotmax=temp_data[tot_index,:].max()
-    # Since we are doing bar plots, we need to make sure the bottom of the bar
-    # is included in our viewing window.
-    # If I remove this, I can zoom in on where things actually happen.
-    #plotmax=max(plotmax,0.0)
-    #plotmin=min(plotmin,0.0)
-
     # For every interval, we need to make a new bar plot, since the values in the loss/gain
     # may change.
     for iyear in range(ndiffs):
 
         # First, how much total change did we have between the last period and this period?
-        tot_change=diff_array[tot_index,iyear]
-        tot_percent_change=diff_array[tot_index,iyear]/abs(temp_data[tot_index,iyear+1])*100.0
+        tot_change=lulucf_total_diffs[iyear]
+        tot_percent_change=lulucf_total_diffs[iyear]/abs(lulucf_total_values[iyear+1])*100.0
 
-        yval=temp_data[tot_index,iyear]
+        yval=lulucf_total_values[iyear]
+        print("Starting value for ",iyear,yval)
+        print(lulucf_total_diffs)
+        print(lulucf_total_values)
          
         barnames_normal=["UNFCCC_FL-FL", "UNFCCC_GL-GL", "UNFCCC_CL-CL","UNFCCC_woodharvest"]
         for ibar,cbar in enumerate(barnames_normal):
@@ -190,13 +481,21 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
             isim=desired_simulations.index(barnames[ibar])
             plot_value=diff_array[isim,iyear]
             color_value=facec[isim]
-            
-            p1=ax1.bar(xval, plot_value, bottom=yval,color=color_value,width=barwidth,alpha=production_alpha)
+
+            # If the plot value is NaN for one of these bars, just give
+            # it a value of 0.0 to show it doesn't contribute.
+            #print("jifoez ",iyear,cbar,xval,barwidth,yval,plot_value)
+            if np.isnan(plot_value):
+                plot_value=0.0
+            #endif
+
+            p1=gradient_bar(ax1,xval-barwidth/2.0, xval+barwidth/2.0, yval, plot_value+yval, color_value, "white")
+            p1=ax1.bar(xval, plot_value, bottom=yval,color=color_value,width=barwidth,alpha=0.0)
             top_label(p1,diff_array[isim,iyear]/tot_change*tot_percent_change,text_objects)
             bottom_label(p1,displayname[isim],text_objects)
-            if displayname[isim] not in legend_titles:
-                legend_axes.append(p1)
-                legend_titles.append(displayname[isim])
+            #if displayname[isim] not in legend_titles:
+            #    legend_axes.append(p1)
+            #    legend_titles.append(displayname[isim])
             #endif
             yval=yval+plot_value
 
@@ -224,11 +523,12 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
                     color_value=facec[isim]
                     if plot_value > 0.0:
                         # Net gain
-                        print("vcxv gain ",netsims[jsim],xval,yval,plot_value)
-                        p1=ax1.bar(xval, plot_value, bottom=yval,color=color_value,width=barwidth,alpha=production_alpha)
-                        if displayname[isim] not in legend_titles:
-                            legend_axes.append(p1)
-                            legend_titles.append(displayname[isim])
+                        #print("vcxv gain ",netsims[jsim],xval,yval,plot_value)
+                        p1=gradient_bar(ax1,xval-barwidth/2.0, xval+barwidth/2.0, yval, plot_value+yval, color_value, "white")
+                        #p1=ax1.bar(xval, plot_value, bottom=yval,color=color_value,width=barwidth,alpha=production_alpha)
+                        #if displayname[isim] not in legend_titles:
+                        #    legend_axes.append(p1)
+                        #    legend_titles.append(displayname[isim])
                         #endif
                         yval=yval+plot_value
                         final_height=final_height+plot_value
@@ -247,11 +547,12 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
                     color_value=facec[isim]
                     if plot_value <= 0.0:
                         # Net loss
-                        print("vcxv loss ",netsims[jsim],xval,yval,plot_value)
-                        p1=ax1.bar(xval, plot_value, bottom=yval,color=color_value,width=barwidth,alpha=production_alpha)
-                        if displayname[isim] not in legend_titles:
-                            legend_axes.append(p1)
-                            legend_titles.append(displayname[isim])
+                        #print("vcxv loss ",netsims[jsim],xval,yval,plot_value)
+                        p1=gradient_bar(ax1,xval-barwidth/2.0, xval+barwidth/2.0, yval, plot_value+yval, color_value, "white")
+#                        p1=ax1.bar(xval, plot_value, bottom=yval,color=color_value,width=barwidth,alpha=production_alpha)
+                        #if displayname[isim] not in legend_titles:
+                        #    legend_axes.append(p1)
+                        #    legend_titles.append(displayname[isim])
                         #endif
                         yval=yval+plot_value
                         final_height=final_height+plot_value
@@ -265,7 +566,7 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
             #endif
 
             # Create an outlined bar that we can also use to position the labels
-            print("jfioezj ",final_height,overall_bar_bottom)
+            #print("jfioezj ",final_height,overall_bar_bottom)
             p1=ax1.bar(xval, final_height, bottom=overall_bar_bottom,color="None",width=barwidth,edgecolor="black",linewidth=0.1,alpha=production_alpha)
             top_label(p1,final_height/abs(tot_change)*abs(tot_percent_change),text_objects)
             bottom_label(p1,barnames_net[ibar],text_objects)
@@ -280,6 +581,38 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
     #shell = code.InteractiveConsole(variables)
     #shell.interact()
     #
+
+    # This is a short routine to put text inside of our bars
+    # Note that we have to check to see if the bar is a source or a sink!
+    # If it's a source (the value is positive), we attach the label close
+    # to the top.  If a sink (the value is negative), we attach it to the
+    # endif.
+    def in_label(rects,text_objects):
+        for idx,rect in enumerate(rects):
+            height = rect.get_height()
+            #print("Placing data at: ",rect.get_x() + rect.get_width()/2.,0.95*height,0.05*height)
+            if height < 0.0:
+                text_obj=ax1.text(rect.get_x() + rect.get_width()/2., 0.95*height,
+                         "{:.2f}".format(height),fontsize=14,color='white',fontweight='bold',
+                         ha='center', va='bottom', rotation=90)
+            else:
+                text_obj=ax1.text(rect.get_x() + rect.get_width()/2., 0.95*height,
+                        "+{:.2f}".format(height),fontsize=14,color='white',fontweight='bold',
+                         ha='center', va='top', rotation=90)
+            #endif
+            text_objects.append(text_obj)
+        #endfor
+        return text_objects
+    #enddef
+
+    # This prints the LULUCF total inside the gray bar.  Don't need
+    # to do this if we are not printing those bars.
+    if lplot_lulucf_tot_bars:
+        text_objects=in_label(lulucf_bars,text_objects)
+    #endif
+
+    # Give us a little bit of space on the plot mins and maxes
+
 
     # This is a bit ugly, but the only way I see to find out what
     # the upper and lower extents are on our y-axis so that we can
@@ -300,6 +633,7 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
         #endif
         #print("jifez ",iloop)
         for iobj in text_objects:
+#            print("jiofjez ",iobj)
             # Bounding box seems to be in (x0,y0),(x1,y1) format, and not
             # in data coordinates.  How can I get it in data coordinates?
             im_ext = iobj.get_window_extent(renderer=canvas.get_renderer())
@@ -322,29 +656,21 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
         # In theory, only a small buffer is needed because we have adjusted
         # our lowest value on the plot by the extents of the text.
         plotdiff=plotmax-plotmin
-        ax1.set_ylim(plotmin,plotmax+0.05*abs(plotdiff))
+#        print("jifoez ",plotmin,plotmax,plotdiff)
+
+        if lshow_full_bars:
+            if plotmax < 0.0:
+                plotmax=0.0
+            elif plotmin > 0.0:
+                plotmin=0.0
+            #endif
+        #endif
+        ax1.set_ylim(plotmin-0.05*abs(plotdiff),plotmax+0.05*abs(plotdiff))
         #print("nvvvvvvv ",iloop,plotdiff)
         iloop=iloop+1
         #loverlap=False
     #endwhile
 
-    # This seems best done after all the scaling with the other text.
-    # This is a short routine to put text inside of our bars
-    def in_label(rects):
-        for idx,rect in enumerate(rects):
-            height = rect.get_height()
-            if height < 0.0:
-                ax1.text(rect.get_x() + rect.get_width()/2., 0.95*height,
-                         "{:.2f}".format(height),fontsize=14,color='white',fontweight='bold',
-                         ha='center', va='bottom', rotation=90)
-            else:
-                ax1.text(rect.get_x() + rect.get_width()/2., 0.5*height,
-                        "{:.2f}".format(height),fontsize=14,color='white',fontweight='bold',
-                         ha='center', va='center', rotation=90)
-            #endif
-        #endfor
-    #enddef
-    in_label(lulucf_bars)
 
     # Now I add a few things that I don't want rescaled
     # Now add some text and arrows.
@@ -371,7 +697,7 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
                      arrowprops=dict(facecolor='black', shrink=0.05),
                      horizontalalignment='right', verticalalignment='top',
                  )
-        deltaval=diff_array[tot_index,iyear]/abs(temp_data[tot_index,iyear+1])*100.0
+        deltaval=lulucf_total_diffs[iyear]/abs(lulucf_total_values[iyear+1])*100.0
         if deltaval>0.:
             ax1.text(midpoint, text_place, '+'+str(np.around(deltaval,decimals=1))+'%', ha="center", va="center", fontsize=13,fontweight='bold')
         else:
@@ -379,5 +705,42 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
         #endif
     #endfor
 
+    # Create a custom legend.
+    #custom_lines=[]
+    for isim,csim in enumerate(required_simulations):
+        color_value=facec[isim]
+        legend_axes.append(matplotlib.patches.Patch(facecolor=color_value,fill=True))
+        #legend_axes.append(Line2D([0], [0], color=color_value, lw=10))
+        legend_titles.append(displayname[isim])
+    #endif
+
+    # This is for trying something really fancy.  I want to make a legend
+    # rectangle where multiple colors appear, based on the LUC values
+    # that are used above for + and -.  It doesn't work yet, so for the moment
+    # I use a white box with a black outline for both LUC(+) and LUC(-).
+    def legend_artist():
+        x0, y0 = handlebox.xdescent, handlebox.ydescent
+        width, height = handlebox.width, handlebox.height
+        patch = mpatches.Rectangle([x0, y0], width, height, facecolor='red',
+                                   edgecolor='black', hatch='xx', lw=3,
+                                   transform=handlebox.get_transform())
+        handlebox.add_artist(patch)
+        return patch
+
+    # Now add two special legends
+    #legend_axes.append(legend_artist())
+    legend_axes.append(matplotlib.patches.Patch(edgecolor="black",fill=False))
+    legend_titles.append("LUC(-)")
+    legend_axes.append(matplotlib.patches.Patch(edgecolor="black",fill=False))
+    legend_titles.append("LUC(+)")
+
+    return False,ax1
+    
+
+    # This is done at the end of the outside loop for all other files
+#    fig.savefig(output_file_start+desired_plots[iplot]+output_file_end,dpi=300)
+#    plt.close(fig)
+
+#    return True
 
 #enddef

@@ -88,7 +88,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                   # All EUROCOM simulations combined
                   'EUROCOM_ALL' : '/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_AllEUROCOMInversions_XXX_LAND_GL_1M_V1_202003021_McGrath_WP3_CountryTotWithEEZ.nc', \
                   'ECOSSE_CL-CL': "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CropFluxes_ECOSSE-SX_UAbdn_CRP_EU28_1M_V1_20200518_KUHNERT_WP3_CountryTotWithOutEEZ.nc",\
-                  'ECOSSE_GL-GL': "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_GrassFluxes_ECOSSE-SX_UAbdn_GRS_EU_1M_V1_20200218_KUHNERT_WP3_CountryTotWithOutEEZ.nc", \
+                  'ECOSSE_GL-GL': "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_GrassFluxes_ECOSSE-SX_UAbdn_GRS_EU28_1M_V1_20200518_KUHNERT_WP3_CountryTotWithOutEEZ.nc", \
                   'ECOSSE_CL-CL_us': "/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/WP3/EU28_swheat_co2_CountryTotWithOutEEZ.nc",\
                   'ECOSSE_GL-GL_us': "/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/WP3/EU28_gra_co2_CountryTotWithOutEEZ.nc", \
                   'EFISCEN-Space': "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_treeNEP_EFISCEN-Space-SX_WENR_FOR_EU_1M_V1_20190716_SCHELHAAS_WP3_CountryTotWithOutEEZ.nc",\
@@ -309,7 +309,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                       'EUROCOM_NAME' :  'FCO2_NBP', \
                       'EUROCOM_ALL' :  'FCO2_NBP', \
                       'ECOSSE_CL-CL': "FCO2_NEP_CRO", \
-                    'ECOSSE_GL-GL': "FCO2_SOIL_GRA", \
+                    'ECOSSE_GL-GL': "FCO2_NEP_GRA", \
                       'ECOSSE_CL-CL_us': "FCO2_SOIL_CRO", \
                     'ECOSSE_GL-GL_us': "FCO2_SOIL_GRA", \
                     'EFISCEN-Space': "FCO2_NBP_FOR", \
@@ -1200,7 +1200,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
  
 #      datasource='UNFCCC/IIASA/WEnR/UAbdn/MPI-BGC/LSCE/TRENDY'
       output_file_start="UNFCCCLULUCFbar_"
-      output_file_end="_FCO2land_2019_v1.png" 
+      output_file_end="_FCO2land_2019_v7.png" 
       titleending=r" : CO$_2$ emission trends from land use, land use change, and forestry"
 
       plotmarker_master['EPIC']="P"

@@ -86,7 +86,7 @@ lplot_countrytot=True
 # be changed for the plot you are doing!
 # If you want to create fake data, do a run with real data, and then copy all of the .csv files for
 # the plot you want to "fake_data.csv","fake_data_min.csv","fake_data_max.csv","fake_data_err.csv"
-luse_fake_data=True
+luse_fake_data=False
 
 # These are the year limits that are plotted.  The UNFCCC inventory data goes from 1990-2017.
 # For next years of the project, we may have data up until 2021.
@@ -132,11 +132,13 @@ country_region_data=get_country_region_data()
 countrynames=get_countries_and_regions_from_cr_dict(country_region_data)
 
 # Only create plots for these countries/regions
-if True:
-   #desired_plots=['E28','FRA','DEU','SWE','ESP']
+if False:
+#   desired_plots=['E28','FRA','DEU','SWE','ESP']
+   #desired_plots=['E28','GBR','DNK','NLD','DEU','IRL']
+   #desired_plots=['E28','NLD','DEU']
 #   desired_plots=['DEU','FRA','WEE', 'EAE', 'E28']
-   desired_plots=['DEU', 'E28']
-   #desired_plots=['BGR','DEU','FRA','WEE', 'EAE', 'E28']
+   #desired_plots=['DEU', 'E28']
+   desired_plots=['BGR','DEU','FRA','WEE', 'EAE', 'E28']
    #desired_plots=['GGY','FRA','WEE', 'EAE', 'E28']
    #desired_plots=['GRL','FRA','WEE', 'EAE', 'E28']
 else:
@@ -1230,7 +1232,7 @@ for iplot,cplot in enumerate(desired_plots):
    # of the other timeseries.  I have already calculated
    # average values to use above.
    if graphname == "unfccc_lulucf_bar":
-      lskip=create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,syear_average,eyear_average,xplot_min,xplot_max,ndesiredyears,allyears,ax1,facec,production_alpha,legend_axes,legend_titles,displayname,canvas)
+      lskip,ax1=create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,syear_average,eyear_average,xplot_min,xplot_max,ndesiredyears,allyears,ax1,facec,production_alpha,legend_axes,legend_titles,displayname,canvas,output_file_end)
       if lskip:
          continue
       #endif
