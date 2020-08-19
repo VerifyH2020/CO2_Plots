@@ -75,7 +75,7 @@ class Grid:
         return out
 
     def plotmap(self, data, ptype = "map", title = "", ltitle = "", rtitle = "", info = None, filename = "test.png", dpi = 125,
-                drawcoast = True, drawgrid = True, levels = 20, vmin = None, vmax = None, bounds = None, ticks = None, zoom = dict(north = 90, south = -90, west = -180, east = 180)):
+                drawcoast = True, drawgrid = True, levels = 20, vmin = None, vmax = None, bounds = None, ticks = None, zoom = dict(north = 90, south = -90, west = -180, east = 180), custom_cmap=None, plot_cbar=True, label_cbar=""):
         delta = 3
         north = min( 90, max(self.lat) + delta, zoom["north"] + delta)
         south = max(-90, min(self.lat) - delta, zoom["south"] - delta)
@@ -95,6 +95,10 @@ class Grid:
             lim = max(abs(np.percentile(data.compressed(), 1)), abs(np.percentile(data.compressed(), 99))) if type(data) is np.ma.masked_array else max(abs(np.percentile(data, 1)), abs(np.percentile(data, 99)))
             vmin = -lim
             vmax = lim
+        elif ptype == "custom_cmap":
+            cmap = custom_cmap
+        #endif
+
         norm = None if bounds is None else matplotlib.colors.BoundaryNorm(boundaries=bounds, ncolors=levels)
         if bounds is not None: vmin = vmax = None
         o = (self.meshlat <= north) & (self.meshlat >= south) & (self.meshlon >= west) & (self.meshlon <= east)
@@ -103,8 +107,13 @@ class Grid:
         iwest = np.where(self.lon >= west)[0][0]
         ieast = np.where(self.lon <= east)[0][-1]
         cmesh = m.pcolormesh(self.meshlon[inorth:isouth+2,iwest:ieast+2], self.meshlat[inorth:isouth+2,iwest:ieast+2], data[inorth:isouth+1,iwest:ieast+1],
-                             shading = "flat", cmap = cmap, latlon = True, vmin = vmin, vmax = vmax, norm = norm)
-        cbar = m.colorbar(cmesh, pad = 0.08, location = "right")
+                                 shading = "flat", cmap = cmap, latlon = True, vmin = vmin, vmax = vmax, norm = norm)
+        if plot_cbar:
+            cbar = m.colorbar(cmesh, pad = 0.08, location = "right")
+            if label_cbar:
+                cbar.set_label(label_cbar)
+            #endif
+        #endif
         if bounds is not None: cbar.set_ticks(bounds)
         if ticks is not None: cbar.set_ticks(ticks)
         if info is not None: plt.annotate(info, xy = (0.05, 0.05), xycoords = "axes fraction")
