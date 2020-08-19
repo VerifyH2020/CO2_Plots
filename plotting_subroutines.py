@@ -25,6 +25,10 @@ def get_simulation_parameters(graphname,lshow_productiondata):
    printfakewarning=False
    # Roxana proposes using this for all plots
    datasource='VERIFY Project'
+   
+   # Do not apply Normalization to Zero Mean and Unit of Energy (Z-normalization)
+   # to every timeseries 
+   ldetrend=False
 
    overwrite_simulations={}
    overwrite_coeffs={}
@@ -65,11 +69,11 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                   'EPIC_fHarvest' : verifydir + 'Tier3BUPB_CO2_CropFluxes_EPIC-S1_IIASA_CRP_EU_1M_V1_20190911_BALKOVIC_WP3_CountryTotWithOutEEZ.nc', \
                   'EPIC_clch' : verifydir + 'Tier3BUPB_CO2_CropFluxes_EPIC-S1_IIASA_CRP_EU_1M_V1_20190911_BALKOVIC_WP3_CountryTotWithOutEEZ.nc', \
                   'EPIC_npp' : verifydir + 'Tier3BUPB_CO2_CropFluxes_EPIC-S1_IIASA_CRP_EU_1M_V1_20190911_BALKOVIC_WP3_CountryTotWithOutEEZ.nc', \
-                  'JENA-COMBINED' : verifydir + 'Tier3TD_CO2_LandFlux_AllJENA_bgc-jena_LAND_GL_1M_V1_20200304_McGrath_WP3_CountryTotWithEEZ.nc', \
-                  'JENA-REG-100km' : verifydir + 'Tier3TD_CO2_LandFlux_JENA-REG-100km_bgc-jena_LAND_GL_1M_V1_20191020_Gerbig_WP3_CountryTotWithEEZ.nc', \
-                  'JENA-REG-200km' : verifydir + 'Tier3TD_CO2_LandFlux_JENA-REG-200km_bgc-jena_LAND_GL_1M_V1_20191020_Gerbig_WP3_CountryTotWithEEZ.nc', \
-                  'JENA-REG-Core100km' : verifydir + 'Tier3TD_CO2_LandFlux_JENA-REG-Core100km_bgc-jena_LAND_GL_1M_V1_20191020_Gerbig_WP3_CountryTotWithEEZ.nc', \
-                  'JENA-REG-Valid100km' : verifydir + 'Tier3TD_CO2_LandFlux_JENA-REG-Valid100km_bgc-jena_LAND_GL_1M_V1_20191020_Gerbig_WP3_CountryTotWithEEZ.nc', \
+                  'CSR-COMBINED' : verifydir + 'Tier3TD_CO2_LandFlux_AllJENA_bgc-jena_LAND_GL_1M_V1_20200304_McGrath_WP3_CountryTotWithEEZ.nc', \
+                  'CSR-REG-100km' : verifydir + 'Tier3TD_CO2_LandFlux_JENA-REG-100km_bgc-jena_LAND_GL_1M_V1_20191020_Gerbig_WP3_CountryTotWithEEZ.nc', \
+                  'CSR-REG-200km' : verifydir + 'Tier3TD_CO2_LandFlux_JENA-REG-200km_bgc-jena_LAND_GL_1M_V1_20191020_Gerbig_WP3_CountryTotWithEEZ.nc', \
+                  'CSR-REG-Core100km' : verifydir + 'Tier3TD_CO2_LandFlux_JENA-REG-Core100km_bgc-jena_LAND_GL_1M_V1_20191020_Gerbig_WP3_CountryTotWithEEZ.nc', \
+                  'CSR-REG-Valid100km' : verifydir + 'Tier3TD_CO2_LandFlux_JENA-REG-Valid100km_bgc-jena_LAND_GL_1M_V1_20191020_Gerbig_WP3_CountryTotWithEEZ.nc', \
                   'BLUE' : '/home/dods/verify/OTHER_PROJECTS/FCO2/BLUE/Tier3BUPB_CO2_LandFlux_BLUE-2019_bgc-jena_LAND_GL_1M_V1_20191020_Pongratz_WP3_CountryTotWithOutEEZ.nc', \
                   'H&N' : '/home/dods/verify/OTHER_PROJECTS/FCO2/HN/Tier3BUDD_CO2_LandUseChange_HN-SX_JRC_FOR_EU_1Y_V1_20191212_PETRESCU_WPX_CountryTotWithOutEEZ.nc', \
                   'ORCHIDEE-MICT' : '/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_LandUseChange_ORCHIDEEMICT-SX_LSCE_LAND_EU_1M_V1_20190925_YUE_WP3_CountryTotWithOutEEZ.nc', \
@@ -87,7 +91,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                   'EUROCOM_NAME' :  '/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_NAME-HB_bristol_LAND_EU_1M_V1_20191020_White_Grid-eurocom_CountryTotWithEEZ.nc', \
                   # All EUROCOM simulations combined
                   'EUROCOM_ALL' : '/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_AllEUROCOMInversions_XXX_LAND_GL_1M_V1_202003021_McGrath_WP3_CountryTotWithEEZ.nc', \
-                  'ECOSSE_CL-CL': "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CropFluxes_ECOSSE-SX_UAbdn_CRP_EU28_1M_V1_20200518_KUHNERT_WP3_CountryTotWithOutEEZ.nc",\
+                  'ECOSSE_CL-CL': "/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/WP3/ECOSSE/Tier3BUPB_CO2_CropFluxes_ECOSSE-S1_UAbdn_CRP_EU_1M_V1_20200606_KUHNERT_WP3_CountryTotWithOutEEZ.nc",\
                   'ECOSSE_GL-GL': "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_GrassFluxes_ECOSSE-SX_UAbdn_GRS_EU28_1M_V1_20200518_KUHNERT_WP3_CountryTotWithOutEEZ.nc", \
                   'ECOSSE_CL-CL_us': "/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/WP3/EU28_swheat_co2_CountryTotWithOutEEZ.nc",\
                   'ECOSSE_GL-GL_us': "/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/WP3/EU28_gra_co2_CountryTotWithOutEEZ.nc", \
@@ -115,7 +119,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                   'ORCHIDEE_CL-CL' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycleEcosystem_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ.nc", \
                   'TNO_biofuels' : "/home/dods/verify/OTHER_PROJECTS/FCO2/TNO/Tier3BUDD_CO2_BiofuelEmissions_XXX-SX_TNO_XXX_EU_1M_V1_20191110_DERNIER_WPX_CountryTotWithOutEEZ.nc", \
                   'UNFCCC_biofuels' : "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_Biofuels_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTotWithOutEEZ.nc", \
-                  'ULB_lakes_rivers' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_RiverLakeEmissions_XXXX-SX_ULB_INLWAT_EU_1M_V1_20190911_LAUERWALD_WP3_CountryTotWithOutEEZ.nc", \
+                  'rivers_lakes_reservoirs_ULB' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_RiverLakeEmissions_XXXX-SX_ULB_INLWAT_EU_1M_V1_20190911_LAUERWALD_WP3_CountryTotWithOutEEZ.nc", \
                   'UNFCCC_forest_convert' : "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_ForestConvert_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTotWithOutEEZ.nc", \
                   'UNFCCC_grassland_convert' : "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_GrasslandConvert_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTotWithOutEEZ.nc", \
                   'UNFCCC_cropland_convert' : "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_CroplandConvert_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTotWithOutEEZ.nc", \
@@ -141,6 +145,11 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                   'FAOSTAT_FL-FL' : '/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/FAOSTAT/Tier1_CO2_AllFluxes_FAOSTAT-SX_FAO_LAND_EU_1M_V1_20191212_PETRASCU_WPX_CountryTotWithOutEEZ.nc', \
                   'VERIFYBU' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ.nc", \
                   'ORCHIDEE_LUC' : "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ.nc", \
+                  'ORCHIDEE_Tier2_Forest' : "/home/users/mmcgrath/CODE.OBELIX/PYTHON/ORCHIDEE_emission_factors_Forest_CountryTotWithOutEEZ.nc", \
+                  'ORCHIDEE_Tier2_Forest_EF1' : "/home/users/mmcgrath/CODE.OBELIX/PYTHON/ORCHIDEE_emission_factors_Forest_CountryTotWithOutEEZ.nc", \
+                  'ORCHIDEE_Tier2_Forest_EF2' : "/home/users/mmcgrath/CODE.OBELIX/PYTHON/ORCHIDEE_emission_factors_Forest_CountryTotWithOutEEZ.nc", \
+                  'ORCHIDEE_Tier2_Forest_EF3' : "/home/users/mmcgrath/CODE.OBELIX/PYTHON/ORCHIDEE_emission_factors_Forest_CountryTotWithOutEEZ.nc", \
+                  'ORCHIDEE_Tier2_Forest_EF4' : "/home/users/mmcgrath/CODE.OBELIX/PYTHON/ORCHIDEE_emission_factors_Forest_CountryTotWithOutEEZ.nc", \
 
                }
    
@@ -190,11 +199,11 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                       'FAOSTAT_Grs' :  'INVENTORY_NOERR', \
                       'EDGARv4' :  'INVENTORY_NOERR', \
                       'H&N' :  'NONVERIFY_BU', \
-                      'JENA-COMBINED' :  'MINMAX', \
-                      'JENA-REG-100km' :  'VERIFY_TD', \
-                      'JENA-REG-200km' :  'VERIFY_TD', \
-                      'JENA-REG-Core100km' :  'VERIFY_TD', \
-                      'JENA-REG-Valid100km' :  'VERIFY_TD', \
+                      'CSR-COMBINED' :  'MINMAX', \
+                      'CSR-REG-100km' :  'VERIFY_TD', \
+                      'CSR-REG-200km' :  'VERIFY_TD', \
+                      'CSR-REG-Core100km' :  'VERIFY_TD', \
+                      'CSR-REG-Valid100km' :  'VERIFY_TD', \
                       'BLUE' :  'VERIFY_BU', \
                       'EUROCOM_Carboscope' : 'REGIONAL_TD', \
                       'EUROCOM_Flexinvert' : 'REGIONAL_TD', \
@@ -228,7 +237,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                  'ORCHIDEE_CL-CL' : "VERIFY_BU", \
                     'TNO_biofuels' : "INVENTORY_NOERR", \
                     'UNFCCC_biofuels' : "INVENTORY_NOERR", \
-                  'ULB_lakes_rivers' : "VERIFY_BU", \
+                  'rivers_lakes_reservoirs_ULB' : "VERIFY_BU", \
                     'UNFCCC_forest_convert' : "INVENTORY", \
                     'UNFCCC_grassland_convert' : "INVENTORY", \
                     'UNFCCC_cropland_convert' : "INVENTORY", \
@@ -247,6 +256,11 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                     'LUH2v2_CROP' : 'OTHER', \
                     'UNFCCC_CROP' : 'OTHER', \
                     'MS-NRT' : 'INVENTORY_NOERR', \
+                    'ORCHIDEE_Tier2_Forest' : "VERIFY_BU", \
+                  'ORCHIDEE_Tier2_Forest_EF1' : "VERIFY_BU", \
+                  'ORCHIDEE_Tier2_Forest_EF2' : "VERIFY_BU", \
+                  'ORCHIDEE_Tier2_Forest_EF3' : "VERIFY_BU", \
+                  'ORCHIDEE_Tier2_Forest_EF4' : "VERIFY_BU", \
                  }
 
    variables_master={ \
@@ -286,11 +300,11 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                       'EPIC_fHarvest' :  'FCO2_FHARVEST_CRO', \
                       'EPIC_clch' :  'FCO2_CLCH_CRO', \
                       'EPIC_npp' :  'FCO2_NPP_CRO', \
-                      'JENA-COMBINED' :  'FCO2_NBP', \
-                      'JENA-REG-100km' :  'FCO2_NBP', \
-                      'JENA-REG-200km' :  'FCO2_NBP', \
-                      'JENA-REG-Core100km' :  'FCO2_NBP', \
-                      'JENA-REG-Valid100km' :  'FCO2_NBP', \
+                      'CSR-COMBINED' :  'FCO2_NBP', \
+                      'CSR-REG-100km' :  'FCO2_NBP', \
+                      'CSR-REG-200km' :  'FCO2_NBP', \
+                      'CSR-REG-Core100km' :  'FCO2_NBP', \
+                      'CSR-REG-Valid100km' :  'FCO2_NBP', \
                       'BLUE' :  'CD_A', \
                       'H&N' :  'FCO2_NBP', \
                       'ORCHIDEE-MICT' :  'FCO2_NBP', \
@@ -308,7 +322,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                       'EUROCOM_EnKF' :  'FCO2_NBP', \
                       'EUROCOM_NAME' :  'FCO2_NBP', \
                       'EUROCOM_ALL' :  'FCO2_NBP', \
-                      'ECOSSE_CL-CL': "FCO2_NEP_CRO", \
+                      'ECOSSE_CL-CL': "FCO2_NBP_CRO", \
                     'ECOSSE_GL-GL': "FCO2_NEP_GRA", \
                       'ECOSSE_CL-CL_us': "FCO2_SOIL_CRO", \
                     'ECOSSE_GL-GL_us': "FCO2_SOIL_GRA", \
@@ -332,7 +346,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                  'ORCHIDEE_CL-CL' : "FCO2_NBP_CRP", \
                       'TNO_biofuels' : "FCO2_NBP_TOT", \
                       'UNFCCC_biofuels' : "FCO2_NBP", \
-                      'ULB_lakes_rivers' : "FCO2_INLWAT", \
+                      'rivers_lakes_reservoirs_ULB' : "FCO2_INLWAT", \
                    'UNFCCC_forest_convert' : "FCO2_NBP", \
                     'UNFCCC_grassland_convert' : "FCO2_NBP", \
                     'UNFCCC_cropland_convert' : "FCO2_NBP", \
@@ -350,8 +364,13 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                      'UNFCCC_GRASS' : 'AREA', \
                      'LUH2v2_CROP' : 'CROPLAND_AREA', \
                      'UNFCCC_CROP' : 'AREA', \
-                    'MS-NRT' : 'FCO2_NBP', \
-                 }
+                      'MS-NRT' : 'FCO2_NBP', \
+                      'ORCHIDEE_Tier2_Forest' : "FCO2_NBP_FOR", \
+                      'ORCHIDEE_Tier2_Forest_EF1' : "FCO2_NBP_FOR_EF1", \
+                      'ORCHIDEE_Tier2_Forest_EF2' : "FCO2_NBP_FOR_EF2", \
+                      'ORCHIDEE_Tier2_Forest_EF3' : "FCO2_NBP_FOR_EF3", \
+                      'ORCHIDEE_Tier2_Forest_EF4' : "FCO2_NBP_FOR_EF4", \
+                }
    
    plotmarker_master={ \
                        'UNFCCC_totincLULUCF' : '_', \
@@ -390,11 +409,11 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                        'EPIC_fHarvest' :  '^', \
                        'EPIC_npp' :  's', \
                        'EPIC_clch' :  'P', \
-                       'JENA-COMBINED' :  's', \
-                       'JENA-REG-100km' :  'P', \
-                       'JENA-REG-200km' :  'P', \
-                       'JENA-REG-Core100km' :  'P', \
-                       'JENA-REG-Valid100km' :  'P', \
+                       'CSR-COMBINED' :  's', \
+                       'CSR-REG-100km' :  'P', \
+                       'CSR-REG-200km' :  'P', \
+                       'CSR-REG-Core100km' :  'P', \
+                       'CSR-REG-Valid100km' :  'P', \
                        'BLUE' :  '^', \
                        'H&N' :  '^', \
                        'ORCHIDEE-MICT' :  'D', \
@@ -436,7 +455,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                  'ORCHIDEE_CL-CL' : "D", \
                      'TNO_biofuels' : "X", \
                      'UNFCCC_biofuels' : "o", \
-                     'ULB_lakes_rivers' : "o", \
+                     'rivers_lakes_reservoirs_ULB' : "o", \
                    'UNFCCC_forest_convert' : "o", \
                     'UNFCCC_grassland_convert' : "o", \
                     'UNFCCC_cropland_convert' : "o", \
@@ -455,6 +474,11 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                     'LUH2v2_CROP' : 'o', \
                     'UNFCCC_CROP' : 'o', \
                     'MS-NRT' : 'o', \
+                       'ORCHIDEE_Tier2_Forest' : "D", \
+                       'ORCHIDEE_Tier2_Forest_EF1' : "D", \
+                       'ORCHIDEE_Tier2_Forest_EF2' : "D", \
+                       'ORCHIDEE_Tier2_Forest_EF3' : "D", \
+                       'ORCHIDEE_Tier2_Forest_EF4' : "D", \
                     }
    facec_master={ \
                   'UNFCCC_totincLULUCF' :  'black', \
@@ -477,7 +501,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                   'TrendyV7_ORCHIDEE' :  'none', \
                   'TrendyV7_SDGVM' :  'magenta', \
                   'TrendyV7_SURFEX' :  'pink', \
-                  'VERIFYBU' : 'blue', \
+                  'VERIFYBU' : 'yellow', \
                   'ORCHIDEE' : 'dodgerblue', \
                   'ORCHIDEE_S2' : 'red', \
                   'ORCHIDEE_S1' : 'green', \
@@ -493,11 +517,11 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                   'EPIC_fHarvest' :  'red', \
                   'EPIC_npp' :  'green', \
                   'EPIC_clch' :  'blue', \
-                  'JENA-COMBINED' :  'mediumblue', \
-                  'JENA-REG-100km' :  'khaki', \
-                  'JENA-REG-200km' :  'orange', \
-                  'JENA-REG-Core100km' :  'darkorange', \
-                  'JENA-REG-Valid100km' :  'gold', \
+                  'CSR-COMBINED' :  'mediumblue', \
+                  'CSR-REG-100km' :  'khaki', \
+                  'CSR-REG-200km' :  'orange', \
+                  'CSR-REG-Core100km' :  'darkorange', \
+                  'CSR-REG-Valid100km' :  'gold', \
                   'BLUE' :  'tan', \
                   'H&N' :  'orange', \
                   'ORCHIDEE-MICT' :  'lightsteelblue', \
@@ -539,7 +563,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                   'ORCHIDEE_CL-CL' : "dodgerblue", \
                   'UNFCCC_biofuels' : "saddlebrown", \
                   'TNO_biofuels' : "saddlebrown", \
-                  'ULB_lakes_rivers' : "sandybrown", \
+                  'rivers_lakes_reservoirs_ULB' : "sandybrown", \
                    'UNFCCC_forest_convert' : "sandybrown", \
                     'UNFCCC_grassland_convert' : "sandybrown", \
                     'UNFCCC_cropland_convert' : "sandybrown", \
@@ -558,6 +582,11 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                      'UNFCCC_CROP' : 'blue', \
                     'LUH2v2_CROP' : 'orange', \
                 'MS-NRT' : 'red', \
+                  'ORCHIDEE_Tier2_Forest' : "red", \
+                  'ORCHIDEE_Tier2_Forest_EF1' : "red", \
+                  'ORCHIDEE_Tier2_Forest_EF2' : "darkgreen", \
+                  'ORCHIDEE_Tier2_Forest_EF3' : "blue", \
+                  'ORCHIDEE_Tier2_Forest_EF4' : "gray", \
              }
 
    # set some default values, to save space.  Can be changed below.
@@ -625,25 +654,34 @@ def get_simulation_parameters(graphname,lshow_productiondata):
    uncert_color_master['UNFCCC_LUC']='darkseagreen'
    uncert_color_master['GCP_ALL']='red'
    uncert_color_master['TrendyV7']='gray'
-   uncert_color_master['JENA-COMBINED']='blue'
+   uncert_color_master['CSR-COMBINED']='blue'
    uncert_color_master['UNFCCC_GL-GL']='brown'
    uncert_color_master['UNFCCC_CL-CL']='gold'
 
    # We always want these to be the same
    edgec_master['MS-NRT']=facec_master['MS-NRT']
 
+   # Some we want to be just outlines
+   edgec_master["ORCHIDEE_Tier2_Forest"]=facec_master["ORCHIDEE_FL-FL"]
+   facec_master["ORCHIDEE_Tier2_Forest"]="none"
+
    # And better names for these two
-   displayname_master['UNFCCC_LULUCF']='UNFCCC LULUCF NGHGI 2019'
-   displayname_err_master['UNFCCC_LULUCF']='UNFCCC LULUCF NGHGI 2019 uncertainty'
+   displayname_master['UNFCCC_LULUCF']='UNFCCC LULUCF NGHGI (2019)'
+   displayname_err_master['UNFCCC_LULUCF']='UNFCCC LULUCF NGHGI (2019) uncertainty'
    displayname_master['FAOSTAT_LULUCF']='FAOSTAT'
    displayname_master['GCP_ALL']='Mean of GCP inversions'
    displayname_err_master['GCP_ALL']='Min/Max of GCP inversions'
-   displayname_master['JENA-COMBINED']='Mean of CarboScopeReg'
-   displayname_err_master['JENA-COMBINED']='Min/Max of CarboScopeReg'
+   displayname_master['CSR-COMBINED']='Mean of CarboScopeReg'
+   displayname_err_master['CSR-COMBINED']='Min/Max of CarboScopeReg'
    displayname_master['EUROCOM_ALL']='Mean of EUROCOM inversions'
    displayname_err_master['EUROCOM_ALL']='Min/Max of EUROCOM inversions'
    displayname_master['TrendyV7']='Median of TRENDY v7 DGVMs'
    displayname_err_master['TrendyV7']='Min/Max of TRENDY v7 DGVMs'
+
+   displayname_master['ORCHIDEE_Tier2_Forest_EF1']='UNFCCC emissions / FL-FL area'
+   displayname_master['ORCHIDEE_Tier2_Forest_EF2']='ORCHIDEE FL-FL emissions / LUH2v2-ESACCI FL-FL area'
+   displayname_master['ORCHIDEE_Tier2_Forest_EF3']='ORCHIDEE FL-FL emissions / UNFCCC FL-FL area'
+   displayname_master['ORCHIDEE_Tier2_Forest_EF4']='Created from Eq. 2.5 and ORCHIDEE'
 
    # Temporary one
    #displayname_master['EFISCEN']="EFSICEN NBP"
@@ -899,14 +937,14 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                             'BLUE', \
                             'H&N', \
                             'MS-NRT', \
-                            'ORCHIDEE-MICT', \
+                            #'ORCHIDEE-MICT', \
                             'ORCHIDEE', \
                             'FAOSTAT_LULUCF', \
                             'FAOSTAT_Crp', \
                             'FAOSTAT_Grs', \
                             'FAOSTAT_For', \
                             'TrendyV7', \
-                      "TrendyV7_ORCHIDEE",\
+                      #"TrendyV7_ORCHIDEE",\
          ]  
       
       desired_legend=[\
@@ -918,8 +956,8 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                       displayname_master["H&N"],\
                           displayname_master['TrendyV7'], displayname_err_master['TrendyV7'], \
                       displayname_master["ORCHIDEE"],\
-                      displayname_master["ORCHIDEE-MICT"],\
-                      displayname_master["TrendyV7_ORCHIDEE"],\
+                      #displayname_master["ORCHIDEE-MICT"],\
+                      #displayname_master["TrendyV7_ORCHIDEE"],\
      ]
 #      datasource='UNFCCC/LMU/LSCE/FAO'
       output_file_start="LULUCFTrendy_"
@@ -1200,6 +1238,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
  
 #      datasource='UNFCCC/IIASA/WEnR/UAbdn/MPI-BGC/LSCE/TRENDY'
       output_file_start="UNFCCCLULUCFbar_"
+      # v3 has colored bars, v7 has gray bars
       output_file_end="_FCO2land_2019_v7.png" 
       titleending=r" : CO$_2$ emission trends from land use, land use change, and forestry"
 
@@ -1224,22 +1263,39 @@ def get_simulation_parameters(graphname,lshow_productiondata):
       #   productiondata_master['ECOSSE_GL-GL']=False
       #endif
 
-   elif graphname == "verifybu":
+   elif graphname == "unfccc_woodharvest":
+      desired_simulations=[ \
+                        #    'UNFCCC_LULUCF', \
+                            'UNFCCC_FL-FL', \
+                            'UNFCCC_woodharvest', \
+                         ]  
+
+      output_file_start="UNFCCCHWP_"
+      output_file_end="_FCO2land_2019_v1.png" 
+      titleending=r" : CO$_2$ emission trends from land use, land use change, and forestry"
+
+      facec_master['UNFCCC_LULUCF']="darkgray"
+      facec_master['UNFCCC_woodharvest']="aqua"
+
+      displayname_master['UNFCCC_FL-FL']='FL-FL'
+      displayname_master['UNFCCC_woodharvest']='HWP'
+
+   elif graphname in ("verifybu","verifybu_detrend"):
       desired_simulations=[ \
                             'ORCHIDEE', \
                             'ORCHIDEE-MICT', \
                             'EFISCEN', \
 #                            'EFISCEN-unscaled', \
-                            'EFISCEN-Space', \
+                            #'EFISCEN-Space', \
                             'FLUXCOM_rsonlyANN_os', \
                             'FLUXCOM_rsonlyRF_os', \
-                            'ECOSSE_GL-GL', \
+                            #'ECOSSE_GL-GL', \
                             'ECOSSE_CL-CL', \
                             #'ECOSSE_GL-GL_us', \
                             #'ECOSSE_CL-CL_us', \
                             'EPIC', \
                             'BLUE', \
-                            'VERIFYBU', \
+#                            'VERIFYBU', \
                          ]   
 #      datasource='UNFCCC/MPI-BGC/JRC/WEnR/LSCE/FAOSTAT'
       output_file_start="VerifyBU_"
@@ -1247,10 +1303,16 @@ def get_simulation_parameters(graphname,lshow_productiondata):
       titleending=r" : CO$_2$ emissions from all VERIFY bottom-up models"
       lplot_areas=True
 
+      if graphname == "verifybu_detrend":
+         output_file_start="VerifyBUdetrend_"
+         ldetrend=True
+         titleending=r" : detrended CO$_2$ emissions from all VERIFY bottom-up models"
+      #endif
+
       # These simulations will be combined together.
-      overwrite_simulations["VERIFYBU"]=['ORCHIDEE-MICT','ORCHIDEE','FLUXCOM_rsonlyANN_os','FLUXCOM_rsonlyRF_os','BLUE']
-      overwrite_operations["VERIFYBU"]="mean"
-      displaylegend_master["VERIFYBU"]=False
+      #overwrite_simulations["VERIFYBU"]=['ORCHIDEE-MICT','ORCHIDEE','FLUXCOM_rsonlyANN_os','FLUXCOM_rsonlyRF_os','BLUE']
+      #overwrite_operations["VERIFYBU"]="mean"
+      #displaylegend_master["VERIFYBU"]=False
 
       plotmarker_master['EFISCEN']="P"
       plotmarker_master['CBM']="X"
@@ -1280,7 +1342,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
 
    elif graphname == "trendy":
       desired_simulations=[ \
-                            'TrendyV7', \
+                            #'TrendyV7', \
                             'TrendyV7_CABLE', \
                             'TrendyV7_CLASS', \
                             'TrendyV7_CLM5', \
@@ -1305,7 +1367,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
 
       edgec_master["ORCHIDEE_FL-FL"]="black"
       
-      facec_master["ORCHIDEE_FL-FL"]="black"
+      facec_master["TrendyV7_ORCHIDEE"]="lightgray"
 
    elif graphname == "fluxcom":
       desired_simulations=[ \
@@ -1363,6 +1425,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
    elif graphname == "forestry_full":
       desired_simulations=[ \
                             'ORCHIDEE_FL-FL', \
+                            'ORCHIDEE_Tier2_Forest', \
                             'EFISCEN', \
                           #  'EFISCEN_NPP', \
                           #  'EFISCEN_NEE', \
@@ -1389,6 +1452,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                       # displayname_master['EFISCEN_NEE'], \
 #                       'EFISCEN-Space', \
                        displayname_master['CBM'], \
+                      displayname_master['ORCHIDEE_Tier2_Forest'], \
                        #displayname_master['FLUXCOM_FL-FL_ANN'], \
                        #displayname_master['FLUXCOM_FL-FL_RF'], \
                        displayname_master['LUH2v2_FOREST'], \
@@ -1397,7 +1461,10 @@ def get_simulation_parameters(graphname,lshow_productiondata):
 
 #      datasource='UNFCCC/MPI-BGC/JRC/WEnR/LSCE/FAOSTAT'
       output_file_start="ForestRemain_"
-      output_file_end="_FCO2land_2019_v1.png" 
+# v1 has EFISCEN data from a spreadsheet sent by Mart-Jan in April 2020
+#      output_file_end="_FCO2land_2019_v1.png" 
+# v2 has EFISCEn data from June 2020
+      output_file_end="_FCO2land_2019_v2.png" 
       titleending=r" : FL-FL bottom-up net CO$_2$ emissions"
       lplot_areas=True
 
@@ -1428,7 +1495,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
       displayname_master['LUH2v2_GRASS']='LUH2v2-ESACCI_GL-GL area (used in ORCHIDEE)'
       lplot_areas=True
 
-      displayname_master['ECOSSE_GL-GL']='ECOSSE GL-GL RH'
+      displayname_master['ECOSSE_GL-GL']='ECOSSE GL-GL'
 
       #if lshow_productiondata:
       #   productiondata_master['ECOSSE_GL-GL']=False
@@ -1520,11 +1587,25 @@ def get_simulation_parameters(graphname,lshow_productiondata):
       facec_master['UNFCCC_biofuels']='red'
       facec_master['TNO_biofuels']='blue'
 
+   elif graphname == "emission_factors":
+      desired_simulations=[ \
+                            'ORCHIDEE_Tier2_Forest_EF1', \
+                            'ORCHIDEE_Tier2_Forest_EF2', \
+                            'ORCHIDEE_Tier2_Forest_EF3', \
+                            'ORCHIDEE_Tier2_Forest_EF4', \
+                         ]   
+
+      output_file_start="FL-FLEmissionFactors_"
+      output_file_end="_FCO2land_2019_v1.png" 
+      titleending=r" : FL-FL bottom-up emission factors"
+      lplot_areas=False
+
+
    elif graphname == "eurocom_inversions":
       desired_simulations=[ \
                             'EUROCOM_ALL', \
                             'EUROCOM_Carboscope', \
-                            'JENA-COMBINED', \
+                            'CSR-COMBINED', \
                             'EUROCOM_Flexinvert', \
                             'EUROCOM_Lumia', \
                             'EUROCOM_Chimere', \
@@ -1534,7 +1615,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                          ]   
       output_file_start="EUROCOMInversions_"
       output_file_end="_2019_v1.png" 
-      titleending=r" : net natural CO$_2$ fluxes from EUROCOM inversions"
+      titleending=r" : net land CO$_2$ fluxes from EUROCOM inversions"
 
       lplot_errorbar_master['EUROCOM_ALL']=True
 
@@ -1547,7 +1628,7 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                          ]   
       output_file_start="GCPInversions_"
       output_file_end="_2019_v1.png" 
-      titleending=r" : net natural CO$_2$ fluxes from GCP inversions"
+      titleending=r" : net land CO$_2$ fluxes from GCP inversions"
 
       displayname_master['GCP_ALL']="Mean of GCP inversions"
       displayname_err_master['GCP_ALL']="Min/Max of GCP inversions"
@@ -1560,11 +1641,11 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                             'GCP_JENA', \
                             'GCP_CTRACKER', \
                             'GCP_CAMS', \
-                            'ULB_lakes_rivers', \
+                            'rivers_lakes_reservoirs_ULB', \
                          ]   
       output_file_start="GCPInversionsCorrected_"
       output_file_end="_2019_v1.png" 
-      titleending=r" : net natural CO$_2$ fluxes from GCP inversions"
+      titleending=r" : net land CO$_2$ fluxes from GCP inversions"
 
       lcorrect_inversion_master["GCP_ALL"]=True
       lcorrect_inversion_master["GCP_JENA"]=True
@@ -1578,28 +1659,30 @@ def get_simulation_parameters(graphname,lshow_productiondata):
       desired_simulations=[ \
                             'UNFCCC_LULUCF', \
                             'MS-NRT', \
-      #                      'ULB_lakes_rivers', \
-                            'JENA-COMBINED', \
+      #                      'rivers_lakes_reservoirs_ULB', \
+                            'CSR-COMBINED', \
                             'EUROCOM_ALL', \
                             'GCP_ALL', \
                             'BLUE', \
+                        #    'EPIC', \
+                        #    'EFISCEN', \
                             'H&N', \
                          #   'FLUXCOM_rsonlyANN_os', \
                          #   'FLUXCOM_rsonlyRF_os', \
-                            'ORCHIDEE-MICT', \
+                         #   'ORCHIDEE-MICT', \
                             'ORCHIDEE', \
                             'FAOSTAT_LULUCF', \
                             'FAOSTAT_Crp', \
                             'FAOSTAT_Grs', \
                             'FAOSTAT_For', \
                             'TrendyV7', \
-                          'TrendyV7_ORCHIDEE', \
+                         # 'TrendyV7_ORCHIDEE', \
       ]        
 
       output_file_end="_FCO2land_2019_v1.png" 
 
       if graphname == "inversions_combined":
-         titleending=r" : Reconciliation of top-down vs. bottom-up net natural CO$_2$ fluxes"
+         titleending=r" : Comparison of top-down vs. bottom-up net land CO$_2$ fluxes"
          output_file_start="TopDownLULUCF_"
          # The legend is tricky.  You can use names not definied in the above
          # simulation list if they are defined later on.  This just gives their
@@ -1608,34 +1691,42 @@ def get_simulation_parameters(graphname,lshow_productiondata):
          desired_legend=[ \
                           displayname_master['UNFCCC_LULUCF'], \
                           displayname_err_master['UNFCCC_LULUCF'], \
+                          displayname_master['FAOSTAT_LULUCF'], \
                           displayname_master['MS-NRT'], \
                           displayname_master['EUROCOM_ALL'],displayname_err_master['EUROCOM_ALL'],\
                           displayname_master['GCP_ALL'], displayname_err_master['GCP_ALL'], \
-                          displayname_master['JENA-COMBINED'], \
-                          displayname_master['FAOSTAT_LULUCF'], \
-                          displayname_master['BLUE'], \
-                          displayname_master['H&N'], \
+                          displayname_master['CSR-COMBINED'], \
                           displayname_master['TrendyV7'], displayname_err_master['TrendyV7'], \
                           displayname_master['ORCHIDEE'], \
-                          displayname_master['TrendyV7_ORCHIDEE'], \
-                          displayname_master['ORCHIDEE-MICT'], \
+                      #    displayname_master['EPIC'], \
+                      #    displayname_master['EFISCEN'], \
+                          displayname_master['BLUE'], \
+                          displayname_master['H&N'], \
+                          #displayname_master['TrendyV7_ORCHIDEE'], \
+                          #displayname_master['ORCHIDEE-MICT'], \
                     #      'FLUXCOM_rsonlyANN_os', \
                     #      'FLUXCOM_rsonlyRF_os',
                        ]
+
+         displaylegend_master['ORCHIDEE-MICT']=True
+         displaylegend_master['ORCHIDEE']=True      
+         displaylegend_master['TrendyV7_ORCHIDEE']=True
+
       else:
          output_file_start="TopDownLULUCFbar_"
-         titleending=r" : Reconciliation of top-down vs. bottom-up (aggregated) net natural CO$_2$ fluxes"
+         titleending=r" : Comparison of top-down vs. bottom-up (aggregated) net land CO$_2$ fluxes"
 
          desired_simulations.append("VERIFYBU")
 
          # These simulations will be combined together.
 #         overwrite_simulations["VERIFYBU"]=['ORCHIDEE-MICT','ORCHIDEE','FLUXCOM_rsonlyANN_os','FLUXCOM_rsonlyRF_os','BLUE']
-         overwrite_simulations["VERIFYBU"]=['ORCHIDEE-MICT','ORCHIDEE','BLUE']
+#         overwrite_simulations["VERIFYBU"]=['ORCHIDEE-MICT','ORCHIDEE','BLUE']
+         overwrite_simulations["VERIFYBU"]=['ORCHIDEE','BLUE']
          overwrite_operations["VERIFYBU"]="mean"
          displaylegend_master["VERIFYBU"]=False
 
-         displayname_master["VERIFYBU"]="Mean of VERIFY BU simulation"
-         displayname_err_master["VERIFYBU"]="Min/Max of VERIFY BU simulation"
+         displayname_master["VERIFYBU"]="Mean of BU estimates (VERIFY)"
+         displayname_err_master["VERIFYBU"]="Min/Max of BU estimates (VERIFY)"
 
          # The legend is tricky.  You can use names not definied in the above
          # simulation list if they are defined later on.  This just gives their
@@ -1647,36 +1738,32 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                           displayname_master['MS-NRT'], \
                           displayname_master['EUROCOM_ALL'],displayname_err_master['EUROCOM_ALL'],\
                           displayname_master['GCP_ALL'], displayname_err_master['GCP_ALL'], \
-                          displayname_master['JENA-COMBINED'], \
+                          displayname_master['CSR-COMBINED'], \
                           displayname_master['TrendyV7'], displayname_err_master['TrendyV7'], \
                           displayname_master['FAOSTAT_LULUCF'], \
                           displayname_master['H&N'], \
                           displayname_master['VERIFYBU'], \
                           displayname_err_master['VERIFYBU'], \
-                          displayname_master['ORCHIDEE'], \
-                          displayname_master['TrendyV7_ORCHIDEE'], \
-                          displayname_master['ORCHIDEE-MICT'], \
+                  #        displayname_master['ORCHIDEE'], \
+                  #        displayname_master['TrendyV7_ORCHIDEE'], \
+                  #        displayname_master['ORCHIDEE-MICT'], \
                        ]
 
          # These simulations will be combined together.
 #         overwrite_simulations["VERIFYBU"]=['ORCHIDEE-MICT','ORCHIDEE','BLUE','FLUXCOM_rsonlyANN_os','FLUXCOM_rsonlyRF_os']
-         overwrite_simulations["VERIFYBU"]=['ORCHIDEE-MICT','ORCHIDEE','BLUE']
-         overwrite_operations["VERIFYBU"]="mean"
+         #overwrite_simulations["VERIFYBU"]=['ORCHIDEE-MICT','ORCHIDEE','BLUE']
+         #overwrite_operations["VERIFYBU"]="mean"
 
          # So I don't want to generally plot the components
-         displaylegend_master['ORCHIDEE-MICT']=True
-         displaylegend_master['ORCHIDEE']=True
+         displaylegend_master['ORCHIDEE-MICT']=False
+         displaylegend_master['ORCHIDEE']=False
          displaylegend_master['BLUE']=False
          displaylegend_master['FLUXCOM_rsonlyANN_os']=False
          displaylegend_master['FLUXCOM_rsonlyRF_os']=False
 
-         displaylegend_master['TrendyV7_ORCHIDEE']=True
+         displaylegend_master['TrendyV7_ORCHIDEE']=False
 
       #endif
-
-      displaylegend_master['ORCHIDEE-MICT']=True
-      displaylegend_master['ORCHIDEE']=True      
-      displaylegend_master['TrendyV7_ORCHIDEE']=True
 
       # These simulations will be combined together.
       overwrite_simulations["FAOSTAT_LULUCF"]=['FAOSTAT_Crp','FAOSTAT_Grs','FAOSTAT_For']
@@ -1703,16 +1790,16 @@ def get_simulation_parameters(graphname,lshow_productiondata):
       lplot_errorbar_master["EUROCOM_ALL"]=True
       lplot_errorbar_master["GCP_ALL"]=True
       lplot_errorbar_master["TrendyV7"]=True
-      lplot_errorbar_master["JENA-COMBINED"]=True
-      lwhiskerbars_master["JENA-COMBINED"]=True
+      lplot_errorbar_master["CSR-COMBINED"]=True
+      lwhiskerbars_master["CSR-COMBINED"]=True
 
    elif graphname == "inversions_verify":
       desired_simulations=[ \
-                            'JENA-COMBINED', \
-                            'JENA-REG-100km', \
-                            'JENA-REG-200km', \
-                            'JENA-REG-Core100km', \
-                            'JENA-REG-Valid100km', \
+                            'CSR-COMBINED', \
+                            'CSR-REG-100km', \
+                            'CSR-REG-200km', \
+                            'CSR-REG-Core100km', \
+                            'CSR-REG-Valid100km', \
                          ]   
 #      datasource='JENA'
       output_file_start="inversions_verify_"
@@ -1722,13 +1809,13 @@ def get_simulation_parameters(graphname,lshow_productiondata):
    elif graphname in ( "inversions_test", "inversions_full"):
 
       if graphname == "inversions_test":
-         titleending=r" : UNFCCC vs. net natural CO$_2$ fluxes - TEST (not complete dataset)"
+         titleending=r" : UNFCCC vs. net land CO$_2$ fluxes - TEST (not complete dataset)"
          desired_simulations=[ \
                                'UNFCCC_LULUCF', \
                                'MS-NRT', \
-                               'ULB_lakes_rivers', \
-                               'JENA-REG-100km', \
-                               'JENA-REG-200km', \
+                               'rivers_lakes_reservoirs_ULB', \
+                               'CSR-REG-100km', \
+                               'CSR-REG-200km', \
                                'EUROCOM_Carboscope', \
                                'EUROCOM_Flexinvert', \
                                'GCP_JENA', \
@@ -1736,12 +1823,12 @@ def get_simulation_parameters(graphname,lshow_productiondata):
                             ]   
          output_file_start="inversions_test_"
       else:
-         titleending=r" : UNFCCC vs. net natural CO$_2$ fluxes"
+         titleending=r" : UNFCCC vs. top-down estimates of net land CO$_2$ fluxes"
          desired_simulations=[ \
                                'UNFCCC_LULUCF', \
                                'MS-NRT', \
-                               'ULB_lakes_rivers', \
-                               'JENA-COMBINED', \
+                               'rivers_lakes_reservoirs_ULB', \
+                               'CSR-COMBINED', \
                                'EUROCOM_ALL', \
                                'GCP_ALL', \
                            ]   
@@ -1749,11 +1836,11 @@ def get_simulation_parameters(graphname,lshow_productiondata):
       #endif
 
       desired_legend=[ \
-                       'UNFCCC LULUCF NGHGI 2019', \
-                       'UNFCCC LULUCF NGHGI 2019 uncertainty', \
+                       displayname_master['UNFCCC_LULUCF'], \
+                       displayname_err_master['UNFCCC_LULUCF'], \
                        'MS-NRT', \
-                       'ULB_lakes_rivers', \
-                       displayname_master['JENA-COMBINED'], \
+                       'rivers_lakes_reservoirs_ULB', \
+                       displayname_master['CSR-COMBINED'], \
                        displayname_master['EUROCOM_ALL'],displayname_err_master['EUROCOM_ALL'],\
                        displayname_master['GCP_ALL'], displayname_err_master['GCP_ALL'], \
       ]
@@ -1765,12 +1852,12 @@ def get_simulation_parameters(graphname,lshow_productiondata):
       # A couple of these plots will be displayed as bars instead of symbols
       lplot_errorbar_master["EUROCOM_ALL"]=True
       lplot_errorbar_master["GCP_ALL"]=True
-      lplot_errorbar_master["JENA-COMBINED"]=True
-      lwhiskerbars_master["JENA-COMBINED"]=True
+      lplot_errorbar_master["CSR-COMBINED"]=True
+      lwhiskerbars_master["CSR-COMBINED"]=True
 
       # And to correct some of the plots.
       lcorrect_inversion_master["GCP_ALL"]=True
-      lcorrect_inversion_master["JENA-COMBINED"]=True
+      lcorrect_inversion_master["CSR-COMBINED"]=True
       lcorrect_inversion_master["EUROCOM_ALL"]=True
 
    else:
@@ -1797,7 +1884,8 @@ def get_simulation_parameters(graphname,lshow_productiondata):
 
 
 #   return linclude_inventories,desired_inventories,desired_others,desired_verify,datasource,output_file_start,output_file_end
-   return desired_simulations,files_master,simtype_master,plotmarker_master,variables_master,edgec_master,facec_master,uncert_color_master,markersize_master,productiondata_master,displayname_master,displayname_err_master,displaylegend_master,datasource,output_file_start,output_file_end,titleending,printfakewarning,lplot_areas,overwrite_simulations,overwrite_coeffs,overwrite_operations,desired_legend,flipdatasign_master,lcorrect_inversion_master,lplot_errorbar_master,lwhiskerbars_master
+   return desired_simulations,files_master,simtype_master,plotmarker_master,variables_master,edgec_master,facec_master,uncert_color_master,markersize_master,productiondata_master,displayname_master,displayname_err_master,displaylegend_master,datasource,output_file_start,output_file_end,titleending,printfakewarning,lplot_areas,overwrite_simulations,overwrite_coeffs,overwrite_operations,desired_legend,flipdatasign_master,lcorrect_inversion_master,lplot_errorbar_master,lwhiskerbars_master,ldetrend
+
 #enddef
 ##########################################################################
 

@@ -5,6 +5,12 @@ import sys
 from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 from matplotlib.lines import Line2D
 import re
+import matplotlib.gridspec as gridspec
+import matplotlib as mpl
+from textwrap import fill # legend text can be too long
+from matplotlib.ticker import (MultipleLocator, FormatStrFormatter,
+                               AutoMinorLocator)
+from scikit_posthocs import outliers_grubbs as grubbs
 
 # This is a plot which looks different from all the rest.  It's a series
 # of stacked bar plots.
@@ -157,7 +163,7 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
 
         
         temp_index=desired_simulations.index(csim)
-        print(csim,temp_index,simulation_data[temp_index,:,iplot])
+        print("Subsectors: ",csim,temp_index,simulation_data[temp_index,:,iplot])
         new_sum_vals[isim,:]=simulation_data[temp_index,:,iplot]
     #endfor
     new_sum_vals=np.nansum(new_sum_vals,axis=0)
@@ -243,6 +249,13 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
         diff_array[:,iyear]=temp_data[:,iyear+1]-temp_data[:,iyear]
         percent_diff_array[:,iyear]=diff_array[:,iyear]/abs(temp_data[:,iyear])*100
         lulucf_total_diffs[iyear]=lulucf_total_values[iyear+1]-lulucf_total_values[iyear]
+    #endif
+
+    # Check some information here:
+    if True:
+        for isim,csim in enumerate(required_simulations):
+            print("Testing averages: ",isim,csim,temp_data[isim,:])
+        #endfor
     #endif
 
     # This gets tricky for the net gain and net loss.  I need to loop over all the possible data at every point
@@ -743,4 +756,189 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
 
 #    return True
 
+#enddef
+
+############################################################
+# This plot is a plot showing the mean values of each simulation
+# It's done in addition to most plots
+def create_mean_plot(legend_titles,displayname,simulation_data,simulation_min,simulation_max,iplot,pa_string,kp_string,facec,zorder_value,uncert_color,simulation_mean,lplot_countrytot,plot_titles,output_file_start,desired_plots,output_file_end,uncert_alpha,overlapping_years,exclude_simulation_means,desired_simulations):
+
+    figmean=plt.figure(2,figsize=(13, 8))
+    gsmean = gridspec.GridSpec(2, 1, height_ratios=[9,1])
+    ax1mean=plt.subplot(gsmean[0])
+    #ax2mean =plt.subplot(gsmean[2])
+
+    # Don't need these two items on our legend
+    legend_titles_adjusted=[]
+    for ilegend,clegend in enumerate(legend_titles):
+        # Skip anything with area in it.
+        m_area=re.search("area",clegend,re.IGNORECASE)
+        m_uncert=re.search("uncertainty",clegend,re.IGNORECASE)
+        m_minmax=re.search("Min/Max",clegend,re.IGNORECASE)
+        if not m_area and not m_uncert and not m_minmax:
+            if clegend not in [pa_string,kp_string]:
+                legend_titles_adjusted.append(clegend)
+                print("Adding legend: ",clegend)
+            #endif
+        #endif
+    #endfor
+
+    # We need this because we need to know where to make a division
+    #expected_simulations=['UNFCCC_LULUCF','FAOSTAT_LULUCF','EUROCOM_ALL','GCP_ALL','CSR-COMBINED','TrendyV7','ORCHIDEE','BLUE','H&N']
+
+
+
+    # Need to figure out how many simulations we have, and then
+    # spread them evenly across the x axis.  
+    nsims=len(legend_titles_adjusted)
+    xaxis_vector=np.asarray(range(nsims))
+    barwidth=0.5
+    #legend_axis=[]
+    xlabels=[]
+    iposition=0
+    for ititle,ctitle in enumerate(legend_titles_adjusted): 
+
+        isim=displayname.index(ctitle)
+
+        # We exclude some simulations from the overlap period, like MS-NRT, which
+        # only has a single year.
+        if desired_simulations[isim] not in exclude_simulation_means:
+            mean_years=overlapping_years[iplot]
+        else:
+            mean_years=np.asarray(simulation_data[isim,:,iplot])
+            mean_years= np.invert(np.isnan(mean_years))
+        #endif
+
+        # Do we have an outlier?  Use Grubb's test
+        loutliers=grubbs(simulation_data[isim,mean_years,iplot],hypo=True)
+        if loutliers:
+            print("Outliers!",ctitle,mean_years)
+            print("Before outliers: ",simulation_data[isim,mean_years,iplot])
+            print("After outliers: ",grubbs(simulation_data[isim,mean_years,iplot]))
+            #loutliers=grubbs(simulation_data[isim,mean_years,iplot])
+        #endif
+            
+        # Do we have error bars?
+        if not np.isnan(simulation_min[isim,-1,iplot]) and not np.isnan(simulation_max[isim,-1,iplot]):
+            #meanmin=np.nanmin(simulation_data[isim,mean_years,iplot])
+            #meanmax=np.nanmax(simulation_data[isim,mean_years,iplot])
+            #fullmin=np.nanmin(simulation_min[isim,mean_years,iplot])
+            #fullmax=np.nanmax(simulation_max[isim,mean_years,iplot])
+            meanmin=np.nanmean(simulation_min[isim,mean_years,iplot])
+            meanmax=np.nanmean(simulation_max[isim,mean_years,iplot])
+            #p1=mpl.patches.Rectangle((float(iposition)-barwidth/2.0,meanmin),barwidth,meanmax-meanmin, color=facec[isim], zorder=zorder_value)
+            #ax1mean.add_patch(p1)
+            p1=mpl.patches.Rectangle((float(iposition)-barwidth/2.0,meanmin),barwidth,meanmax-meanmin, color=uncert_color[isim], alpha=uncert_alpha,zorder=zorder_value-2)
+            ax1mean.add_patch(p1)
+            p2=ax1mean.hlines(y=simulation_mean[isim,iplot],xmin=float(iposition)-barwidth/2.0,xmax=float(iposition)+barwidth/2.0,color='black',linestyle='--',zorder=zorder_value+1)
+            #            p1=ax1mean.bar(iposition, simulation_mean[isim,iplot], yerr=errordata, color=facec[isim],width=barwidth,label=displayname[isim],error_kw=dict(lw=2,capsize=15,capthick=1))
+
+        else:
+            #meanmin=np.nanmin(simulation_data[isim,mean_years,iplot])
+            #meanmax=np.nanmax(simulation_data[isim,mean_years,iplot])
+            dotted_mean_color="black"
+            #if facec[isim] == "black":
+            #    dotted_mean_color="white"
+            #else:
+            #    dotted_mean_color="black"
+            #endif
+
+            p2=ax1mean.hlines(y=simulation_mean[isim,iplot],xmin=float(iposition)-barwidth/2.0,xmax=float(iposition)+barwidth/2.0,color=dotted_mean_color,linestyle='--',zorder=zorder_value+1)
+            #p1=mpl.patches.Rectangle((float(iposition)-barwidth/2.0,meanmin),barwidth,meanmax-meanmin, color=facec[isim], zorder=zorder_value)
+            #ax1mean.add_patch(p1)
+            #            p1=ax1mean.bar(iposition, simulation_mean[isim,iplot], color=facec[isim],width=barwidth,label=displayname[isim])
+        #endif
+        xlabels.append(displayname[isim])
+        iposition=iposition+1
+            
+    #endfor
+
+    #ax1mean.yaxis.grid(True)
+    ax1mean.set_xticks(xaxis_vector)
+    
+    # Two label styles.  One horizontal, splitting the label across
+    # mutiple lines
+    if True:
+        xlabels = [fill(l, 20) for l in xlabels]
+        plt.xticks(rotation=45, ha='right')
+    else:
+        # The other, a single line and rotated at 45 degrees
+        plt.xticks(rotation=45, ha='right')
+    #endif
+    ax1mean.set_xticklabels(xlabels)
+    ax1mean.tick_params(axis='x', which='major', labelsize=10)
+    ax1mean.tick_params(axis='y', which='major', labelsize=14)
+
+    ax1mean.yaxis.set_minor_locator(AutoMinorLocator())
+    ax1mean.tick_params(which='minor', direction='in', length=3)
+    ax1mean.tick_params(which='major', direction='in', length=5)
+
+   # Now a bunch of things changing the general appearence of the plot
+    if not lplot_countrytot:
+        ax1mean.set_ylabel(r'g C yr$^{-1}$ m$^2$ of country)', fontsize=14)
+    else:
+        ax1mean.set_ylabel(r'Tg C yr$^{-1}$', fontsize=14)
+    #endif
+
+    #if graphname in ("inversions_combined","inversions_full", "inversions_test","inversions_combined","inversions_combinedbar"):
+    # Need to wrap legend labels to make sure they don't spill over
+    # into other columns.
+    #   labels = [fill(l, 40) for l in legend_titles_adjusted]
+    #   ax2mean.legend(legend_axes,labels,bbox_to_anchor=(0,0,1,1), loc="lower left",mode="expand", borderaxespad=0, ncol=2,fontsize='large')                     
+    #else:
+    #   labels = [fill(l, 30) for l in legend_titles_adjusted]
+    #   ax2mean.legend(legend_axes,labels,bbox_to_anchor=(0,0,1,1), loc="lower left",mode="expand", borderaxespad=0, ncol=3,fontsize='large')                     
+    #endif
+    #ax2mean.axis('off')
+    ax1mean.set_title("Timeseries means\n" + plot_titles[iplot],fontsize=16)
+    ax1mean.set_xlim(-1,nsims)
+    ax1mean.hlines(y=0.0,xmin=-1,xmax=nsims,color="black",linestyle='--',linewidth=0.1)
+    
+    ax1mean.text(0.02,0.05, 'sink', transform=ax1mean.transAxes,fontsize=12,color='black')
+    ax1mean.text(0.02,0.85, 'source', transform=ax1mean.transAxes,fontsize=12,color='black')
+
+    #####
+    # This won't work for every graph, but i'm trying to show different groups of results.
+    # Give a little more space at the top
+    ymin,ymax=ax1mean.get_ylim()
+    ax1mean.set_ylim(ymin=ymin,ymax=ymax+0.1*(ymax-ymin))
+
+    # This is for UNFCCC, FAO, GCP, EUROCOM, CSR, TRENDY, ORCHIDEE, BLUE, H&N
+    if True:
+        ymin,ymax=ax1mean.get_ylim()
+        p1=mpl.patches.Rectangle((1.5,ymin),3.0,ymax-ymin, color="lightgray", zorder=-100,alpha=0.3)
+        ax1mean.add_patch(p1)
+        p1=mpl.patches.Rectangle((6.5,ymin),2.5,ymax-ymin, color="lightgray", zorder=-100,alpha=0.3)
+        ax1mean.add_patch(p1)
+        ax1mean.text(0.5,0.98*(ymax-ymin)+ymin, 'Inventories', va='top', ha="center",fontsize=12,color='black')
+        ax1mean.text(3.0,0.98*(ymax-ymin)+ymin, 'Top-down', va='top', ha="center",fontsize=12,color='black')
+        ax1mean.text(5.5,0.98*(ymax-ymin)+ymin, 'Bottom-up\n(DGVMs)', va='top', ha="center",fontsize=12,color='black')
+        ax1mean.text(7.5,0.98*(ymax-ymin)+ymin, 'Bottom-up\n(bookkeeping)', va='top', ha="center",fontsize=12,color='black')
+        
+    # This is for UNFCCC, FAO, GCP, EUROCOM, CSR, TRENDY, ORCHIDEE, EPIC, EFISCEN, BLUE, H&N
+    if False:
+        ymin,ymax=ax1mean.get_ylim()
+        p1=mpl.patches.Rectangle((1.5,ymin),3.0,ymax-ymin, color="lightgray", zorder=-100,alpha=0.3)
+        ax1mean.add_patch(p1)
+        p1=mpl.patches.Rectangle((6.5,ymin),4.5,ymax-ymin, color="lightgray", zorder=-100,alpha=0.3)
+        ax1mean.add_patch(p1)
+        ax1mean.text(0.5,0.98*(ymax-ymin)+ymin, 'Inventories', va='top', ha="center",fontsize=12,color='black')
+        ax1mean.text(3.0,0.98*(ymax-ymin)+ymin, 'Top-down', va='top', ha="center",fontsize=12,color='black')
+        ax1mean.text(5.5,0.98*(ymax-ymin)+ymin, 'Bottom-up\n(complete)', va='top', ha="center",fontsize=12,color='black')
+        ax1mean.text(8.5,0.98*(ymax-ymin)+ymin, 'Bottom-up\n(partial)', va='top', ha="center",fontsize=12,color='black')
+
+    #####
+
+    cc='/home/orchidee03/cqiu/2Drun/inventories/inventories3/cc_by_gray.png'
+    img=plt.imread(cc)
+    newax = figmean.add_axes([0.1, 0.0, 0.05, 0.05], anchor='NE', zorder=-1)
+    newax.imshow(img)
+    newax.axis('off')
+    
+    ax1mean.text(1.0,0.3, 'VERIFY Project', transform=newax.transAxes,fontsize=12,color='darkgray')
+
+    figmean.savefig("MeanBar" +output_file_start+desired_plots[iplot]+output_file_end,dpi=300)
+
+
+    plt.close(figmean)
 #enddef

@@ -169,6 +169,28 @@ def get_country_region_data(country_region_plotting_order=["NONE"],loutput_codes
     country_region_data["BIH"].add_possible_names('BosniaandHerzegovina')
     country_region_data["RUS"].add_possible_names('Russia')
 
+    # These are all used in EFISCEN...lowercase values of the code
+    for ccode,cname in country_names.items():
+        country_region_data[ccode].add_possible_names(ccode.lower())
+    #endfor
+    # And some special ones
+    country_region_data["DEU"].add_possible_names('ger')
+    country_region_data["ROU"].add_possible_names('rom')
+    country_region_data["SVN"].add_possible_names('slo')
+    country_region_data["ESP"].add_possible_names('spa')
+    country_region_data["NLD"].add_possible_names('nla')
+    country_region_data["BGR"].add_possible_names('bul')
+    country_region_data["GBR"].add_possible_names('uka')
+    country_region_data["IRL"].add_possible_names('ire')
+    country_region_data["CHE"].add_possible_names('swi')
+    country_region_data["LTU"].add_possible_names('lit')
+    country_region_data["HRV"].add_possible_names('cro')
+    country_region_data["GRC"].add_possible_names('gre')
+    country_region_data["PRT"].add_possible_names('por')
+    country_region_data["LVA"].add_possible_names('lat')
+    country_region_data["SVK"].add_possible_names('slr')
+    country_region_data["DNK"].add_possible_names('den')
+
     # Now fill out the regional data
     region_names,country_list=get_region_data(country_names,country_region_data)
 
@@ -409,9 +431,12 @@ def get_region_data(country_names,country_region_data):
 # countries and regions in the passed dictionary are present in the
 # file, returning a dictionary with keys of all the country/region
 # names
-def find_countries_and_regions_in_file(filename,country_region_data):
+def find_countries_and_regions_in_file(filename,country_region_data,lremove_unfound=False):
 
     print("Looking for the countries and regions in file: ",filename)
+    if lremove_unfound:
+        print("We will remove any countries we don't find in this file from our dict.")
+    #endif
 
     # Open up the file
     srcnc=NetCDFFile(filename,"r")
@@ -454,6 +479,10 @@ def find_countries_and_regions_in_file(filename,country_region_data):
     srcnc.close()
 
     # Print out any countries that we did not find as a warning.
+    if lremove_unfound:
+        trimmed_cr_data={}
+    #endif
+
     for cr_code,cr_data in country_region_data.items():
 
         if cr_data.file_index == cr_data.uninit_int:
@@ -463,11 +492,19 @@ def find_countries_and_regions_in_file(filename,country_region_data):
                 print("WARNING: Did not find a long name in the .nc country mask file for {} ({}).".format(cr_data.long_name,cr_code))
                 
             #endif
+
+            if lremove_unfound:
+                trimmed_cr_data[cr_code]=cr_data
+            #endif
+
         #endif
     #endfor
 
-
-    return country_region_data
+    if lremove_unfound:
+        return trimmed_cr_data
+    else:
+        return country_region_data
+    #endif
 
 #enddef
 
@@ -795,6 +832,9 @@ if __name__ == '__main__':
     # I was once smart (even though I forget this), the long_name is already
     # included in the possible_names.  So I just need to loop through those.
     country_region_data=get_country_region_data()
+    print("**********************************************************")
+    print("Checking to see if any possible country names are repeated.")
+    print("**********************************************************")
     for ccode,cr_data in country_region_data.items():
         if cr_data.is_country:
             print("Testing country: {} ({})".format(cr_data.long_name,ccode))
