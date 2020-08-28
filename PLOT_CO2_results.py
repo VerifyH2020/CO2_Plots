@@ -9,7 +9,7 @@
 #    possible_graphnames list below
 # 
 #   You can control the countries/regions which are plotted by
-#   modifying the desired_plots list.
+#   modifying the sim_params.desired_plots list.
 #
 #   As of Feb 27, 2020, we use the following plots: rm -f *png *csv && python PLOT_CO2_results.py forestry_full && python PLOT_CO2_results.py grassland_full && python PLOT_CO2_results.py crops_full && python PLOT_CO2_results.py inversions_full && python PLOT_CO2_results.py inversions_combined && python PLOT_CO2_results.py inversions_combinedbar && python PLOT_CO2_results.py LULUCF_trendy
 #
@@ -40,204 +40,29 @@ import argparse
 from country_subroutines import get_countries_and_regions_from_cr_dict,get_country_region_data,get_country_codes_for_netCDF_file
 from plotting_subroutines import get_simulation_parameters,find_date,get_cumulated_array,readfile,group_input,combine_simulations,calculate_country_areas,get_country_areas,read_fake_data,create_sectorplot_full,print_test_data
 from plot_types import create_unfccc_bar_plot,create_mean_plot
+from plotting_inputs import simulation_parameters
+
+# I use Python 3 constructs.
+if sys.version_info[0] < 3:
+    raise Exception("You must use Python 3")
+#endif
 
 ###############################################
-# Some possible flags to control the simulation
+# Set up all the input parameters that control the simulation
 parser = argparse.ArgumentParser(description='Create synthesis plots from data found on the VERIFY database.')
-parser.add_argument('--graphname', dest='graphname', action='store',required=True,
-                    choices=["test", "luc_full", "sectorplot_full", "forestry_full", "grassland_full", "crops_full", "inversions_full", "inversions_test","biofuels","inversions_verify","lulucf","lulucf_full","inversions_combined","inversions_combinedbar","verifybu","verifybu_detrend","fluxcom","lucf_full","lulucf_trendy","trendy","unfccc_lulucf_bar","all_orchidee","gcp_inversions","gcp_inversions_corrected","eurocom_inversions","eurocom_inversions_corrected","epic","lulucf_msnrt","orc_trendy","fao","unfccc_fao","unfccc_fao_trendy","emission_factors","unfccc_woodharvest"],
-                   help='the type of graph that you wish to plot')
 
-parser.add_argument('--plot_all_countries', dest='plot_all_countries', action='store',default="False",
-                   help='if TRUE, we will create plots for every country and region that we can.  Otherwise, we only plot for what is hard-coded.')
-
-parser.add_argument('--plot_meangraph', dest='lplot_meangraph', action='store',default=False,
-                   help='if TRUE, we will create additional plots of the timeseries means for every country and region that we can.  The filename is the same, except preceded by MeanBar.')
-
-
-args = parser.parse_args()
-
-print("######################### INPUT VALUES #########################")
-graphname=args.graphname
-print("**************************************************************")
-print("Creating graph: " + graphname)
-print("**************************************************************")
-
-possible_true_values=["true","t","yes","y"]
-plot_all_countries=args.plot_all_countries
-if plot_all_countries.lower() in possible_true_values:
-    plot_all_countries=True
-else:
-    plot_all_countries=False
-#endif
-
-if plot_all_countries:
-   print("Creating plots for ALL countries and regions.")
-else:
-   print("Only creating plots for a hard-coded set of countries and regions.")
-#endif
-
-lplot_meangraph=args.lplot_meangraph
-if lplot_meangraph:
-   print("Creating additional plots for graph means.")
-else:
-   print("Not creating additional plots for graph means.")
-#endif
-
-print("######################### END INPUT VALUES #####################")
+sim_params=simulation_parameters(parser)
 
 ###############################################
-
-##########################################################################
-# Here are some variables that are used throughout the code
-##########################################################################
-
-# This controls the alpha value (transparency) for real and invented data.
-production_alpha=1.0
-nonproduction_alpha=0.2
-# If this is True, the symbols on the plots are made lighter if we 
-# are using non-production data.  This demonstrates the work left to be
-# done in terms of data processing, but sometimes we don't want to do this
-# as then we can't see the final plot aesthetic.
-lshow_productiondata=True
-
-# This controls the transparency of the uncertainty error bars on some plots
-uncert_alpha=0.3
-
-# This adds the timeseries means to the plot if True.  For the moment, it
-# calculates the means and stores them in the last place in the timeseries
-# array, crashing with an error if there is already a value here (we assume
-# that you plot, for example, up to the year 2020 but only have data until
-# year 2018, in order to have a nice whitespace on the right side of the
-# plot).
-lplot_means=True
-
-# Print some additional data about one of the timeseries.  For debugging
-# purposes.
-ltest_data=False
-itest_sim=0
-itest_plot=0
-
-# Toggles between showing VERIFY inversions as a rectangle like the others, or
-# a symbol with error bars
-#lerrorbars=True
-
-# Creates a horizontal line across the graph at zero.
-lprintzero=True
-
-# Make the Y-ranges on all the plots identical, selecting the ranges based
-# on the data.
-lharmonize_y=False
-
-# Make the Y-ranges on all the plots identical, imposing a range.
-lexternal_y=False
-ymin_external=-500.0
-ymax_external=500.0
-if lexternal_y:
-   lharmonize_y=True
-#endif
-
-# Plot spatial fluxes or country totals? If the following variable is
-# false, we will divide all fluxes by the area of the country/region before
-# plotting, to give the flux per pixel.
-lplot_countrytot=True
-
-# This saves time by creating fake data, and helps debug the plots.  But, it is very specific and must
-# be changed for the plot you are doing!
-# If you want to create fake data, do a run with real data, and then copy all of the .csv files for
-# the plot you want to "fake_data.csv","fake_data_min.csv","fake_data_max.csv","fake_data_err.csv"
-luse_fake_data=False
-
-# How many years do we extract from the data, or fill in with NaN if it's not found?
-if True:
-   # Standard plot
-   ndesiredyears=32 # use a couple extra years for padding on the right hand side
-   allyears=1990+np.arange(ndesiredyears)  ###1990-2022,ndesiredyears years. 
-else:
-   # Sometimes we want something a bit different.  This works fine for
-   # plotting the Trendy models, but might crash elsewhere where dates are
-   # still hardcoded.
-   ndesiredyears=14 # use a couple extra years for padding on the right hand side
-   allyears=2008+np.arange(ndesiredyears)  ###1990-2022,ndesiredyears years. 
-
-#endif
-# These are the year limits that are plotted.  The UNFCCC inventory data goes from 1990-2017.
-if True:
-   # For next years of the project, we may have data up until 2021.
-   # so I generally do 1989.5-2021.5.  2022.5 to give extra space for
-   # the timeseries averages.
-   xplot_min=1989.5
-   xplot_max=2022.5
-else:
-   xplot_min=allyears[0]-0.5
-   xplot_max=allyears[-1]+0.5
-#endif
-
-print("Extracting data from {} to {}.".format(allyears[0],allyears[-1]))
-
-all_regions_countries=get_country_codes_for_netCDF_file()
-
-# This gives the full country name as a function of the ISO-3166 code
-country_region_data=get_country_region_data()
-countrynames=get_countries_and_regions_from_cr_dict(country_region_data)
-
-# Only create plots for these countries/regions
-if not plot_all_countries:
-   desired_plots=['E28','FRA','DEU']
-   #desired_plots=['E28','GBR','DNK','NLD','DEU','IRL']
-#   desired_plots=['E28','NLD','DEU']
-#   desired_plots=['DEU','FRA','WEE', 'EAE', 'E28']
-#   desired_plots=['DEU', 'E28']
-   #desired_plots=['BGR','DEU','FRA','WEE', 'EAE', 'E28']
-   #desired_plots=['GGY','FRA','WEE', 'EAE', 'E28']
-   #desired_plots=['GRL','FRA','WEE', 'EAE', 'E28']
-   # These are the regions we use in the synthesis paper
-   #desired_plots=['E28','CEE','EAE','NOE','SOZ','WEE']
-
-else:
-   desired_plots=all_regions_countries
-#endif
-#desired_plots.remove('KOS')
-
-
-# What if I want a new region?  In theory, if I can build the dataseries
-# before I get to the general plotting routines, they should treat
-# it like just another region.  So, let's try to set everything
-# up for a new region here.  The code now handles everything in 
-# in group_input.
-#desired_plots=['EAE2','WEE2']
-# This is a test case that should produce indentical results
-#desired_plots=['IBE','IBE2']
-
-
-
-# This is something which controls the title printed on the plot, related
-# to the country/group.  As a default, take the country/group name.
-plot_titles_master={}
-for cname in countrynames.keys():
-   plot_titles_master[cname]=countrynames[cname]
-#endfor
-plot_titles_master["CSK"]="Former Czechoslovakia"
-plot_titles_master["CHL"]="Switzerland + Liechtenstein"
-plot_titles_master["BLT"]="Baltic countries"
-plot_titles_master["NAC"]="North Adriatic Countries"
-plot_titles_master["DSF"]="Denmark, Sweden, Finland"
-plot_titles_master["FMA"]="France, Monaco, Andorra"
-plot_titles_master["UMB"]="Ukraine, Rep. of Moldova, Belarus"
-plot_titles_master["SEA"]="South-Eastern Europe alternate"
-plot_titles_master["E28"]="EU27+UK"
-
-
-##########################################################################
 
 
 ####################################################################
 ############################# This is the start of the program
 ####################################################################
 
-nplots=len(desired_plots)
+nplots=len(sim_params.desired_plots)
 
-desired_simulations,files_master,simtype_master,plotmarker_master,variables_master,edgec_master,facec_master,uncert_color_master,markersize_master,productiondata_master,displayname_master,displayname_err_master,displaylegend_master,datasource,output_file_start,output_file_end,titleending,printfakewarning,lplot_areas,overwrite_simulations,overwrite_coeffs,overwrite_operations,desired_legend,flipdatasign_master,lcorrect_inversion_master,lplot_errorbar_master,lwhiskerbars_master,ldetrend=get_simulation_parameters(graphname,lshow_productiondata)
+desired_simulations,files_master,simtype_master,plotmarker_master,variables_master,edgec_master,facec_master,uncert_color_master,markersize_master,productiondata_master,displayname_master,displayname_err_master,displaylegend_master,datasource,output_file_start,output_file_end,titleending,printfakewarning,lplot_areas,overwrite_simulations,overwrite_coeffs,overwrite_operations,desired_legend,flipdatasign_master,lcorrect_inversion_master,lplot_errorbar_master,lwhiskerbars_master,ldetrend=get_simulation_parameters(sim_params.graphname,sim_params.lshow_productiondata)
 
 # This is a generic code to read in all the simulations.  We may do different things based on the
 # simulation name or type later on.
@@ -286,21 +111,21 @@ for simulationname in desired_simulations:
 
 # Now read in the data into one large array.  Based on the simulation
 # type, we may have to modify how we process the data.
-simulation_data=np.zeros((numsims,ndesiredyears,nplots))*np.nan
+simulation_data=np.zeros((numsims,sim_params.ndesiredyears,nplots))*np.nan
 # Some of the files, like the inventories, have an error that we can read in
-simulation_err=np.zeros((numsims,ndesiredyears,nplots))*np.nan
+simulation_err=np.zeros((numsims,sim_params.ndesiredyears,nplots))*np.nan
 # and occasionally we want the min and the max values, in particular for
 # combinations of other simulations.  I use this for uncertainty as well.
-simulation_min=np.zeros((numsims,ndesiredyears,nplots))*np.nan
-simulation_max=np.zeros((numsims,ndesiredyears,nplots))*np.nan
+simulation_min=np.zeros((numsims,sim_params.ndesiredyears,nplots))*np.nan
+simulation_max=np.zeros((numsims,sim_params.ndesiredyears,nplots))*np.nan
 
 
-if luse_fake_data:
-   print("WARNING: reading in fake data for graph: {}".format(graphname))
+if sim_params.luse_fake_data:
+   print("WARNING: reading in fake data for graph: {}".format(sim_params.graphname))
    print("All plots will have the same data.")
    for isim,simname in enumerate(desired_simulations):  
       for iplot in range(nplots):
-         simulation_data[isim,:,iplot],simulation_err[isim,:,iplot],simulation_min[isim,:,iplot],simulation_max[isim,:,iplot]=read_fake_data(ndesiredyears,simname)
+         simulation_data[isim,:,iplot],simulation_err[isim,:,iplot],simulation_min[isim,:,iplot],simulation_max[isim,:,iplot]=read_fake_data(sim_params.ndesiredyears,simname)
       #endfor
    #endfor
 
@@ -319,17 +144,17 @@ else:
       #endtry
 
       if simtype[isim] == "INVENTORY":
-         inv_fCO2=readfile(fname,variables[isim],ndesiredyears,True,1990,2018)  #monthly
+         inv_fCO2=readfile(fname,variables[isim],sim_params.ndesiredyears,True,1990,2018)  #monthly
          # This reads in the associated error.  It assumes that the file
          # has another variable of the same name, with _ERR added.
-         inv_fCO2_err=readfile(fname,variables[isim] + "_ERR",ndesiredyears,True,1990,2018)  #monthly
+         inv_fCO2_err=readfile(fname,variables[isim] + "_ERR",sim_params.ndesiredyears,True,1990,2018)  #monthly
          annfCO2=np.nanmean(inv_fCO2,axis=1)   #convert from monthly to yearly
          annfCO2_err=np.nanmean(inv_fCO2_err,axis=1)   #convert from monthly to yearly
          
          annfCO2_min=annfCO2.copy()*np.nan # these values are not used here
          annfCO2_max=annfCO2.copy()*np.nan
    
-         simulation_data[isim,:,:],simulation_err[isim,:,:],simulation_min[isim,:,:],simulation_max[isim,:,:]=group_input(annfCO2,annfCO2_err,annfCO2_min,annfCO2_max,desired_plots,True,ndesiredyears,nplots,all_regions_countries,desired_simulations[isim])
+         simulation_data[isim,:,:],simulation_err[isim,:,:],simulation_min[isim,:,:],simulation_max[isim,:,:]=group_input(annfCO2,annfCO2_err,annfCO2_min,annfCO2_max,sim_params.desired_plots,True,sim_params.ndesiredyears,nplots,sim_params.all_regions_countries,desired_simulations[isim])
          
 
          # I want to convert the percentage error values into min and max.  I do that below in 
@@ -339,10 +164,10 @@ else:
 
       elif simtype[isim] == ("MINMAX"):
          # This file has the variable value, as well as values of _MIN and _MAX which give error bars
-         inv_fCO2=readfile(fname,variables[isim],ndesiredyears,True,1990,2018)  #monthly
+         inv_fCO2=readfile(fname,variables[isim],sim_params.ndesiredyears,True,1990,2018)  #monthly
          # This reads in the associated error.  It assumes that the file has two other variables with similar names..
-         inv_fCO2_min=readfile(fname,variables[isim] + "_MIN",ndesiredyears,True,1990,2018)  #monthly
-         inv_fCO2_max=readfile(fname,variables[isim] + "_MAX",ndesiredyears,True,1990,2018)  #monthly
+         inv_fCO2_min=readfile(fname,variables[isim] + "_MIN",sim_params.ndesiredyears,True,1990,2018)  #monthly
+         inv_fCO2_max=readfile(fname,variables[isim] + "_MAX",sim_params.ndesiredyears,True,1990,2018)  #monthly
          
          annfCO2=np.nanmean(inv_fCO2,axis=1)   #convert from monthly to yearly
          annfCO2_min=np.nanmean(inv_fCO2_min,axis=1)   #convert from monthly to yearly
@@ -352,10 +177,10 @@ else:
          print("Min: ",desired_simulations[isim],annfCO2[:,11])
          print("Max: ",desired_simulations[isim],annfCO2[:,11])
          
-         simulation_data[isim,:,:],simulation_err[isim,:,:],simulation_min[isim,:,:],simulation_max[isim,:,:]=group_input(annfCO2,annfCO2,annfCO2_min,annfCO2_max,desired_plots,False,ndesiredyears,nplots,all_regions_countries,desired_simulations[isim])
+         simulation_data[isim,:,:],simulation_err[isim,:,:],simulation_min[isim,:,:],simulation_max[isim,:,:]=group_input(annfCO2,annfCO2,annfCO2_min,annfCO2_max,sim_params.desired_plots,False,sim_params.ndesiredyears,nplots,sim_params.all_regions_countries,desired_simulations[isim])
 
       elif simtype[isim] in ("TRENDY","VERIFY_BU","NONVERIFY_BU","INVENTORY_NOERR","VERIFY_TD","GLOBAL_TD","REGIONAL_TD","OTHER"):
-         inv_fCO2=readfile(fname,variables[isim],ndesiredyears,True,allyears[0],allyears[-1])  #monthly
+         inv_fCO2=readfile(fname,variables[isim],sim_params.ndesiredyears,True,sim_params.allyears[0],sim_params.allyears[-1])  #monthly
          annfCO2=np.nanmean(inv_fCO2,axis=1)   #convert from monthly to yearly
          
          annfCO2_min=annfCO2.copy()*np.nan # these values are not used here
@@ -385,7 +210,7 @@ else:
             annfCO2[abs(annfCO2)>1e35]=np.nan
          #endif
 
-         simulation_data[isim,:,:],simulation_err[isim,:,:],simulation_min[isim,:,:],simulation_max[isim,:,:]=group_input(annfCO2,annfCO2,annfCO2_min,annfCO2_max,desired_plots,False,ndesiredyears,nplots,all_regions_countries,desired_simulations[isim])
+         simulation_data[isim,:,:],simulation_err[isim,:,:],simulation_min[isim,:,:],simulation_max[isim,:,:]=group_input(annfCO2,annfCO2,annfCO2_min,annfCO2_max,sim_params.desired_plots,False,sim_params.ndesiredyears,nplots,sim_params.all_regions_countries,desired_simulations[isim])
       else:
          print("Do not know how to process data for simulation type: {0}".format(simtype[isim]))
          sys.exit()
@@ -393,12 +218,12 @@ else:
 
    #endfor
 #endif
-print_test_data(ltest_data,simulation_data,simulation_err,simulation_min,simulation_max,itest_sim,itest_plot,desired_simulations,desired_plots,"CHECKPOINT 1 (after reading in all)")
+print_test_data(sim_params.ltest_data,simulation_data,simulation_err,simulation_min,simulation_max,sim_params.itest_sim,sim_params.itest_plot,desired_simulations,sim_params.desired_plots,"CHECKPOINT 1 (after reading in all)")
 
 # If something is equal to zero, I don't plot it.
 simulation_data[simulation_data == 0.0]=np.nan
 
-print_test_data(ltest_data,simulation_data,simulation_err,simulation_min,simulation_max,itest_sim,itest_plot,desired_simulations,desired_plots,"CHECKPOINT 3 (after NaNing data)")
+print_test_data(sim_params.ltest_data,simulation_data,simulation_err,simulation_min,simulation_max,sim_params.itest_sim,sim_params.itest_plot,desired_simulations,sim_params.desired_plots,"CHECKPOINT 3 (after NaNing data)")
 
 # Use the values from the error array to fill out the min and the max array.  The min and the max array are
 # best for plotting, and I want to use them to print out the data values, but errors can only be propogated
@@ -422,7 +247,7 @@ if not test_min_max.all():
    print("Seem to have minimum values and not maximum values (or vice versa)!")
    for isim,simname in enumerate(desired_simulations):  
       print("Simulation: ",simname)
-      for iyear in range(ndesiredyears):
+      for iyear in range(sim_params.ndesiredyears):
          for iplot in range(nplots):
             print("iyear,iplot,min,max: {} {} {} {}".format(iyear,iplot,simulation_min[isim,iyear,iplot],simulation_max[isim,iyear,iplot]))
          #endfor
@@ -439,7 +264,7 @@ if test_min_err.any():
    print("Next we will convert the err into min/max and the min/max into err values.")
    for isim,simname in enumerate(desired_simulations):  
       print("Simulation: ",simname)
-      for iyear in range(ndesiredyears):
+      for iyear in range(sim_params.ndesiredyears):
          for iplot in range(nplots):
             print("iyear,iplot,min,max: {} {} {} {}".format(iyear,iplot,simulation_data[isim,iyear,iplot],simulation_err[isim,iyear,iplot],simulation_min[isim,iyear,iplot],simulation_max[isim,iyear,iplot]))
          #endfor
@@ -457,7 +282,7 @@ err_mask=np.logical_and(np.invert(have_min),have_err)
 # Remember, numbers are such that 100.0 is 100%!  Convert to a ratio when multiplying.
 simulation_max=np.where( err_mask,simulation_data+abs(simulation_data)*simulation_err/100.0,simulation_max)
 simulation_min=np.where( err_mask,simulation_data-abs(simulation_data)*simulation_err/100.0,simulation_min)
-print_test_data(ltest_data,simulation_data,simulation_err,simulation_min,simulation_max,itest_sim,itest_plot,desired_simulations,desired_plots,"CHECKPOINT 3 (after calculating min/max)")
+print_test_data(sim_params.ltest_data,simulation_data,simulation_err,simulation_min,simulation_max,sim_params.itest_sim,sim_params.itest_plot,desired_simulations,sim_params.desired_plots,"CHECKPOINT 3 (after calculating min/max)")
 
 
 # Now where we have min/max but not error, calculate an error value.  This is an approximation, since
@@ -468,7 +293,7 @@ print_test_data(ltest_data,simulation_data,simulation_err,simulation_min,simulat
 err_mask=np.logical_and(have_min,np.invert(have_err))
 simulation_err=np.where( err_mask,0.5*(simulation_max-simulation_min)/abs(simulation_data),simulation_err)
 
-print_test_data(ltest_data,simulation_data,simulation_err,simulation_min,simulation_max,itest_sim,itest_plot,desired_simulations,desired_plots,"CHECKPOINT 4 (after calculating error)")
+print_test_data(sim_params.ltest_data,simulation_data,simulation_err,simulation_min,simulation_max,sim_params.itest_sim,sim_params.itest_plot,desired_simulations,sim_params.desired_plots,"CHECKPOINT 4 (after calculating error)")
 
 # Check to see if we have inventory data.  If so, we do something different in plotting.
 ninv=simtype.count("INVENTORY")
@@ -496,7 +321,7 @@ else:
 if any(lcorrect_inversion):
    correction_tag=" (removing rivers_lakes_reservoirs_ULB)"
    correction_simulations=np.array(["rivers_lakes_reservoirs_ULB"],dtype=object)
-   correction_data=np.zeros((ndesiredyears,nplots))
+   correction_data=np.zeros((sim_params.ndesiredyears,nplots))
    for isim,simname in enumerate(desired_simulations):  
       if simname in correction_simulations:
          correction_data[:,:]=correction_data[:,:]+simulation_data[isim,:,:]
@@ -517,17 +342,54 @@ if any(lcorrect_inversion):
 
 #endif
 
-print_test_data(ltest_data,simulation_data,simulation_err,simulation_min,simulation_max,itest_sim,itest_plot,desired_simulations,desired_plots,"CHECKPOINT 6 (after corrections)")
+print_test_data(sim_params.ltest_data,simulation_data,simulation_err,simulation_min,simulation_max,sim_params.itest_sim,sim_params.itest_plot,desired_simulations,sim_params.desired_plots,"CHECKPOINT 6 (after corrections)")
 
 # Sometimes I need to sum several variables into one timeseries.  This does that, assuming
 # that there one simulation already in the dataset that will be overwritten.
-simulation_data[:,:,:],simulation_min[:,:,:],simulation_max[:,:,:],simulation_err[:,:,:]=combine_simulations(overwrite_simulations,overwrite_coeffs,overwrite_operations,simulation_data,simulation_min,simulation_max,simulation_err,desired_simulations,graphname)
+simulation_data[:,:,:],simulation_min[:,:,:],simulation_max[:,:,:],simulation_err[:,:,:]=combine_simulations(overwrite_simulations,overwrite_coeffs,overwrite_operations,simulation_data,simulation_min,simulation_max,simulation_err,desired_simulations,sim_params.graphname)
 
-print_test_data(ltest_data,simulation_data,simulation_err,simulation_min,simulation_max,itest_sim,itest_plot,desired_simulations,desired_plots,"CHECKPOINT 7 (after combine_simulations)")
+print_test_data(sim_params.ltest_data,simulation_data,simulation_err,simulation_min,simulation_max,sim_params.itest_sim,sim_params.itest_plot,desired_simulations,sim_params.desired_plots,"CHECKPOINT 7 (after combine_simulations)")
+
+# Need to be careful with this.  This applies Normalization to Zero Mean and Unit of Energy (Z-normalization)
+# to every timeseries.  Not sure how it'll work with timeseries that
+# have error bars.  Want to do this before the means are calculated.
+if ldetrend:
+    print("Detrending all timeseries with Z-normalization.")
+    for isim,csim in enumerate(desired_simulations):
+        for iplot in range(nplots):
+            have_min=np.asarray(simulation_min[isim,:,iplot])
+            have_min= np.invert(np.isnan(have_min))
+            have_max=np.asarray(simulation_max[isim,:,iplot])
+            have_max= np.invert(np.isnan(have_max))
+            if have_min.any():
+                print("Not sure I can detrend with minimum values!")
+                print(csim,iplot)
+                traceback.print_stack(file=sys.stdout)
+                sys.exit(1)
+            #endif
+            if have_max.any():
+                print("Not sure I can detrend with maximum values!")
+                print(csim,iplot)
+                traceback.print_stack(file=sys.stdout)
+                sys.exit(1)
+            #endif
+
+            # Calculate the mean of the timeseries
+            ts_mean=np.nanmean(simulation_data[isim,:,iplot])
+#            print("jifoez ",csim,iplot,ts_mean)
+#            print(simulation_data[isim,:,iplot])
+            ts_std=np.nanstd(simulation_data[isim,:,iplot])
+            simulation_data[isim,:,iplot]=(simulation_data[isim,:,iplot]-ts_mean)/ts_std
+        #endfor
+    #endfor
+
+#endif
+
+print_test_data(sim_params.ltest_data,simulation_data,simulation_err,simulation_min,simulation_max,sim_params.itest_sim,sim_params.itest_plot,desired_simulations,sim_params.desired_plots,"CHECKPOINT 7b (after detrending)")
 
 # For clarity on the plots, we can plot the mean values of our period of
 # interest for each dataset somewhere.  Do that calculation here.
-if lplot_means:
+if sim_params.lplot_means:
    print("Calculating means across all simulations for only the overlapping years.")
    simulation_mean=np.zeros((numsims,nplots))*np.nan
 
@@ -558,7 +420,7 @@ if lplot_means:
    overlapping_years=[]
    for iplot in range(nplots):
       overlapping_years_plot=[]
-      for iyear in range(ndesiredyears):
+      for iyear in range(sim_params.ndesiredyears):
          nans=np.isnan(test_data[:,iyear,iplot])
          # want True if there are no NaNs for this year
          overlapping_years_plot.append(not any(nans))
@@ -611,45 +473,14 @@ if lplot_means:
    #endfor
 #endif
 
-# Need to be careful with this.  This applies Normalization to Zero Mean and Unit of Energy (Z-normalization)
-# to every timeseries.  Not sure how it'll work with timeseries that
-# have error bars.
-if ldetrend:
-    print("Detrending all timeseries with Z-normalization.")
-    for isim,csim in enumerate(desired_simulations):
-        for iplot in range(nplots):
-            have_min=np.asarray(simulation_min[isim,:,iplot])
-            have_min= np.invert(np.isnan(have_min))
-            have_max=np.asarray(simulation_max[isim,:,iplot])
-            have_max= np.invert(np.isnan(have_max))
-            if have_min.any():
-                print("Not sure I can detrend with minimum values!")
-                print(csim,iplot)
-                traceback.print_stack(file=sys.stdout)
-                sys.exit(1)
-            #endif
-            if have_max.any():
-                print("Not sure I can detrend with maximum values!")
-                print(csim,iplot)
-                traceback.print_stack(file=sys.stdout)
-                sys.exit(1)
-            #endif
 
-            # Calculate the mean of the timeseries
-            ts_mean=np.nanmean(simulation_data[isim,:,iplot])
-            ts_std=np.nanstd(simulation_data[isim,:,iplot])
-            simulation_data[isim,:,iplot]=(simulation_data[isim,:,iplot]-ts_mean)/ts_std
-        #endfor
-    #endfor
-
-#endif
 
 ######### Here is where we get to the actual plotting
 # set the titles
 plot_titles=[]
-for iplot,cplot in enumerate(desired_plots):
+for iplot,cplot in enumerate(sim_params.desired_plots):
    try:
-      plot_titles.append("FCO2 land - " + plot_titles_master[cplot] + titleending)
+      plot_titles.append("FCO2 land - " + sim_params.plot_titles_master[cplot] + titleending)
    except:
       plot_titles.append("No title given.")
    #endtry
@@ -657,10 +488,10 @@ for iplot,cplot in enumerate(desired_plots):
 
 # There may be some situations in which we want to make the range of the y-axis 
 # identical in all plots
-if lharmonize_y:
-   if lexternal_y:
-      ymin=ymin_external
-      ymax=ymax_external
+if sim_params.lharmonize_y:
+   if sim_params.lexternal_y:
+      ymin=sim_params.ymin_external
+      ymax=sim_params.ymax_external
    else:
       ymin=np.nanmin(simulation_data[:,:,:])
       ymin=ymin-0.05*abs(ymin)
@@ -673,7 +504,7 @@ if lharmonize_y:
 # For one of the graphs, I do a little data processing.
 # I do this before the loop because I want to still print out
 # good values to the .csv files.
-if graphname == "unfccc_lulucf_bar":
+if sim_params.graphname == "unfccc_lulucf_bar":
 
    # A few tests
    naverages=3
@@ -704,20 +535,20 @@ if graphname == "unfccc_lulucf_bar":
    # I want to replace the values by averages defined above.
    for iaverage in range(naverages):
       # Find the indices for the years that cover the range that we want
-      temp_index=np.where( allyears == syear_average[iaverage])
+      temp_index=np.where( sim_params.allyears == syear_average[iaverage])
       sindex=int(temp_index[0])
-      temp_index=np.where( allyears == eyear_average[iaverage])
+      temp_index=np.where( sim_params.allyears == eyear_average[iaverage])
       eindex=int(temp_index[0])
-      if syear_average[iaverage] != allyears[sindex]:
+      if syear_average[iaverage] != sim_params.allyears[sindex]:
          print("Something is going wrong in starting year averages!")
          print("iaverage: {}, syear_average: {}".format(iaverage,syear_average[iaverage]))
-         print("sindex: {}, allyears: {}".format(sindex,allyears[sindex]))
+         print("sindex: {}, sim_params.allyears: {}".format(sindex,sim_params.allyears[sindex]))
          sys.exit(1)
       #endif
-      if eyear_average[iaverage] != allyears[eindex]:
+      if eyear_average[iaverage] != sim_params.allyears[eindex]:
          print("Something is going wrong in ending year averages!")
          print("iaverage: {}, eyear_average: {}".format(iaverage,eyear_average[iaverage]))
-         print("eindex: {}, allyears: {}".format(eindex,allyears[eindex]))
+         print("eindex: {}, sim_params.allyears: {}".format(eindex,sim_params.allyears[eindex]))
          sys.exit(1)
       #endif       
       if eindex < sindex:
@@ -738,7 +569,7 @@ if graphname == "unfccc_lulucf_bar":
    #endif
 
 ##
-print_test_data(ltest_data,simulation_data,simulation_err,simulation_min,simulation_max,itest_sim,itest_plot,desired_simulations,desired_plots,"CHECKPOINT 8")
+print_test_data(sim_params.ltest_data,simulation_data,simulation_err,simulation_min,simulation_max,sim_params.itest_sim,sim_params.itest_plot,desired_simulations,sim_params.desired_plots,"CHECKPOINT 8")
 
 ######## Sometimes people want raw data.  I will
 # print all raw data for all the plots to this file.
@@ -749,17 +580,17 @@ print_test_data(ltest_data,simulation_data,simulation_err,simulation_min,simulat
 #calculate_country_areas()
 country_areas=get_country_areas()
 
-for iplot,cplot in enumerate(desired_plots):
+for iplot,cplot in enumerate(sim_params.desired_plots):
 
-   print("**** On plot {0} ****".format(plot_titles_master[cplot]))
-   #datafile.write("**** On plot {0} ****\n".format(plot_titles_master[cplot]))
+   print("**** On plot {0} ****".format(sim_params.plot_titles_master[cplot]))
+   #datafile.write("**** On plot {0} ****\n".format(sim_params.plot_titles_master[cplot]))
 
    # Create a dataframe for all of these simulations, and print it to a .csv file
    # In order to do this, I should process all the data outside this loop
    # and make sure it's stored in simulation_data.  I am working towards that goal,
    # though perhaps not quite there yet.
-   df=pd.DataFrame(data=simulation_data[:,:,iplot],index=displayname,columns=allyears)
-   print_test_data(ltest_data,simulation_data,simulation_err,simulation_min,simulation_max,itest_sim,itest_plot,desired_simulations,desired_plots,"CHECKPOINT 9 (starting plots)")
+   df=pd.DataFrame(data=simulation_data[:,:,iplot],index=displayname,columns=sim_params.allyears)
+   print_test_data(sim_params.ltest_data,simulation_data,simulation_err,simulation_min,simulation_max,sim_params.itest_sim,sim_params.itest_plot,desired_simulations,sim_params.desired_plots,"CHECKPOINT 9 (starting plots)")
 
    # Since we want to use only a single .csv, loop through the min and
    # the max files.  If there is a difference between the min and the max,
@@ -783,11 +614,11 @@ for iplot,cplot in enumerate(desired_plots):
          # Notice that I can ignore this if all my data is NaN
          if len(min_non_NaN) != len(non_NaN) and len(non_NaN) != 0:
             print("Why do data and minimum values have different numbers of NaN?")
-            print(csim,desired_plots[iplot])
+            print(csim,sim_params.desired_plots[iplot])
             print("Data: ",simulation_data[isim,:,iplot])
             print("Min: ",simulation_min[isim,:,iplot])
             # For certain edge cases, this happens.  Greenland, for example.
-            if desired_plots[iplot] not in ("GRL","JEY"):
+            if sim_params.desired_plots[iplot] not in ("GRL","JEY"):
                sys.exit(1)
             else:
                temp_min=simulation_min[isim,:,iplot]
@@ -805,7 +636,7 @@ for iplot,cplot in enumerate(desired_plots):
             # This creates the dataframe transposed from what I want.  But
             # it crashes if I flip the indices and columns, so I do this and
             # then append the transposed dataframe.
-            newdf=pd.DataFrame(simulation_min[isim,:,iplot],index=allyears,columns=[displayname[isim] + " MIN VALUES"])
+            newdf=pd.DataFrame(simulation_min[isim,:,iplot],index=sim_params.allyears,columns=[displayname[isim] + " MIN VALUES"])
                   
             df=df.append(newdf.T)
             df.sort_index(inplace=True)
@@ -824,11 +655,11 @@ for iplot,cplot in enumerate(desired_plots):
          # Notice that I can ignore this if all my data is NaN
          if len(max_non_NaN) != len(non_NaN) and not nancheck.all() and len(non_NaN) != 0:
             print("Why do data and maximum values have different numbers of NaN?")
-            print(csim,desired_plots[iplot])
+            print(csim,sim_params.desired_plots[iplot])
             print("Data: ",simulation_data[isim,:,iplot])
             print("Max: ",simulation_max[isim,:,iplot])
             # For certain edge cases, this happens.  Greenland, for example.
-            if desired_plots[iplot] not in ("GRL","JEY"):
+            if sim_params.desired_plots[iplot] not in ("GRL","JEY"):
                sys.exit(1)
             else:
                temp_max=simulation_max[isim,:,iplot]
@@ -846,7 +677,7 @@ for iplot,cplot in enumerate(desired_plots):
             # This creates the dataframe transposed from what I want.  But
             # it crashes if I flip the indices and columns, so I do this and
             # then append the transposed dataframe.
-            newdf=pd.DataFrame(simulation_max[isim,:,iplot],index=allyears,columns=[displayname[isim] + " MAX VALUES"])
+            newdf=pd.DataFrame(simulation_max[isim,:,iplot],index=sim_params.allyears,columns=[displayname[isim] + " MAX VALUES"])
                   
             df=df.append(newdf.T)
             df.sort_index(inplace=True)
@@ -859,19 +690,19 @@ for iplot,cplot in enumerate(desired_plots):
    # Some people think it's more classicial to have the years as
    # the rows.  So do a quick transpose.
    df=df.T
-   df.to_csv(path_or_buf=output_file_start+desired_plots[iplot]+data_file_end,sep=",")
+   df.to_csv(path_or_buf=output_file_start+sim_params.desired_plots[iplot]+data_file_end,sep=",")
    
    
-   #df=pd.DataFrame(data=simulation_min[:,:,iplot],index=desired_simulations,columns=allyears)
+   #df=pd.DataFrame(data=simulation_min[:,:,iplot],index=desired_simulations,columns=sim_params.allyears)
    #data_file_end=re.sub(r".png",r"_min.csv",output_file_end)
-   #df.to_csv(path_or_buf=output_file_start+desired_plots[iplot]+data_file_end,sep=",")
-   #df=pd.DataFrame(data=simulation_max[:,:,iplot],index=desired_simulations,columns=allyears)
+   #df.to_csv(path_or_buf=output_file_start+sim_params.desired_plots[iplot]+data_file_end,sep=",")
+   #df=pd.DataFrame(data=simulation_max[:,:,iplot],index=desired_simulations,columns=sim_params.allyears)
    #data_file_end=re.sub(r".png",r"_max.csv",output_file_end)
-   #df.to_csv(path_or_buf=output_file_start+desired_plots[iplot]+data_file_end,sep=",")
+   #df.to_csv(path_or_buf=output_file_start+sim_params.desired_plots[iplot]+data_file_end,sep=",")
    # This is more for debugging purposes, not always necessary
-   #df=pd.DataFrame(data=simulation_err[:,:,iplot],index=desired_simulations,columns=allyears)
+   #df=pd.DataFrame(data=simulation_err[:,:,iplot],index=desired_simulations,columns=sim_params.allyears)
    #data_file_end=re.sub(r".png",r"_err.csv",output_file_end)
-   #df.to_csv(path_or_buf=output_file_start+desired_plots[iplot]+data_file_end,sep=",")
+   #df.to_csv(path_or_buf=output_file_start+sim_params.desired_plots[iplot]+data_file_end,sep=",")
    ####
 
    # In an effort to harmonize the spacing a bit, I create a three-panel
@@ -891,11 +722,11 @@ for iplot,cplot in enumerate(desired_plots):
    zorder_value=30
 
    # Do we scale the fluxes by the total area of the countries?
-   if not lplot_countrytot:
+   if not sim_params.lplot_countrytot:
       # The units of simulation data were in Tg C/yr.  This gives
       # Tg C/yr/square meter of country.  We want g C/yr/square meter of
       # country.
-      simulation_data[:,:,iplot]=simulation_data[:,:,iplot]/country_areas[countrynames[cplot]]*1e12
+      simulation_data[:,:,iplot]=simulation_data[:,:,iplot]/country_areas[sim_params.countrynames[cplot]]*1e12
       
    #endif
 
@@ -911,19 +742,19 @@ for iplot,cplot in enumerate(desired_plots):
          lowerrange=simulation_min[isim,:,iplot]
          if not lwhiskerbars[isim]:
             # This prints rectangles
-            for iyear in range(ndesiredyears):
+            for iyear in range(sim_params.ndesiredyears):
                if np.isnan(simulation_data[isim,iyear,iplot]):
                   continue
                #endif
                ldata=True
-               p1=mpl.patches.Rectangle((allyears[iyear]-0.5,lowerrange[iyear]),1,upperrange[iyear]-lowerrange[iyear], color=uncert_color[isim], alpha=uncert_alpha,zorder=1)
-               p2=ax1.hlines(y=simulation_data[isim,iyear,iplot],xmin=allyears[iyear]-0.5,xmax=allyears[iyear]+0.5,color=facec[isim],linestyle='--',zorder=2)
+               p1=mpl.patches.Rectangle((sim_params.allyears[iyear]-0.5,lowerrange[iyear]),1,upperrange[iyear]-lowerrange[iyear], color=uncert_color[isim], alpha=sim_params.uncert_alpha,zorder=1)
+               p2=ax1.hlines(y=simulation_data[isim,iyear,iplot],xmin=sim_params.allyears[iyear]-0.5,xmax=sim_params.allyears[iyear]+0.5,color=facec[isim],linestyle='--',zorder=2)
                ax1.add_patch(p1)
             #endfor
          else:
             # This prints a symbol with whisker error bars
-            whiskerbars=np.array((simulation_data[isim,:,iplot]-lowerrange[:],upperrange[:]-simulation_data[isim,:,iplot])).reshape(2,ndesiredyears)
-            p2=ax1.errorbar(allyears,simulation_data[isim,:,iplot],yerr=whiskerbars,marker=plotmarker[isim],mfc=facec[isim],mec='black',ms=10,capsize=10,capthick=2,ecolor="black",linestyle='None',zorder=5)
+            whiskerbars=np.array((simulation_data[isim,:,iplot]-lowerrange[:],upperrange[:]-simulation_data[isim,:,iplot])).reshape(2,sim_params.ndesiredyears)
+            p2=ax1.errorbar(sim_params.allyears,simulation_data[isim,:,iplot],yerr=whiskerbars,marker=plotmarker[isim],mfc=facec[isim],mec='black',ms=10,capsize=10,capthick=2,ecolor="black",linestyle='None',zorder=5)
             nandata=np.isnan(simulation_data[isim,:,iplot])
             if not nandata.all():
                ldata=True
@@ -950,9 +781,9 @@ for iplot,cplot in enumerate(desired_plots):
 
    if "VERIFYBU" in desired_simulations:
       idata=desired_simulations.index("VERIFYBU")
-      for iyear in range(ndesiredyears):
-         p2=ax1.hlines(y=simulation_data[idata,iyear,iplot],xmin=allyears[iyear]-0.5,xmax=allyears[iyear]+0.5,color=facec[idata],linestyle='--')
-         p1=mpl.patches.Rectangle((allyears[iyear]-0.5,simulation_min[idata,iyear,iplot]),1,simulation_max[idata,iyear,iplot]-simulation_min[idata,iyear,iplot], color=uncert_color[idata], alpha=uncert_alpha)
+      for iyear in range(sim_params.ndesiredyears):
+         p2=ax1.hlines(y=simulation_data[idata,iyear,iplot],xmin=sim_params.allyears[iyear]-0.5,xmax=sim_params.allyears[iyear]+0.5,color=facec[idata],linestyle='--')
+         p1=mpl.patches.Rectangle((sim_params.allyears[iyear]-0.5,simulation_min[idata,iyear,iplot]),1,simulation_max[idata,iyear,iplot]-simulation_min[idata,iyear,iplot], color=uncert_color[idata], alpha=sim_params.uncert_alpha)
          ax1.add_patch(p1)
       #endfor
       legend_axes.append(p2)
@@ -962,7 +793,7 @@ for iplot,cplot in enumerate(desired_plots):
  
       # Write raw data to a file
       #datafile.write("**** On dataset Mean of VERIFY BU simulations ****\n")
-      #datafile.write("years {}\n".format(allyears[:]))
+      #datafile.write("years {}\n".format(sim_params.allyears[:]))
       #datafile.write("data {}\n".format(simulation_data[idata,:,iplot]))
       #datafile.write("upperbounds {}\n".format(simulation_max[idata,:,iplot]))
       #datafile.write("lowerbounds {}\n".format(simulation_min[idata,:,iplot]))
@@ -971,18 +802,18 @@ for iplot,cplot in enumerate(desired_plots):
 
 
    # This is to plot the inventories
-   if linventories and not (graphname == "unfccc_lulucf_bar"):
+   if linventories and not (sim_params.graphname == "unfccc_lulucf_bar"):
 
-      if graphname == "sectorplot_full":
+      if sim_params.graphname == "sectorplot_full":
 
          temp_desired_sims=("UNFCCC_FL-FL","UNFCCC_GL-GL","UNFCCC_CL-CL")
-         temp_data=np.zeros((len(temp_desired_sims),ndesiredyears))
+         temp_data=np.zeros((len(temp_desired_sims),sim_params.ndesiredyears))
          for isim,csim in enumerate(temp_desired_sims):
             temp_data[isim,:]=simulation_data[desired_simulations.index(csim),:,iplot]
          #endfor
 
          # plot the whole sum of these three runs
-         #p1=ax1.scatter(allyears,np.nansum(temp_data,axis=0),marker="X",facecolors="blue", edgecolors="blue",s=60,alpha=nonproduction_alpha)
+         #p1=ax1.scatter(sim_params.allyears,np.nansum(temp_data,axis=0),marker="X",facecolors="blue", edgecolors="blue",s=60,alpha=sim_params.nonproduction_alpha)
          #legend_axes.append(p1)
          #legend_titles.append("UNFCCC_LU")
 
@@ -1004,9 +835,9 @@ for iplot,cplot in enumerate(desired_plots):
          barwidth=1.0
          for isim,csim in enumerate(temp_desired_sims):
             if productiondata[desired_simulations.index(csim)]:
-               p1=ax1.bar(allyears, temp_data[isim,:], bottom=data_stack[isim,:], color=facec[desired_simulations.index(csim)],width=barwidth,alpha=production_alpha*0.5)
+               p1=ax1.bar(sim_params.allyears, temp_data[isim,:], bottom=data_stack[isim,:], color=facec[desired_simulations.index(csim)],width=barwidth,alpha=sim_params.production_alpha*0.5)
             else:
-               p1=ax1.bar(allyears, temp_data[isim,:], bottom=data_stack[isim,:], color=facec[desired_simulations.index(csim)],width=barwidth,alpha=nonproduction_alpha*0.5)
+               p1=ax1.bar(sim_params.allyears, temp_data[isim,:], bottom=data_stack[isim,:], color=facec[desired_simulations.index(csim)],width=barwidth,alpha=sim_params.nonproduction_alpha*0.5)
             #endif
             legend_axes.append(p1)
             legend_titles.append(csim)
@@ -1026,18 +857,18 @@ for iplot,cplot in enumerate(desired_plots):
 
          # We do something different for land areas, which are plotted as
          # bars on an altnerative axis
-         if graphname == "forestry_full" and desired_simulations[isim] in ("LUH2v2_FOREST","UNFCCC_FOREST"):
+         if sim_params.graphname == "forestry_full" and desired_simulations[isim] in ("LUH2v2_FOREST","UNFCCC_FOREST"):
             continue
          #endif 
-         if graphname == "grassland_full" and desired_simulations[isim] in ("LUH2v2_GRASS","UNFCCC_GRASS"):
+         if sim_params.graphname == "grassland_full" and desired_simulations[isim] in ("LUH2v2_GRASS","UNFCCC_GRASS"):
             continue
          #endif 
-         if graphname == "crops_full" and desired_simulations[isim] in ("LUH2v2_CROP","UNFCCC_CROP"):
+         if sim_params.graphname == "crops_full" and desired_simulations[isim] in ("LUH2v2_CROP","UNFCCC_CROP"):
             continue
          #endif 
 
 
-         if simtype[isim] == "INVENTORY" and graphname != "sectorplot_full":
+         if simtype[isim] == "INVENTORY" and sim_params.graphname != "sectorplot_full":
             print("Plotting inventories!")
             print(simulation_max[isim,:,iplot])
             #datafile.write("**** On dataset {0} ****\n".format(desired_simulations[isim]))
@@ -1046,7 +877,7 @@ for iplot,cplot in enumerate(desired_plots):
 #            lowerrange=simulation_data[isim,:,iplot]-simulation_data[isim,:,iplot]*simulation_err[isim,:,iplot]
             upperrange=simulation_max[isim,:,iplot]
             lowerrange=simulation_min[isim,:,iplot]
-            #datafile.write("years {}\n".format(allyears[:]))
+            #datafile.write("years {}\n".format(sim_params.allyears[:]))
             #datafile.write("data {}\n".format(simulation_data[isim,:,iplot]))
             #datafile.write("upperbounds {}\n".format(upperrange[:]))
             #datafile.write("lowerbounds {}\n".format(lowerrange[:]))
@@ -1063,15 +894,15 @@ for iplot,cplot in enumerate(desired_plots):
             #endif
 
             lshow_uncert=False
-            for iyear in range(ndesiredyears):
+            for iyear in range(sim_params.ndesiredyears):
 
                # If we have no uncertainty, then I don't want to show it.
                if not np.isnan(lowerrange[iyear]) and not np.isnan(lowerrange[iyear]):
-                  p1=mpl.patches.Rectangle((allyears[iyear]-0.5,lowerrange[iyear]),1,upperrange[iyear]-lowerrange[iyear], color=uncert_color[isim], alpha=uncert_alpha,zorder=zorder_value-2)
+                  p1=mpl.patches.Rectangle((sim_params.allyears[iyear]-0.5,lowerrange[iyear]),1,upperrange[iyear]-lowerrange[iyear], color=uncert_color[isim], alpha=sim_params.uncert_alpha,zorder=zorder_value-2)
                   ax1.add_patch(p1)
                   lshow_uncert=True
                #endif
-               #ax1.fill_between(np.array([allyears[iyear]-0.5,allyears[iyear]+0.5]),lowerrange[iyear],upperrange[iyear],color=uncert_color[isim],alpha=uncert_alpha,zorder=zorder_value-1)
+               #ax1.fill_between(np.array([sim_params.allyears[iyear]-0.5,sim_params.allyears[iyear]+0.5]),lowerrange[iyear],upperrange[iyear],color=uncert_color[isim],alpha=sim_params.uncert_alpha,zorder=zorder_value-1)
             #endfor
 
             if lshow_uncert:
@@ -1081,11 +912,11 @@ for iplot,cplot in enumerate(desired_plots):
 
             # I want to make sure the symbol shows up on top of the error bars.
             # If this is not real data, make it lighter.
-            for iyear in range(ndesiredyears):
+            for iyear in range(sim_params.ndesiredyears):
                if productiondata[isim]:
-                  p1=ax1.hlines(y=simulation_data[isim,iyear,iplot],xmin=allyears[iyear]-0.5,xmax=allyears[iyear]+0.5,color=facec[isim],linestyle='-',alpha=production_alpha,zorder=zorder_value-1)
+                  p1=ax1.hlines(y=simulation_data[isim,iyear,iplot],xmin=sim_params.allyears[iyear]-0.5,xmax=sim_params.allyears[iyear]+0.5,color=facec[isim],linestyle='-',alpha=sim_params.production_alpha,zorder=zorder_value-1)
                else:
-                  p1=ax1.hlines(y=simulation_data[isim,iyear,iplot],xmin=allyears[iyear]-0.5,xmax=allyears[iyear]+0.5,color=facec[isim],linestyle='-',alpha=nonproduction_alpha,zorder=zorder_value-1)
+                  p1=ax1.hlines(y=simulation_data[isim,iyear,iplot],xmin=sim_params.allyears[iyear]-0.5,xmax=sim_params.allyears[iyear]+0.5,color=facec[isim],linestyle='-',alpha=sim_params.nonproduction_alpha,zorder=zorder_value-1)
                #endif
             #endif
 
@@ -1099,7 +930,7 @@ for iplot,cplot in enumerate(desired_plots):
 
    # This is to plot all the other simulations not covered by the special cases above
    for isim,simname in enumerate(desired_simulations):  
-      if simtype[isim] in ("NONVERIFY_BU","INVENTORY_NOERR","VERIFY_BU","TRENDY","GLOBAL_TD","REGIONAL_TD","MINMAX") or graphname == "inversions_verify":
+      if simtype[isim] in ("NONVERIFY_BU","INVENTORY_NOERR","VERIFY_BU","TRENDY","GLOBAL_TD","REGIONAL_TD","MINMAX") or sim_params.graphname == "inversions_verify":
          
          # We should have already plotted this above
          if lplot_errorbar[isim]:
@@ -1117,7 +948,7 @@ for iplot,cplot in enumerate(desired_plots):
          #endif
 
          # I do something differently for one of the plots
-         if graphname == "sectorplot_full" and desired_simulations[isim] in ("EPIC","ECOSSE_GL-GL","EFISCEN"):
+         if sim_params.graphname == "sectorplot_full" and desired_simulations[isim] in ("EPIC","ECOSSE_GL-GL","EFISCEN"):
             continue
          #endif
          if any(lcorrect_inversion) and desired_simulations[isim] in correction_simulations:
@@ -1130,39 +961,39 @@ for iplot,cplot in enumerate(desired_plots):
 
          # I use lighter symbols if the data is not real, i.e. I created a false dataset just to have something to plot
          if productiondata[isim]:
-            p1=ax1.scatter(allyears,simulation_data[isim,:,iplot],marker=plotmarker[isim],label=desired_simulations[isim],facecolors=facec[isim], edgecolors=edgec[isim],s=markersize[isim],alpha=production_alpha,zorder=zorder_value)
+            p1=ax1.scatter(sim_params.allyears,simulation_data[isim,:,iplot],marker=plotmarker[isim],label=desired_simulations[isim],facecolors=facec[isim], edgecolors=edgec[isim],s=markersize[isim],alpha=sim_params.production_alpha,zorder=zorder_value)
          else:
-            p1=ax1.scatter(allyears,simulation_data[isim,:,iplot],marker=plotmarker[isim],label=desired_simulations[isim],facecolors=facec[isim], edgecolors=edgec[isim],s=markersize[isim],alpha=nonproduction_alpha,zorder=zorder_value)
+            p1=ax1.scatter(sim_params.allyears,simulation_data[isim,:,iplot],marker=plotmarker[isim],label=desired_simulations[isim],facecolors=facec[isim], edgecolors=edgec[isim],s=markersize[isim],alpha=sim_params.nonproduction_alpha,zorder=zorder_value)
          #endif
          legend_axes.append(p1)
          legend_titles.append(displayname[isim])
 
          #datafile.write("**** On dataset {0} ****\n".format(displayname[isim]))
-         #datafile.write("years {}\n".format(allyears[:]))
+         #datafile.write("years {}\n".format(sim_params.allyears[:]))
          #datafile.write("data {}\n".format(simulation_data[isim,:,iplot]))
 
       #endif
    #endif
 
    # For this particular graph, I plot three of the VERIFY runs in a different way.
-   if graphname == "sectorplot_full":
+   if sim_params.graphname == "sectorplot_full":
 
       create_sectorplot_full()
 
    #endif
 
    # I want to plot the forest area on this plot as bars at the bottom.
-   if graphname in ("forestry_full","grassland_full","crops_full") and lplot_areas:
+   if sim_params.graphname in ("forestry_full","grassland_full","crops_full") and lplot_areas:
       print("Getting ready to plot land areas.")
       axsub = ax1.twinx()
       
-      if graphname == "forestry_full":
+      if sim_params.graphname == "forestry_full":
          land_areas=("LUH2v2_FOREST","UNFCCC_FOREST")
          labelname='Forest area \n[kha]'
-      elif graphname == "grassland_full":
+      elif sim_params.graphname == "grassland_full":
          land_areas=("LUH2v2_GRASS","UNFCCC_GRASS")
          labelname='Grassland area \n[kha]'
-      elif graphname == "crops_full":
+      elif sim_params.graphname == "crops_full":
          land_areas=("LUH2v2_CROP","UNFCCC_CROP")
          labelname='Cropland area \n[kha]'
       #endif
@@ -1189,7 +1020,7 @@ for iplot,cplot in enumerate(desired_plots):
             #endif
 
             # convert from m**2 to kha
-            p1=axsub.bar(allyears+offset, simulation_data[isim,:,iplot]/1000.0/10000.0, color=facec[desired_simulations.index(land_area)],width=barwidth,alpha=production_alpha*0.3)
+            p1=axsub.bar(sim_params.allyears+offset, simulation_data[isim,:,iplot]/1000.0/10000.0, color=facec[desired_simulations.index(land_area)],width=barwidth,alpha=sim_params.production_alpha*0.3)
             legend_axes.append(p1)
             legend_titles.append(displayname_master[land_area])
 
@@ -1201,7 +1032,7 @@ for iplot,cplot in enumerate(desired_plots):
       
 
       #datafile.write("**** On dataset {0} ****\n".format(displayname[isim]))
-      #datafile.write("years {}\n".format(allyears[:]))
+      #datafile.write("years {}\n".format(sim_params.allyears[:]))
       #datafile.write("data {}\n".format(simulation_data[isim,:,iplot]))
 
       # I want the bars to only take up the bottom third of the graph or so.
@@ -1214,7 +1045,7 @@ for iplot,cplot in enumerate(desired_plots):
    # I want to try stacking some bars at the bottom and right-side axis of some of the inversion plots
    if any(lcorrect_inversion):
 
-      temp_data=np.zeros((len(correction_simulations),ndesiredyears))
+      temp_data=np.zeros((len(correction_simulations),sim_params.ndesiredyears))
       for isim,csim in enumerate(correction_simulations):
          temp_data[isim,:]=simulation_data[desired_simulations.index(csim),:,iplot]
       #endfor
@@ -1241,16 +1072,16 @@ for iplot,cplot in enumerate(desired_plots):
       barwidth=0.3
       for isim,csim in enumerate(correction_simulations):
          if productiondata[desired_simulations.index(csim)]:
-            p1=axsub.bar(allyears, temp_data[isim,:], bottom=data_stack[isim,:], color=facec[desired_simulations.index(csim)],width=barwidth,alpha=production_alpha*0.3)
+            p1=axsub.bar(sim_params.allyears, temp_data[isim,:], bottom=data_stack[isim,:], color=facec[desired_simulations.index(csim)],width=barwidth,alpha=sim_params.production_alpha*0.3)
          else:
-            p1=axsub.bar(allyears, temp_data[isim,:], bottom=data_stack[isim,:], color=facec[desired_simulations.index(csim)],width=barwidth,alpha=nonproduction_alpha*0.3)
+            p1=axsub.bar(sim_params.allyears, temp_data[isim,:], bottom=data_stack[isim,:], color=facec[desired_simulations.index(csim)],width=barwidth,alpha=sim_params.nonproduction_alpha*0.3)
          #endif
          legend_axes.append(p1)
          legend_titles.append(csim)
       #endfor
 
 
-      if not lplot_countrytot:
+      if not sim_params.lplot_countrytot:
          axsub.set_ylabel(r'Correction for inversions\n[g C/yr/(m$^2$ of country)]')
       else:
          axsub.set_ylabel(r'Correction for inversions\n[Tg C yr$^{-1}$]')
@@ -1260,7 +1091,7 @@ for iplot,cplot in enumerate(desired_plots):
       # so that the bottom is equal to zero.
       ylimits=ax1.get_ylim()
       # Be careful if we are harmonizing the main axis
-      if lharmonize_y:
+      if sim_params.lharmonize_y:
          yaxisrange=ymax-ymin
       else:
          yaxisrange=ylimits[1]-ylimits[0]
@@ -1271,8 +1102,8 @@ for iplot,cplot in enumerate(desired_plots):
    # This is a special bar plot that doesn't look like any
    # of the other timeseries.  I have already calculated
    # average values to use above.
-   if graphname == "unfccc_lulucf_bar":
-      lskip,ax1=create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,syear_average,eyear_average,xplot_min,xplot_max,ndesiredyears,allyears,ax1,facec,production_alpha,legend_axes,legend_titles,displayname,canvas,output_file_end)
+   if sim_params.graphname == "unfccc_lulucf_bar":
+      lskip,ax1=create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,syear_average,eyear_average,sim_params.xplot_min,sim_params.xplot_max,sim_params.ndesiredyears,sim_params.allyears,ax1,facec,sim_params.production_alpha,legend_axes,legend_titles,displayname,canvas,output_file_end)
       if lskip:
          continue
       #endif
@@ -1280,14 +1111,14 @@ for iplot,cplot in enumerate(desired_plots):
    ###
 
    # Sometimes we want the y-axis for every plot to be identical
-   if lharmonize_y:
+   if sim_params.lharmonize_y:
       ax1.set_ylim(ymin,ymax)
    #endif
 
    kp_string="Kyoto Protocol (entering into force)"
    pa_string="Paris Agreement"
 
-   if graphname != "unfccc_lulucf_bar":
+   if sim_params.graphname != "unfccc_lulucf_bar":
       # We have some special lines here
       p1=ax1.axvline(x=2005,color='peru', linestyle=':')
       legend_axes.append(p1)
@@ -1307,7 +1138,7 @@ for iplot,cplot in enumerate(desired_plots):
       for isim,csim in enumerate(desired_legend):
          if csim not in legend_titles:
             print("--- {0} does not appear to be present in the simulations we have treated.".format(csim))
-            print("Please change desired_legend for graph {0}".format(graphname))
+            print("Please change desired_legend for graph {0}".format(sim_params.graphname))
             print("DESIRED: ",desired_legend)
             print("PLOTTED: ",legend_titles)
             #sys.exit(1)
@@ -1347,15 +1178,18 @@ for iplot,cplot in enumerate(desired_plots):
    
 
    # Now a bunch of things changing the general appearence of the plot
-   if not lplot_countrytot:
+   if not sim_params.lplot_countrytot:
       ax1.set_ylabel(r'g C yr$^{-1}$ m$^2$ of country)', fontsize=14)
    else:
       ax1.set_ylabel(r'Tg C yr$^{-1}$', fontsize=14)
    #endif
 
+   if ldetrend:
+       ax1.set_ylabel(r'[unitless]', fontsize=14)
+   #endif
 
    # A special plot for emission factors
-   if graphname == "emission_factors":
+   if sim_params.graphname == "emission_factors":
        ax1.set_ylabel(r'Tg C yr$^{-1}$ m$^{-2}$ FL-FL', fontsize=14)
        print("jfieozje ",ax1.get_ylim())
        ymin_temp=np.nanmin(simulation_data[:,:,iplot])
@@ -1373,7 +1207,7 @@ for iplot,cplot in enumerate(desired_plots):
 
 
    # For the xaxis, there are some plots where we don't want ticks and tick labels
-   if graphname != "unfccc_lulucf_bar":
+   if sim_params.graphname != "unfccc_lulucf_bar":
       ax1.set_xlabel('Year', fontsize=14)
       ax1.xaxis.set_major_locator(MultipleLocator(5))
       ax1.xaxis.set_minor_locator(MultipleLocator(1))
@@ -1388,11 +1222,11 @@ for iplot,cplot in enumerate(desired_plots):
          labelbottom=False) # labels along the bottom edge are off
    #endif
 
-   ax1.set_xlim(xplot_min,xplot_max)
+   ax1.set_xlim(sim_params.xplot_min,sim_params.xplot_max)
    ax1.tick_params(axis='y', which='major', labelsize=14)
    ax1.tick_params(axis='y', which='minor', labelsize=14)
 
-   if graphname in ("forestry_full","grassland_full","crops_full") and lplot_areas:
+   if sim_params.graphname in ("forestry_full","grassland_full","crops_full") and lplot_areas:
       # I want the bars to only take up the bottom third of the graph or so, so I want
       # the full data to only take up the top two-thirds
       ylimits=ax1.get_ylim()
@@ -1405,7 +1239,7 @@ for iplot,cplot in enumerate(desired_plots):
    # Now copy the full ax1 legend to ax2, and turn off that from ax1, just
    # to make the spacing a little bit better.
    # Also change the number of columns in the legend in case we have a lot of text.
-   if graphname in ("inversions_combined","inversions_full", "inversions_test","inversions_combined","inversions_combinedbar"):
+   if sim_params.graphname in ("inversions_combined","inversions_full", "inversions_test","inversions_combined","inversions_combinedbar"):
       # Need to wrap legend labels to make sure they don't spill over
       # into other columns.
       labels = [fill(l, 40) for l in legend_titles]
@@ -1426,7 +1260,7 @@ for iplot,cplot in enumerate(desired_plots):
    ax1.text(1.0,0.3, 'VERIFY Project', transform=newax.transAxes,fontsize=12,color='darkgray')
 
    if printfakewarning:
-      if lshow_productiondata:
+      if sim_params.lshow_productiondata:
          ax1.text(1.0,1.0, 'WARNING: Graph contains fake data (shown in lighter symbols). Bars indicating range are always lighter.', transform=newax.transAxes,fontsize=12,color='red')
       else:
          ax1.text(1.0,1.0, 'WARNING: Graph contains fake data.  For illustration purposes only.', transform=newax.transAxes,fontsize=12,color='red')
@@ -1435,38 +1269,38 @@ for iplot,cplot in enumerate(desired_plots):
 
    ax1.set_title(plot_titles[iplot],fontsize=16)
 
-   if lprintzero:
-      ax1.hlines(y=0.0,xmin=xplot_min,xmax=xplot_max,color="black",linestyle='--',linewidth=0.1)
+   if sim_params.lprintzero:
+      ax1.hlines(y=0.0,xmin=sim_params.xplot_min,xmax=sim_params.xplot_max,color="black",linestyle='--',linewidth=0.1)
    #endif
 
    # in this case, we have average simulation data plotted at the last
    # year in the timeseries.  We want to make this stand out a bit, so
    # we add a little light shading and change the tick label.
-   if lplot_means and graphname != "unfccc_lulucf_bar":
+   if sim_params.lplot_means and sim_params.graphname != "unfccc_lulucf_bar":
 #      ymin_temp,ymax_temp=ax1.get_ylim()
-      #p1=mpl.patches.Rectangle((allyears[-1]-1.0,ymin_temp),2.0,ymax_temp-ymin_temp, color="linen",alpha=0.5,zorder=-1)
+      #p1=mpl.patches.Rectangle((sim_params.allyears[-1]-1.0,ymin_temp),2.0,ymax_temp-ymin_temp, color="linen",alpha=0.5,zorder=-1)
       #ax1.add_patch(p1)
       # Set the labels by hand, since they should always be the same
       locs=[1990.0, 1995.0, 2000.0, 2005.0, 2010.0, 2015.0, 2021.0]
 #      labels=["1990", "1995", "2000", "2005", "2010", "2015", "Mean\n1990-last year\navailable"]
-      labels=["1990", "1995", "2000", "2005", "2010", "2015", "Timeseries\nmean"]
+      labels=["1990", "1995", "2000", "2005", "2010", "2015", "Mean of\noverlapping\ntimeseries"]
       ax1.set_xticks(locs)
       ax1.set_xticklabels(labels)
-      ax1.xaxis.labelpad=-13 # Needed if we make the mean label multi-line, since
-      #ax1.xaxis.labelpad=-27 # Needed if we make the mean label multi-line, since
+      #ax1.xaxis.labelpad=-13 # Needed if we make the mean label multi-line, since
+      ax1.xaxis.labelpad=-27 # Needed if we make the mean label multi-line, since
       # that pushes down the Year label too far from the axis
 
    #endif
 
    #plt.tight_layout(rect=[0, 0.05,1 , 1])
-   fig.savefig(output_file_start+desired_plots[iplot]+output_file_end,dpi=300)
+   fig.savefig(output_file_start+sim_params.desired_plots[iplot]+output_file_end,dpi=300)
    plt.close(fig)
 
    # What if we make a bar plot from these means?
    # Tried doing this above, but having two figures open caused issues.
    #if False:
-   if lplot_means and graphname != "unfccc_lulucf_bar" and lplot_meangraph:
-      create_mean_plot(legend_titles,displayname,simulation_data,simulation_min,simulation_max,iplot,pa_string,kp_string,facec,zorder_value,uncert_color,simulation_mean,lplot_countrytot,plot_titles,output_file_start,desired_plots,output_file_end,uncert_alpha,overlapping_years,exclude_simulation_means,desired_simulations)
+   if sim_params.lplot_means and sim_params.graphname != "unfccc_lulucf_bar" and sim_params.lplot_meangraph:
+      create_mean_plot(legend_titles,displayname,simulation_data,simulation_min,simulation_max,iplot,pa_string,kp_string,facec,zorder_value,uncert_color,simulation_mean,sim_params.lplot_countrytot,plot_titles,output_file_start,sim_params.desired_plots,output_file_end,sim_params.uncert_alpha,overlapping_years,exclude_simulation_means,desired_simulations)
 
    #endif
 
