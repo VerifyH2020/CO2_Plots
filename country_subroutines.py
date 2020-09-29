@@ -16,6 +16,7 @@
 #
 ##########################################
 
+# These are downloadable or standard modules
 from netCDF4 import Dataset as NetCDFFile 
 import sys
 import re
@@ -72,6 +73,7 @@ class countrydata:
             self.possible_names.extend(possible_name)
         #endif
     #enddef
+
 #enddef
 
 def get_country_codes_for_netCDF_file():
@@ -867,3 +869,114 @@ if __name__ == '__main__':
     print_regions_and_countries(country_region_plotting_order,country_region_data,3,False)
 
 #endif
+
+def get_country_areas():
+
+    # This is taken from our map with 79 regions.  Values are in square meters.
+    # Note that this likely does not correspond exactly to reported values from
+    # other sources, like the CIA World Factbook.  The reason is that our
+    # maps are at 0.1 degree resolution, and areas outside our lat/long window
+    # are not accounted for.  But it's the correct value for our purposes.
+    
+    
+    country_areas={}
+    country_areas["Aaland Islands"]=1578897664.0
+    country_areas["Albania"]=28352174080.0
+    country_areas["Andorra"]=447315584.0
+    country_areas["Austria"]=83591815168.0
+    country_areas["Belgium"]=30669848576.0
+    country_areas["Bulgaria"]=112254164992.0
+    country_areas["Bosnia and Herzegovina"]=50907799552.0
+    country_areas["Belarus"]=206009483264.0
+    country_areas["Switzerland"]=41593430016.0
+    country_areas["Cyprus"]=5524352512.0
+    country_areas["Czech Republic"]=78416461824.0
+    country_areas["Germany"]=356221026304.0
+    country_areas["Denmark"]=44500295680.0
+    country_areas["Spain"]=498337873920.0
+    country_areas["Estonia"]=45490667520.0
+    country_areas["Finland"]=334269054976.0
+    country_areas["France"]=547293986816.0
+    country_areas["Faroe Islands"]=1354416512.0
+    country_areas["United Kingdom"]=245327314944.0
+    country_areas["Guernsey"]=125637592.0
+    country_areas["Georgia"]=56721285120.0
+    country_areas["Greece"]=131507568640.0
+    country_areas["Greenland"]=28462256128.0
+    country_areas["Croatia"]=56145813504.0
+    country_areas["Hungary"]=92676333568.0
+    country_areas["Isle of Man"]=718484352.0
+    country_areas["Ireland"]=69942263808.0
+    country_areas["Iceland"]=101657755648.0
+    country_areas["Italy"]=299969642496.0
+    country_areas["Jersey"]=126276816.0
+    country_areas["Liechtenstein"]=164011744.0
+    country_areas["Lithuania"]=64425762816.0
+    country_areas["Luxembourg"]=2557641728.0
+    country_areas["Latvia"]=64558092288.0
+    country_areas["Moldova, Republic of"]=33723500544.0
+    country_areas["Macedonia, the former Yugoslav"]=24797104128.0
+    country_areas["Malta"]=312614048.0
+    country_areas["Montenegro"]=12890724352.0
+    country_areas["Netherlands"]=35655667712.0
+    country_areas["Norway"]=325791744000.0
+    country_areas["Poland"]=311556964352.0
+    country_areas["Portugal"]=87435624448.0
+    country_areas["Romania"]=236436160512.0
+    country_areas["Russian Federation"]=1995897176064.0
+    country_areas["Svalbard and Jan Mayen"]=251208448.0
+    country_areas["San Marino"]=59646068.0
+    country_areas["Serbia"]=88679014400.0
+    country_areas["Slovakia"]=48968114176.0
+    country_areas["Slovenia"]=19864659968.0
+    country_areas["Sweden"]=447214321664.0
+    country_areas["Turkey"]=791915069440.0
+    country_areas["Ukraine"]=596645642240.0
+    country_areas["BENELUX"]=68883161088.0
+    country_areas["Former Czechoslovakia"]=127384567808.0
+    country_areas["Switzerland + Liechtenstein"]=41757442048.0
+    country_areas["Baltic countries"]=174474510336.0
+    country_areas["North Adriatic Countries"]=76010471424.0
+    country_areas["Denmark, Sweden, Finland"]=825983631360.0
+    country_areas["United Kingdom + Ireland"]=315269578752.0
+    country_areas["Iberia"]=585773481984.0
+    country_areas["Western Europe"]=931446718464.0
+    country_areas["Western Europe (alternative)"]=1842534678528.0
+    country_areas["Central Europe"]=1013024096256.0
+    country_areas["Northern Europe"]=1326249934848.0
+    country_areas["Southern Europe (all)"]=2502051495936.0
+    country_areas["Southern Europe (non-EU)"]=1054263214080.0
+    country_areas["Southern Europe (EU)"]=1447788412928.0
+    country_areas["South-Western Europe"]=886055698432.0
+    country_areas["South-Eastern Europe (all)"]=1615995863040.0
+    country_areas["South-Eastern Europe (non-EU)"]=1054263214080.0
+    country_areas["South-Eastern Europe (EU)"]=561732714496.0
+    country_areas["Eastern Europe"]=2832275603456.0
+    country_areas["Eastern Europe (alternative)"]=1288686665728.0
+    country_areas["Eastern Europe (including Russia)"]=3284583317504.0
+    country_areas["EU-11+CHE"]=2273153908736.0
+    country_areas["EU-15"]=3214493614080.0
+    country_areas["EU-27"]=4105796583424.0
+    country_areas["EU-27+UK"]=4351123783680.0
+    country_areas["all Europe"]=8654811561984.0
+    
+    return country_areas
+#enddef
+
+# Give a possible name of a country, find out which code corresponds to
+# this country, returning a None if the country isn't found 
+def find_country_code(country_region_data,cname):
+
+    return_code=None
+
+    for ccode,cr_data in country_region_data.items():
+
+        if cname in cr_data.possible_names:
+            return_code=ccode
+        #endif
+
+    #endif
+
+    return return_code
+
+#enddef

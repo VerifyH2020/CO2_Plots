@@ -159,8 +159,8 @@ class simulation_parameters():
 
         # Print some additional data about one of the timeseries.  For debugging
         # purposes.
-        self.ltest_data=False
-        self.itest_sim=0
+        self.ltest_data=True
+        self.itest_sim=5
         self.itest_plot=0
         
         # Creates a horizontal line across the graph at zero.
@@ -361,10 +361,11 @@ class simulation_parameters():
         master_datasets["EUROCOM_EnKF"]=dataset_parameters( "EUROCOM_EnKF", "/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_EnKF-RAMS_vu_LAND_EU_1M_V1_20191020_Antoon_Grid-eurocom_CountryTotWithEEZ.nc", "REGIONAL_TD", "FCO2_NBP", "P", "darkred")
         master_datasets["EUROCOM_NAME"]=dataset_parameters( "EUROCOM_NAME", "/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_NAME-HB_bristol_LAND_EU_1M_V1_20191020_White_Grid-eurocom_CountryTotWithEEZ.nc", "REGIONAL_TD", "FCO2_NBP", "P", "magenta")
         master_datasets["EUROCOM_ALL"]=dataset_parameters( "EUROCOM_ALL", "/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_AllEUROCOMInversions_XXX_LAND_GL_1M_V1_202003021_McGrath_WP3_CountryTotWithEEZ.nc", "MINMAX", "FCO2_NBP", "P", "blue")
-        master_datasets["ECOSSE_CL-CL"]=dataset_parameters( "ECOSSE_CL-CL", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CropFluxes_ECOSSE-S1_UAbdn_CRP_EU_1M_V1_20200825_KUHNERT_WP3_CountryTotWithEEZ.nc", "VERIFY_BU", "FCO2_NBP_CRO", "o", "darkred")
-        master_datasets["ECOSSE_CL-CL_RH"]=dataset_parameters( "ECOSSE_CL-CL_RH", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CropFluxes_ECOSSE-S1_UAbdn_CRP_EU_1M_V1_20200825_KUHNERT_WP3_CountryTotWithEEZ.nc", "VERIFY_BU", "FCO2_RH_CRO", "o", "green")
-        master_datasets["ECOSSE_CL-CL_NPP"]=dataset_parameters( "ECOSSE_CL-CL_NPP", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CropFluxes_ECOSSE-S1_UAbdn_CRP_EU_1M_V1_20200825_KUHNERT_WP3_CountryTotWithEEZ.nc", "VERIFY_BU", "FCO2_NPP_CRO", "o", "red")
-        master_datasets["ECOSSE_CL-CL_FHARVEST"]=dataset_parameters( "ECOSSE_CL-CL_FHARVEST", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CropFluxes_ECOSSE-S1_UAbdn_CRP_EU_1M_V1_20200825_KUHNERT_WP3_CountryTotWithEEZ.nc", "VERIFY_BU", "FCO2_FHARVEST_CRO", "o", "blue")
+        master_datasets["ECOSSE_CL-CL"]=dataset_parameters( "ECOSSE_CL-CL", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CropFluxes_ECOSSE-S1_UAbdn_CRP_EU_1M_V1_20200923_KUHNERT_WP3_CountryTotWithEEZ.nc", "VERIFY_BU", "FCO2_NBP_CRO", "o", "darkred")
+        master_datasets["ECOSSE_CL-CL_0825"]=dataset_parameters( "ECOSSE_CL-CL_0825", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CropFluxes_ECOSSE-S1_UAbdn_CRP_EU_1M_V1_20200825_KUHNERT_WP3_CountryTotWithEEZ.nc", "VERIFY_BU", "FCO2_NBP_CRO", "o", "blue")
+        master_datasets["ECOSSE_CL-CL_RH"]=dataset_parameters( "ECOSSE_CL-CL_RH", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CropFluxes_ECOSSE-S1_UAbdn_CRP_EU_1M_V1_20200923_KUHNERT_WP3_CountryTotWithEEZ.nc", "VERIFY_BU", "FCO2_RH_CRO", "o", "green")
+        master_datasets["ECOSSE_CL-CL_NPP"]=dataset_parameters( "ECOSSE_CL-CL_NPP", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CropFluxes_ECOSSE-S1_UAbdn_CRP_EU_1M_V1_20200923_KUHNERT_WP3_CountryTotWithEEZ.nc", "VERIFY_BU", "FCO2_NPP_CRO", "o", "red")
+        master_datasets["ECOSSE_CL-CL_FHARVEST"]=dataset_parameters( "ECOSSE_CL-CL_FHARVEST", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CropFluxes_ECOSSE-S1_UAbdn_CRP_EU_1M_V1_20200923_KUHNERT_WP3_CountryTotWithEEZ.nc", "VERIFY_BU", "FCO2_FHARVEST_CRO", "o", "blue")
         master_datasets["ECOSSE_GL-GL"]=dataset_parameters( "ECOSSE_GL-GL", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_GrassFluxes_ECOSSE-SX_UAbdn_GRS_EU28_1M_V1_20200518_KUHNERT_WP3_CountryTotWithOutEEZ.nc", "VERIFY_BU", "FCO2_NEP_GRA", "o", "darkred")
         master_datasets["ECOSSE_CL-CL_us"]=dataset_parameters( "ECOSSE_CL-CL_us", "/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/WP3/EU28_swheat_co2_CountryTotWithOutEEZ.nc", "VERIFY_BU", "FCO2_SOIL_CRO", "o", "darkred")
         master_datasets["ECOSSE_GL-GL_us"]=dataset_parameters( "ECOSSE_GL-GL_us", "/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/WP3/EU28_gra_co2_CountryTotWithOutEEZ.nc", "VERIFY_BU", "FCO2_SOIL_GRA", "o", "darkred")
@@ -496,15 +497,15 @@ class simulation_parameters():
             self.titleending=r" : CO$_2$ emissions from land use change"
             
             # Change some colors and symbols here
-            facec_master['BLUE']='blue'
-            facec_master['H&N']='green'
-            facec_master['ORCHIDEE-MICT']='red'
-            facec_master['ORCHIDEE']='blue'
+            master_datasets['BLUE'].facec='blue'
+            master_datasets['H&N'].facec='green'
+            master_datasets['ORCHIDEE-MICT'].facec='red'
+            master_datasets['ORCHIDEE'].facec='blue'
             
-            plotmarker_master['BLUE']='^'
-            plotmarker_master['H&N']='^'
-            plotmarker_master['ORCHIDEE-MICT']='X'
-            plotmarker_master['ORCHIDEE']='X'
+            master_datasets['BLUE'].plotmarker='^'
+            master_datasets['H&N'].plotmarker='^'
+            master_datasets['ORCHIDEE-MICT'].plotmarker='X'
+            master_datasets['ORCHIDEE'].plotmarker='X'
             
             # These simulations will be combined together.
             self.overwrite_simulations["UNFCCC_LUC"]=['UNFCCC_forest_convert', \
@@ -532,14 +533,14 @@ class simulation_parameters():
             
             
             # So I don't want to generally plot the components
-            displaylegend_master['UNFCCC_forest_convert']=False
-            displaylegend_master['UNFCCC_grassland_convert']=False
-            displaylegend_master['UNFCCC_cropland_convert']=False
-            displaylegend_master['UNFCCC_wetland_convert']=False
-            displaylegend_master['UNFCCC_settlement_convert']=False
-            displaylegend_master['UNFCCC_other_convert']=False
-            displaylegend_master['ORCHIDEE']=False
-            displaylegend_master['ORCHIDEE_S2']=False
+            master_datasets['UNFCCC_forest_convert'].displaylegend=False
+            master_datasets['UNFCCC_grassland_convert'].displaylegend=False
+            master_datasets['UNFCCC_cropland_convert'].displaylegend=False
+            master_datasets['UNFCCC_wetland_convert'].displaylegend=False
+            master_datasets['UNFCCC_settlement_convert'].displaylegend=False
+            master_datasets['UNFCCC_other_convert'].displaylegend=False
+            master_datasets['ORCHIDEE'].displaylegend=False
+            master_datasets['ORCHIDEE_S2'].displaylegend=False
             
             
             #if lshow_productiondata:
@@ -561,16 +562,16 @@ class simulation_parameters():
             self.titleending=r" : CO$_2$ emissions from all ORCHIDEE simulations"
             
             # Change some colors and symbols here
-            facec_master['ORCHIDEE-MICT']='red'
-            facec_master['ORCHIDEE']='blue'
+            master_datasets['ORCHIDEE-MICT'].facec='red'
+            master_datasets['ORCHIDEE'].facec='blue'
             
-            plotmarker_master['ORCHIDEE-MICT']='^'
-            plotmarker_master['TrendyV7_ORCHIDEE']='X'
-            plotmarker_master['ORCHIDEE']='D'
-            plotmarker_master['ORCHIDEE_S2']='D'
-            plotmarker_master['ORCHIDEE_S1']='D'
-            plotmarker_master['ORCHIDEE_S0']='D'
-            plotmarker_master['ORCHIDEE_LUC']='P'
+            master_datasets['ORCHIDEE-MICT'].plotmarker='^'
+            master_datasets['TrendyV7_ORCHIDEE'].plotmarker='X'
+            master_datasets['ORCHIDEE'].plotmarker='D'
+            master_datasets['ORCHIDEE_S2'].plotmarker='D'
+            master_datasets['ORCHIDEE_S1'].plotmarker='D'
+            master_datasets['ORCHIDEE_S0'].plotmarker='D'
+            master_datasets['ORCHIDEE_LUC'].plotmarker='P'
             
             # These simulations will be combined together.
             self.overwrite_simulations["ORCHIDEE_LUC"]=['ORCHIDEE', \
@@ -605,15 +606,15 @@ class simulation_parameters():
             self.titleending=r" : CO$_2$ emissions from land use change and forestry"
             
             # Change some colors and symbols here
-            facec_master['BLUE']='blue'
-            facec_master['H&N']='green'
-            facec_master['ORCHIDEE-MICT']='red'
-            facec_master['ORCHIDEE']='blue'
+            master_datasets['BLUE'].facec='blue'
+            master_datasets['H&N'].facec='green'
+            master_datasets['ORCHIDEE-MICT'].facec='red'
+            master_datasets['ORCHIDEE'].facec='blue'
             
-            plotmarker_master['BLUE']='^'
-            plotmarker_master['H&N']='^'
-            plotmarker_master['ORCHIDEE-MICT']='X'
-            plotmarker_master['ORCHIDEE']='X'
+            master_datasets['BLUE'].plotmarker='^'
+            master_datasets['H&N'].plotmarker='^'
+            master_datasets['ORCHIDEE-MICT'].plotmarker='X'
+            master_datasets['ORCHIDEE'].plotmarker='X'
             
             # These simulations will be combined together.
             self.overwrite_simulations["UNFCCC_LUCF"]=['UNFCCC_forest_convert', \
@@ -634,13 +635,13 @@ class simulation_parameters():
                                              1.0, \
                                          ]
             # So I don't want to generally plot the components
-            displaylegend_master['UNFCCC_forest_convert']=False
-            displaylegend_master['UNFCCC_grassland_convert']=False
-            displaylegend_master['UNFCCC_cropland_convert']=False
-            displaylegend_master['UNFCCC_wetland_convert']=False
-            displaylegend_master['UNFCCC_settlement_convert']=False
-            displaylegend_master['UNFCCC_other_convert']=False
-            displaylegend_master['UNFCCC_FL-FL']=False
+            master_datasets['UNFCCC_forest_convert'].displaylegend=False
+            master_datasets['UNFCCC_grassland_convert'].displaylegend=False
+            master_datasets['UNFCCC_cropland_convert'].displaylegend=False
+            master_datasets['UNFCCC_wetland_convert'].displaylegend=False
+            master_datasets['UNFCCC_settlement_convert'].displaylegend=False
+            master_datasets['UNFCCC_other_convert'].displaylegend=False
+            master_datasets['UNFCCC_FL-FL'].displaylegend=False
             
             
             #if lshow_productiondata:
@@ -662,9 +663,9 @@ class simulation_parameters():
             #self.overwrite_operations["FAOSTAT_LULUCF"]="sum"
             #self.overwrite_coeffs["FAOSTAT_LULUCF"]=[1.0,1.0,1.0]
             # So I don't want to generally plot the components
-            #displaylegend_master['FAOSTAT_Crp']=False
-            #displaylegend_master['FAOSTAT_Grs']=False
-            #displaylegend_master['FAOSTAT_For']=False
+            #master_datasets['FAOSTAT_Crp'].displaylegend=False
+            #master_datasets['FAOSTAT_Grs'].displaylegend=False
+            #master_datasets['FAOSTAT_For'].displaylegend=False
             
         elif self.graphname == "lulucf_full":
             self.desired_simulations=[ \
@@ -689,9 +690,9 @@ class simulation_parameters():
             self.overwrite_operations["FAOSTAT_LULUCF"]="sum"
             self.overwrite_coeffs["FAOSTAT_LULUCF"]=[1.0,1.0,1.0]
             # So I don't want to generally plot the components
-            displaylegend_master['FAOSTAT_Crp']=False
-            displaylegend_master['FAOSTAT_Grs']=False
-            displaylegend_master['FAOSTAT_For']=False
+            master_datasets['FAOSTAT_Crp'].displaylegend=False
+            master_datasets['FAOSTAT_Grs'].displaylegend=False
+            master_datasets['FAOSTAT_For'].displaylegend=False
             
         elif self.graphname == "lulucf_trendy":
             self.desired_simulations=[ \
@@ -711,16 +712,16 @@ class simulation_parameters():
                               ]  
             
             self.desired_legend=[\
-                            displayname_master["UNFCCC_LULUCF"],displayname_master["UNFCCC_LULUCF"]+ " uncertainty",\
-                            displayname_master["MS-NRT"],\
+                            master_datasets["UNFCCC_LULUCF"].displayname,master_datasets["UNFCCC_LULUCF"].displayname+ " uncertainty",\
+                            master_datasets["MS-NRT"].displayname,\
                             
-                            displayname_master["FAOSTAT_LULUCF"],\
-                            displayname_master["BLUE"],\
-                            displayname_master["H&N"],\
-                            displayname_master['TrendyV7'], displayname_err_master['TrendyV7'], \
-                            displayname_master["ORCHIDEE"],\
-                            #displayname_master["ORCHIDEE-MICT"],\
-                            #displayname_master["TrendyV7_ORCHIDEE"],\
+                            master_datasets["FAOSTAT_LULUCF"].displayname,\
+                            master_datasets["BLUE"].displayname,\
+                            master_datasets["H&N"].displayname,\
+                            master_datasets['TrendyV7'].displayname, master_datasets['TrendyV7'].displayname_err, \
+                            master_datasets["ORCHIDEE"].displayname,\
+                            #master_datasets["ORCHIDEE-MICT"].displayname,\
+                            #master_datasets["TrendyV7_ORCHIDEE"].displayname,\
                         ]
             self.output_file_start="LULUCFTrendy_"
             self.output_file_end="_FCO2land_2019_v1.png" 
@@ -729,25 +730,25 @@ class simulation_parameters():
             # These simulations will be combined together.
             self.overwrite_simulations["FAOSTAT_LULUCF"]=['FAOSTAT_Crp','FAOSTAT_Grs','FAOSTAT_For']
             # So I don't want to generally plot the components
-            displaylegend_master['FAOSTAT_Crp']=False
-            displaylegend_master['FAOSTAT_Grs']=False
-            displaylegend_master['FAOSTAT_For']=False
+            master_datasets['FAOSTAT_Crp'].displaylegend=False
+            master_datasets['FAOSTAT_Grs'].displaylegend=False
+            master_datasets['FAOSTAT_For'].displaylegend=False
             self.overwrite_operations["FAOSTAT_LULUCF"]="sum"
             self.overwrite_coeffs["FAOSTAT_LULUCF"]=[1.0,1.0,1.0]
             
             # Change some colors and symbols here
-            facec_master["FAOSTAT_LULUCF"]="yellow"
-            plotmarker_master['FAOSTAT_LULUCF']='^'
-            facec_master["ORCHIDEE"]="black"
-            facec_master["ORCHIDEE-MICT"]="none"
-            facec_master["TrendyV7_ORCHIDEE"]="none"
-            edgec_master["TrendyV7_ORCHIDEE"]="dimgrey"
-            edgec_master["ORCHIDEE-MICT"]="black"
-            #displaylegend_master['ORCHIDEE-MICT']=False
-            #displaylegend_master['TrendyV7_ORCHIDEE']=False
+            master_datasets["FAOSTAT_LULUCF"].facec="yellow"
+            master_datasets['FAOSTAT_LULUCF'].plotmarker='^'
+            master_datasets["ORCHIDEE"].facec="black"
+            master_datasets["ORCHIDEE-MICT"].facec="none"
+            master_datasets["TrendyV7_ORCHIDEE"].facec="none"
+            master_datasets["TrendyV7_ORCHIDEE"].edgec="dimgrey"
+            master_datasets["ORCHIDEE-MICT"].edgec="black"
+            #master_datasets['ORCHIDEE-MICT'].displaylegend=False
+            #master_datasets['TrendyV7_ORCHIDEE'].displaylegend=False
             
             # Plot these as bars
-            lplot_errorbar_master["TrendyV7"]=True
+            master_datasets["TrendyV7"].lplot_errorbar=True
             
         elif self.graphname == "orc_trendy":
             self.desired_simulations=[ \
@@ -763,15 +764,15 @@ class simulation_parameters():
                                   "TrendyV7_ORCHIDEE",\
                               ]  
             
-            displayname_master["ORCHIDEE"]="ORCHIDEE-VERIFY"
+            master_datasets["ORCHIDEE"]="ORCHIDEE-VERIFY"
             self.desired_legend=[\
-                            displayname_master["FAOSTAT_LULUCF"],\
-                            displayname_master["UNFCCC_LULUCF"],displayname_master["UNFCCC_LULUCF"]+ " uncertainty",\
-                            displayname_master["MS-NRT"],\
+                            master_datasets["FAOSTAT_LULUCF"].displayname,\
+                            master_datasets["UNFCCC_LULUCF"].displayname,master_datasets["UNFCCC_LULUCF"].displayname+ " uncertainty",\
+                            master_datasets["MS-NRT"].displayname,\
                             
-                            displayname_master['TrendyV7'], displayname_err_master['TrendyV7'], \
-                            displayname_master["TrendyV7_ORCHIDEE"],\
-                            displayname_master["ORCHIDEE"],\
+                            master_datasets['TrendyV7'].displayname, master_datasets['TrendyV7'].displayname_err, \
+                            master_datasets["TrendyV7_ORCHIDEE"].displayname,\
+                            master_datasets["ORCHIDEE"].displayname,\
                         ]
             self.output_file_start="LULUCFOrcTrendy_"
             self.output_file_end="_FCO2land_2019_v1.png" 
@@ -780,25 +781,25 @@ class simulation_parameters():
             # These simulations will be combined together.
             self.overwrite_simulations["FAOSTAT_LULUCF"]=['FAOSTAT_Crp','FAOSTAT_Grs','FAOSTAT_For']
             # So I don't want to generally plot the components
-            displaylegend_master['FAOSTAT_Crp']=False
-            displaylegend_master['FAOSTAT_Grs']=False
-            displaylegend_master['FAOSTAT_For']=False
+            master_datasets['FAOSTAT_Crp'].displaylegend=False
+            master_datasets['FAOSTAT_Grs'].displaylegend=False
+            master_datasets['FAOSTAT_For'].displaylegend=False
             self.overwrite_operations["FAOSTAT_LULUCF"]="sum"
             self.overwrite_coeffs["FAOSTAT_LULUCF"]=[1.0,1.0,1.0]
             
             # Change some colors and symbols here
-            facec_master["FAOSTAT_LULUCF"]="yellow"
-            plotmarker_master['FAOSTAT_LULUCF']='^'
-            facec_master["ORCHIDEE"]="black"
-            facec_master["ORCHIDEE-MICT"]="none"
-            facec_master["TrendyV7_ORCHIDEE"]="none"
-            edgec_master["TrendyV7_ORCHIDEE"]="dimgrey"
-            edgec_master["ORCHIDEE-MICT"]="black"
-            #displaylegend_master['ORCHIDEE-MICT']=False
-            #displaylegend_master['TrendyV7_ORCHIDEE']=False
+            master_datasets["FAOSTAT_LULUCF"].facec="yellow"
+            master_datasets['FAOSTAT_LULUCF'].plotmarker='^'
+            master_datasets["ORCHIDEE"].facec="black"
+            master_datasets["ORCHIDEE-MICT"].facec="none"
+            master_datasets["TrendyV7_ORCHIDEE"].facec="none"
+            master_datasets["TrendyV7_ORCHIDEE"].edgec="dimgrey"
+            master_datasets["ORCHIDEE-MICT"].edgec="black"
+            #master_datasets['ORCHIDEE-MICT'].displaylegend=False
+            #master_datasets['TrendyV7_ORCHIDEE'].displaylegend=False
             
             # Plot these as bars
-            lplot_errorbar_master["TrendyV7"]=True
+            master_datasets["TrendyV7"].lplot_errorbar=True
             
         elif self.graphname == "unfccc_fao_trendy":
             self.desired_simulations=[ \
@@ -814,12 +815,12 @@ class simulation_parameters():
                               ]  
             
             self.desired_legend=[\
-                            displayname_master["FAOSTAT_LULUCF"],\
-                            displayname_master["UNFCCC_LULUCF"],displayname_master["UNFCCC_LULUCF"]+ " uncertainty",\
-                            displayname_master["MS-NRT"],\
+                            master_datasets["FAOSTAT_LULUCF"].displayname,\
+                            master_datasets["UNFCCC_LULUCF"].displayname,master_datasets["UNFCCC_LULUCF"].displayname+ " uncertainty",\
+                            master_datasets["MS-NRT"].displayname,\
                             
-                            displayname_master['TrendyV7'], displayname_err_master['TrendyV7'], \
-                            displayname_master["TrendyV7_ORCHIDEE"],\
+                            master_datasets['TrendyV7'].displayname, master_datasets['TrendyV7'].displayname_err, \
+                            master_datasets["TrendyV7_ORCHIDEE"].displayname,\
                         ]
             self.output_file_start="UNFCCCFAOTrendy_"
             self.output_file_end="_FCO2land_2019_v1.png" 
@@ -828,25 +829,25 @@ class simulation_parameters():
             # These simulations will be combined together.
             self.overwrite_simulations["FAOSTAT_LULUCF"]=['FAOSTAT_Crp','FAOSTAT_Grs','FAOSTAT_For']
             # So I don't want to generally plot the components
-            displaylegend_master['FAOSTAT_Crp']=False
-            displaylegend_master['FAOSTAT_Grs']=False
-            displaylegend_master['FAOSTAT_For']=False
+            master_datasets['FAOSTAT_Crp'].displaylegend=False
+            master_datasets['FAOSTAT_Grs'].displaylegend=False
+            master_datasets['FAOSTAT_For'].displaylegend=False
             self.overwrite_operations["FAOSTAT_LULUCF"]="sum"
             self.overwrite_coeffs["FAOSTAT_LULUCF"]=[1.0,1.0,1.0]
             
             # Change some colors and symbols here
-            facec_master["FAOSTAT_LULUCF"]="yellow"
-            plotmarker_master['FAOSTAT_LULUCF']='^'
-            facec_master["ORCHIDEE"]="black"
-            facec_master["ORCHIDEE-MICT"]="none"
-            facec_master["TrendyV7_ORCHIDEE"]="none"
-            edgec_master["TrendyV7_ORCHIDEE"]="dimgrey"
-            edgec_master["ORCHIDEE-MICT"]="black"
-            #displaylegend_master['ORCHIDEE-MICT']=False
-            #displaylegend_master['TrendyV7_ORCHIDEE']=False
+            master_datasets["FAOSTAT_LULUCF"].facec="yellow"
+            master_datasets['FAOSTAT_LULUCF'].plotmarker='^'
+            master_datasets["ORCHIDEE"].facec="black"
+            master_datasets["ORCHIDEE-MICT"].facec="none"
+            master_datasets["TrendyV7_ORCHIDEE"].facec="none"
+            master_datasets["TrendyV7_ORCHIDEE"].edgec="dimgrey"
+            master_datasets["ORCHIDEE-MICT"].edgec="black"
+            #master_datasets['ORCHIDEE-MICT'].displaylegend=False
+            #master_datasets['TrendyV7_ORCHIDEE'].displaylegend=False
             
             # Plot these as bars
-            lplot_errorbar_master["TrendyV7"]=True
+            master_datasets["TrendyV7"].lplot_errorbar=True
             
         elif self.graphname == "unfccc_fao":
             self.desired_simulations=[ \
@@ -860,9 +861,9 @@ class simulation_parameters():
                               ]  
             
             self.desired_legend=[\
-                            displayname_master["FAOSTAT_LULUCF"],\
-                            displayname_master["UNFCCC_LULUCF"],displayname_master["UNFCCC_LULUCF"]+ " uncertainty",\
-                            displayname_master["MS-NRT"],\
+                            master_datasets["FAOSTAT_LULUCF"].displayname,\
+                            master_datasets["UNFCCC_LULUCF"].displayname,master_datasets["UNFCCC_LULUCF"].displayname+ " uncertainty",\
+                            master_datasets["MS-NRT"].displayname,\
                             
                         ]
             self.output_file_start="UNFCCCFAO_"
@@ -872,25 +873,25 @@ class simulation_parameters():
             # These simulations will be combined together.
             self.overwrite_simulations["FAOSTAT_LULUCF"]=['FAOSTAT_Crp','FAOSTAT_Grs','FAOSTAT_For']
             # So I don't want to generally plot the components
-            displaylegend_master['FAOSTAT_Crp']=False
-            displaylegend_master['FAOSTAT_Grs']=False
-            displaylegend_master['FAOSTAT_For']=False
+            master_datasets['FAOSTAT_Crp'].displaylegend=False
+            master_datasets['FAOSTAT_Grs'].displaylegend=False
+            master_datasets['FAOSTAT_For'].displaylegend=False
             self.overwrite_operations["FAOSTAT_LULUCF"]="sum"
             self.overwrite_coeffs["FAOSTAT_LULUCF"]=[1.0,1.0,1.0]
             
             # Change some colors and symbols here
-            facec_master["FAOSTAT_LULUCF"]="yellow"
-            plotmarker_master['FAOSTAT_LULUCF']='^'
-            facec_master["ORCHIDEE"]="black"
-            facec_master["ORCHIDEE-MICT"]="none"
-            facec_master["TrendyV7_ORCHIDEE"]="none"
-            edgec_master["TrendyV7_ORCHIDEE"]="dimgrey"
-            edgec_master["ORCHIDEE-MICT"]="black"
-            #displaylegend_master['ORCHIDEE-MICT']=False
-            #displaylegend_master['TrendyV7_ORCHIDEE']=False
+            master_datasets["FAOSTAT_LULUCF"].facec="yellow"
+            master_datasets['FAOSTAT_LULUCF'].plotmarker='^'
+            master_datasets["ORCHIDEE"].facec="black"
+            master_datasets["ORCHIDEE-MICT"].facec="none"
+            master_datasets["TrendyV7_ORCHIDEE"].facec="none"
+            master_datasets["TrendyV7_ORCHIDEE"].edgec="dimgrey"
+            master_datasets["ORCHIDEE-MICT"].edgec="black"
+            #master_datasets['ORCHIDEE-MICT'].displaylegend=False
+            #master_datasets['TrendyV7_ORCHIDEE'].displaylegend=False
             
             # Plot these as bars
-            lplot_errorbar_master["TrendyV7"]=True
+            master_datasets["TrendyV7"].lplot_errorbar=True
             
         elif self.graphname == "fao":
             self.desired_simulations=[ \
@@ -903,7 +904,7 @@ class simulation_parameters():
             
             self.desired_legend=[\
                             #                      "blah",\
-                            displayname_master["FAOSTAT_LULUCF"],\
+                            master_datasets["FAOSTAT_LULUCF"].displayname,\
                         ]
             self.output_file_start="FAO_"
             self.output_file_end="_FCO2land_2019_v1.png" 
@@ -912,25 +913,25 @@ class simulation_parameters():
             # These simulations will be combined together.
             self.overwrite_simulations["FAOSTAT_LULUCF"]=['FAOSTAT_Crp','FAOSTAT_Grs','FAOSTAT_For']
             # So I don't want to generally plot the components
-            displaylegend_master['FAOSTAT_Crp']=False
-            displaylegend_master['FAOSTAT_Grs']=False
-            displaylegend_master['FAOSTAT_For']=False
+            master_datasets['FAOSTAT_Crp'].displaylegend=False
+            master_datasets['FAOSTAT_Grs'].displaylegend=False
+            master_datasets['FAOSTAT_For'].displaylegend=False
             self.overwrite_operations["FAOSTAT_LULUCF"]="sum"
             self.overwrite_coeffs["FAOSTAT_LULUCF"]=[1.0,1.0,1.0]
             
             # Change some colors and symbols here
-            facec_master["FAOSTAT_LULUCF"]="yellow"
-            plotmarker_master['FAOSTAT_LULUCF']='^'
-            facec_master["ORCHIDEE"]="black"
-            facec_master["ORCHIDEE-MICT"]="none"
-            facec_master["TrendyV7_ORCHIDEE"]="none"
-            edgec_master["TrendyV7_ORCHIDEE"]="dimgrey"
-            edgec_master["ORCHIDEE-MICT"]="black"
-            #displaylegend_master['ORCHIDEE-MICT']=False
-            #displaylegend_master['TrendyV7_ORCHIDEE']=False
+            master_datasets["FAOSTAT_LULUCF"].facec="yellow"
+            master_datasets['FAOSTAT_LULUCF'].plotmarker='^'
+            master_datasets["ORCHIDEE"].facec="black"
+            master_datasets["ORCHIDEE-MICT"].facec="none"
+            master_datasets["TrendyV7_ORCHIDEE"].facec="none"
+            master_datasets["TrendyV7_ORCHIDEE"].edgec="dimgrey"
+            master_datasets["ORCHIDEE-MICT"].edgec="black"
+            #master_datasets['ORCHIDEE-MICT'].displaylegend=False
+            #master_datasets['TrendyV7_ORCHIDEE'].displaylegend=False
             
             # Plot these as bars
-            lplot_errorbar_master["TrendyV7"]=True
+            master_datasets["TrendyV7"].lplot_errorbar=True
             
         elif self.graphname == "sectorplot_full":
             self.desired_simulations=[ \
@@ -957,9 +958,9 @@ class simulation_parameters():
             self.output_file_end="_FCO2land_2019_v1.png" 
             self.titleending=r" : CO$_2$ emissions from land use (land remaining land)"
             
-            plotmarker_master['EPIC']="P"
+            master_datasets['EPIC'].plotmarker="P"
             
-            facec_master['EPIC']="brown"
+            master_datasets['EPIC'].facec="brown"
             
             #if lshow_productiondata:
             #   productiondata_master['ECOSSE_CL-CL']=False
@@ -982,7 +983,7 @@ class simulation_parameters():
                               ]  
             # I cannot do this until all my simulations have been plotted
             #self.desired_legend=[\
-                #                 displayname_master["UNFCCC_LULUCF"],\
+                #                 master_datasets["UNFCCC_LULUCF"].displayname,\
                 #                'UNFCCC_FL-FL','UNFCCC_GL-GL','UNFCCC_CL-CL',\
                 #                'UNFCCC_forest_convert', \
                 #                      'UNFCCC_grassland_convert', \
@@ -998,21 +999,21 @@ class simulation_parameters():
             self.output_file_end="_FCO2land_2019_v7.png" 
             self.titleending=r" : CO$_2$ emission trends from land use, land use change, and forestry"
             
-            plotmarker_master['EPIC']="P"
+            master_datasets['EPIC'].plotmarker="P"
             
-            facec_master['UNFCCC_LULUCF']="darkgray"
-            facec_master['UNFCCC_forest_convert']="darkgreen"
-            facec_master['UNFCCC_grassland_convert']="magenta"
-            facec_master['UNFCCC_cropland_convert']="violet"
-            facec_master['UNFCCC_wetland_convert']="blue"
-            facec_master['UNFCCC_settlement_convert']="dodgerblue"
-            facec_master['UNFCCC_other_convert']="brown"
-            facec_master['UNFCCC_woodharvest']="aqua"
+            master_datasets['UNFCCC_LULUCF'].facec="darkgray"
+            master_datasets['UNFCCC_forest_convert'].facec="darkgreen"
+            master_datasets['UNFCCC_grassland_convert'].facec="magenta"
+            master_datasets['UNFCCC_cropland_convert'].facec="violet"
+            master_datasets['UNFCCC_wetland_convert'].facec="blue"
+            master_datasets['UNFCCC_settlement_convert'].facec="dodgerblue"
+            master_datasets['UNFCCC_other_convert'].facec="brown"
+            master_datasets['UNFCCC_woodharvest'].facec="aqua"
             
-            displayname_master['UNFCCC_FL-FL']='FL-FL'
-            displayname_master['UNFCCC_GL-GL']='GL-GL'
-            displayname_master['UNFCCC_CL-CL']='CL-CL'
-            displayname_master['UNFCCC_woodharvest']='HWP'
+            master_datasets['UNFCCC_FL-FL'].displayname='FL-FL'
+            master_datasets['UNFCCC_GL-GL'].displayname='GL-GL'
+            master_datasets['UNFCCC_CL-CL'].displayname='CL-CL'
+            master_datasets['UNFCCC_woodharvest'].displayname='HWP'
             
             #if lshow_productiondata:
             #   productiondata_master['ECOSSE_CL-CL']=False
@@ -1030,11 +1031,11 @@ class simulation_parameters():
             self.output_file_end="_FCO2land_2019_v1.png" 
             self.titleending=r" : CO$_2$ emission trends from land use, land use change, and forestry"
             
-            facec_master['UNFCCC_LULUCF']="darkgray"
-            facec_master['UNFCCC_woodharvest']="aqua"
+            master_datasets['UNFCCC_LULUCF'].facec="darkgray"
+            master_datasets['UNFCCC_woodharvest'].facec="aqua"
             
-            displayname_master['UNFCCC_FL-FL']='FL-FL'
-            displayname_master['UNFCCC_woodharvest']='HWP'
+            master_datasets['UNFCCC_FL-FL'].displayname='FL-FL'
+            master_datasets['UNFCCC_woodharvest'].displayname='HWP'
             
         elif self.graphname in ("verifybu","verifybu_detrend"):
             self.desired_simulations=[ \
@@ -1056,7 +1057,7 @@ class simulation_parameters():
             self.output_file_start="VerifyBU_"
             self.output_file_end="_FCO2land_2019_v1.png" 
             self.titleending=r" : CO$_2$ emissions from all VERIFY bottom-up models"
-            lplot_areas=True
+            self.lplot_areas=True
             
             if self.graphname == "verifybu_detrend":
                 self.output_file_start="VerifyBUdetrend_"
@@ -1067,28 +1068,28 @@ class simulation_parameters():
             # These simulations will be combined together.
             #self.overwrite_simulations["VERIFYBU"]=['ORCHIDEE-MICT','ORCHIDEE','FLUXCOM_rsonlyANN_os','FLUXCOM_rsonlyRF_os','BLUE']
             #self.overwrite_operations["VERIFYBU"]="mean"
-            #displaylegend_master["VERIFYBU"]=False
+            #master_datasets["VERIFYBU"].displaylegend=False
             
-            plotmarker_master['EFISCEN']="P"
-            plotmarker_master['CBM']="X"
-            plotmarker_master['FLUXCOM_rsonlyRF_os']="s"
-            plotmarker_master['FLUXCOM_rsonlyANN_os']="s"
-            plotmarker_master['FAOSTAT_FL-FL']="d"
+            master_datasets['EFISCEN'].plotmarker="P"
+            master_datasets['CBM'].plotmarker="X"
+            master_datasets['FLUXCOM_rsonlyRF_os'].plotmarker="s"
+            master_datasets['FLUXCOM_rsonlyANN_os'].plotmarker="s"
+            master_datasets['FAOSTAT_FL-FL'].plotmarker="d"
             
-            edgec_master["ORCHIDEE_FL-FL"]="black"
-            edgec_master["EFISCEN"]="black"
-            edgec_master["CBM"]="black"
-            edgec_master["FLUXCOM_FL-FL_RF"]="black"
-            edgec_master["FLUXCOM_FL-FL_ANN"]="black"
-            edgec_master["FAOSTAT_FL-FL"]="black"
+            master_datasets["ORCHIDEE_FL-FL"].edgec="black"
+            master_datasets["EFISCEN"].edgec="black"
+            master_datasets["CBM"].edgec="black"
+            master_datasets["FLUXCOM_FL-FL_RF"].edgec="black"
+            master_datasets["FLUXCOM_FL-FL_ANN"].edgec="black"
+            master_datasets["FAOSTAT_FL-FL"].edgec="black"
             
-            facec_master["ORCHIDEE_FL-FL"]="black"
-            facec_master["EFISCEN-Space"]="blue"
-            facec_master["EFISCEN"]="skyblue"
-            facec_master["CBM"]="red"
-            facec_master["FLUXCOM_FL-FL_RF"]="orange"
-            facec_master["FLUXCOM_FL-FL_ANN"]="orangered"
-            facec_master["FAOSTAT_FL-FL"]="yellow"
+            master_datasets["ORCHIDEE_FL-FL"].facec="black"
+            master_datasets["EFISCEN-Space"].facec="blue"
+            master_datasets["EFISCEN"].facec="skyblue"
+            master_datasets["CBM"].facec="red"
+            master_datasets["FLUXCOM_FL-FL_RF"].facec="orange"
+            master_datasets["FLUXCOM_FL-FL_ANN"].facec="orangered"
+            master_datasets["FAOSTAT_FL-FL"].facec="yellow"
             
             
             #if lshow_productiondata:
@@ -1116,13 +1117,13 @@ class simulation_parameters():
             self.output_file_start="TRENDY_"
             self.output_file_end="_FCO2land_2019_v1.png" 
             self.titleending=r" : CO$_2$ emissions from all TRENDY v7 bottom-up models"
-            lplot_areas=True
+            self.lplot_areas=True
             
-            plotmarker_master['EFISCEN']="P"
+            master_datasets['EFISCEN'].plotmarker="P"
             
-            edgec_master["ORCHIDEE_FL-FL"]="black"
+            master_datasets["ORCHIDEE_FL-FL"].edgec="black"
             
-            facec_master["TrendyV7_ORCHIDEE"]="lightgray"
+            master_datasets["TrendyV7_ORCHIDEE"].facec="lightgray"
             
         elif self.graphname == "fluxcom":
             self.desired_simulations=[ \
@@ -1141,46 +1142,46 @@ class simulation_parameters():
             self.output_file_end="_FCO2land_2019_v1.png" 
             self.titleending=r" : CO$_2$ emissions from FLUXCOM with both the original and new LUH2v2-ESACCI land cover fractions"
             
-            plotmarker_master['FLUXCOM_rsonlyRF_os']="s"
-            plotmarker_master['FLUXCOM_rsonlyANN_os']="s"
-            plotmarker_master['FLUXCOM_rsonlyRF_ns']="o"
-            plotmarker_master['FLUXCOM_rsonlyANN_ns']="o"
-            plotmarker_master["FLUXCOM_CL-CL_RF"]="P"
-            plotmarker_master["FLUXCOM_FL-FL_RF"]="X"
-            plotmarker_master["FLUXCOM_GL-GL_RF"]="^"
-            plotmarker_master["FLUXCOM_CL-CL_ANN"]="P"
-            plotmarker_master["FLUXCOM_FL-FL_ANN"]="X"
-            plotmarker_master["FLUXCOM_GL-GL_ANN"]="^"
+            master_datasets['FLUXCOM_rsonlyRF_os'].plotmarker="s"
+            master_datasets['FLUXCOM_rsonlyANN_os'].plotmarker="s"
+            master_datasets['FLUXCOM_rsonlyRF_ns'].plotmarker="o"
+            master_datasets['FLUXCOM_rsonlyANN_ns'].plotmarker="o"
+            master_datasets["FLUXCOM_CL-CL_RF"].plotmarker="P"
+            master_datasets["FLUXCOM_FL-FL_RF"].plotmarker="X"
+            master_datasets["FLUXCOM_GL-GL_RF"].plotmarker="^"
+            master_datasets["FLUXCOM_CL-CL_ANN"].plotmarker="P"
+            master_datasets["FLUXCOM_FL-FL_ANN"].plotmarker="X"
+            master_datasets["FLUXCOM_GL-GL_ANN"].plotmarker="^"
             
-            facec_master["FLUXCOM_rsonlyRF_os"]="blue"
-            facec_master["FLUXCOM_rsonlyANN_os"]="red"
-            facec_master["FLUXCOM_rsonlyRF_ns"]="blue"
-            facec_master["FLUXCOM_CL-CL_RF"]="blue"
-            facec_master["FLUXCOM_FL-FL_RF"]="blue"
-            facec_master["FLUXCOM_GL-GL_RF"]="blue"
-            facec_master["FLUXCOM_rsonlyANN_ns"]="red"
-            facec_master["FLUXCOM_CL-CL_ANN"]="red"
-            facec_master["FLUXCOM_GL-GL_ANN"]="red"
-            facec_master["FLUXCOM_FL-FL_ANN"]="red"
+            master_datasets["FLUXCOM_rsonlyRF_os"].facec="blue"
+            master_datasets["FLUXCOM_rsonlyANN_os"].facec="red"
+            master_datasets["FLUXCOM_rsonlyRF_ns"].facec="blue"
+            master_datasets["FLUXCOM_CL-CL_RF"].facec="blue"
+            master_datasets["FLUXCOM_FL-FL_RF"].facec="blue"
+            master_datasets["FLUXCOM_GL-GL_RF"].facec="blue"
+            master_datasets["FLUXCOM_rsonlyANN_ns"].facec="red"
+            master_datasets["FLUXCOM_CL-CL_ANN"].facec="red"
+            master_datasets["FLUXCOM_GL-GL_ANN"].facec="red"
+            master_datasets["FLUXCOM_FL-FL_ANN"].facec="red"
             
             
             # These simulations will be combined together.
             self.overwrite_simulations["FLUXCOM_rsonlyANN_ns"]=['FLUXCOM_FL-FL_ANN','FLUXCOM_GL-GL_ANN','FLUXCOM_CL-CL_ANN']
             # So I don't want to generally plot the components
-            displaylegend_master['FLUXCOM_FL-FL_ANN']=True
-            displaylegend_master['FLUXCOM_GL-GL_ANN']=True
-            displaylegend_master['FLUXCOM_CL-CL_ANN']=True
+            master_datasets['FLUXCOM_FL-FL_ANN'].displaylegend=True
+            master_datasets['FLUXCOM_GL-GL_ANN'].displaylegend=True
+            master_datasets['FLUXCOM_CL-CL_ANN'].displaylegend=True
             
             self.overwrite_simulations["FLUXCOM_rsonlyRF_ns"]=['FLUXCOM_FL-FL_RF','FLUXCOM_GL-GL_RF','FLUXCOM_CL-CL_RF']
             # So I don't want to generally plot the components
-            displaylegend_master['FLUXCOM_FL-FL_RF']=True
-            displaylegend_master['FLUXCOM_GL-GL_RF']=True
-            displaylegend_master['FLUXCOM_CL-CL_RF']=True
+            master_datasets['FLUXCOM_FL-FL_RF'].displaylegend=True
+            master_datasets['FLUXCOM_GL-GL_RF'].displaylegend=True
+            master_datasets['FLUXCOM_CL-CL_RF'].displaylegend=True
             
         elif self.graphname == "forestry_full":
             self.desired_simulations=[ \
                                   'ORCHIDEE_FL-FL', \
-                                  'ORCHIDEE_Tier2_Forest', \
+                                  #'ORCHIDEE_Tier2_Forest', \
                                   'EFISCEN', \
                                   #  'EFISCEN_NPP', \
                                   #  'EFISCEN_NEE', \
@@ -1195,23 +1196,23 @@ class simulation_parameters():
                                   'UNFCCC_FOREST', \
             ]   
             
-            displayname_master['UNFCCC_FOREST']='UNFCCC_FL-FL area'
-            displayname_master['LUH2v2_FOREST']='LUH2v2-ESACCI_FL-FL area (used in ORCHIDEE)'
+            master_datasets['UNFCCC_FOREST'].displayname='UNFCCC_FL-FL area'
+            master_datasets['LUH2v2_FOREST'].displayname='LUH2v2-ESACCI_FL-FL area (used in ORCHIDEE)'
             
             self.desired_legend=[\
-                            displayname_master['UNFCCC_FL-FL'],"UNFCCC_FL-FL uncertainty",\
-                            displayname_master['FAOSTAT_FL-FL'], \
-                            displayname_master['ORCHIDEE_FL-FL'], \
-                            displayname_master['EFISCEN'], \
-                            # displayname_master['EFISCEN_NPP'], \
-                            # displayname_master['EFISCEN_NEE'], \
+                            master_datasets['UNFCCC_FL-FL'].displayname,"UNFCCC_FL-FL uncertainty",\
+                            master_datasets['FAOSTAT_FL-FL'].displayname, \
+                            master_datasets['ORCHIDEE_FL-FL'].displayname, \
+                            master_datasets['EFISCEN'].displayname, \
+                            # master_datasets['EFISCEN_NPP'].displayname, \
+                            # master_datasets['EFISCEN_NEE'].displayname, \
                             #                       'EFISCEN-Space', \
-                            displayname_master['CBM'], \
-                            displayname_master['ORCHIDEE_Tier2_Forest'], \
-                            #displayname_master['FLUXCOM_FL-FL_ANN'], \
-                            #displayname_master['FLUXCOM_FL-FL_RF'], \
-                            displayname_master['LUH2v2_FOREST'], \
-                            displayname_master['UNFCCC_FOREST'], \
+                            master_datasets['CBM'].displayname, \
+                            #master_datasets['ORCHIDEE_Tier2_Forest'].displayname, \
+                            #master_datasets['FLUXCOM_FL-FL_ANN'].displayname, \
+                            #master_datasets['FLUXCOM_FL-FL_RF'].displayname, \
+                            master_datasets['LUH2v2_FOREST'].displayname, \
+                            master_datasets['UNFCCC_FOREST'].displayname, \
             ]
             
             self.output_file_start="ForestRemain_"
@@ -1220,7 +1221,7 @@ class simulation_parameters():
             # v2 has EFISCEn data from June 2020
             self.output_file_end="_FCO2land_2019_v2.png" 
             self.titleending=r" : FL-FL bottom-up net CO$_2$ emissions"
-            lplot_areas=True
+            self.lplot_areas=True
             
             
             #if lshow_productiondata:
@@ -1244,24 +1245,24 @@ class simulation_parameters():
             self.titleending=r" : GL-GL bottom-up net CO$_2$ emissions"
             
             # Change some things from the above
-            displayname_master['UNFCCC_GRASS']='UNFCCC_GL-GL area'
-            displayname_master['LUH2v2_GRASS']='LUH2v2-ESACCI_GL-GL area (used in ORCHIDEE)'
-            lplot_areas=True
+            master_datasets['UNFCCC_GRASS'].displayname='UNFCCC_GL-GL area'
+            master_datasets['LUH2v2_GRASS'].displayname='LUH2v2-ESACCI_GL-GL area (used in ORCHIDEE)'
+            self.lplot_areas=True
             
-            displayname_master['ECOSSE_GL-GL']='ECOSSE GL-GL'
+            master_datasets['ECOSSE_GL-GL'].displayname='ECOSSE GL-GL'
             
             #if lshow_productiondata:
             #   productiondata_master['ECOSSE_GL-GL']=False
             #endif
             self.desired_legend=[\
                             "UNFCCC_GL-GL","UNFCCC_GL-GL uncertainty",\
-                            displayname_master['ORCHIDEE_GL-GL'], \
-                            #displayname_master['ORCHIDEE_RH'], \
-                            displayname_master['ECOSSE_GL-GL'], \
+                            master_datasets['ORCHIDEE_GL-GL'].displayname, \
+                            #master_datasets['ORCHIDEE_RH'].displayname, \
+                            master_datasets['ECOSSE_GL-GL'].displayname, \
                             # 'FLUXCOM_GL-GL_ANN', \
                             # 'FLUXCOM_GL-GL_RF', \
-                            displayname_master['LUH2v2_GRASS'], \
-                            displayname_master['UNFCCC_GRASS'], \
+                            master_datasets['LUH2v2_GRASS'].displayname, \
+                            master_datasets['UNFCCC_GRASS'].displayname, \
                         ]
             
             
@@ -1269,11 +1270,12 @@ class simulation_parameters():
             self.desired_simulations=[ \
                                   'ORCHIDEE_CL-CL', \
                                   'ECOSSE_CL-CL', \
+                                  'ECOSSE_CL-CL_0825', \
                                   'EPIC', \
-                                  'EPIC_RH', \
-                                  'EPIC_clch', \
-                                  'EPIC_fHarvest', \
-                                  'EPIC_npp', \
+                              #    'EPIC_RH', \
+                              #    'EPIC_clch', \
+                              #    'EPIC_fHarvest', \
+                              #    'EPIC_npp', \
                               ]   
             
             
@@ -1301,15 +1303,14 @@ class simulation_parameters():
             
             master_datasets['UNFCCC_CROP'].displayname='UNFCCC_CL-CL area'
             master_datasets['LUH2v2_CROP'].displayname='LUH2v2-ESACCI_CL-CL area (used in ORCHIDEE)'
-            master_datasets['ECOSSE_CL-CL'].displayname='ECOSSE_CL-CL_NBP'
             
             self.desired_legend=[\
                             "UNFCCC_CL-CL","UNFCCC_CL-CL uncertainty",\
                             'ORCHIDEE_CL-CL', \
                             master_datasets['ECOSSE_CL-CL'].displayname, \
-                            #    master_datasets['ECOSSE_CL-CL_RH'], \
-                            #     master_datasets['ECOSSE_CL-CL_NPP'], \
-                            #       master_datasets['ECOSSE_CL-CL_FHARVEST'], \
+                            #    master_datasets['ECOSSE_CL-CL_RH'].displayname, \
+                            #     master_datasets['ECOSSE_CL-CL_NPP'].displayname, \
+                            #       master_datasets['ECOSSE_CL-CL_FHARVEST'].displayname, \
                             'EPIC_CL-CL', \
                             #  'FLUXCOM_CL-CL_ANN', \
                             #  'FLUXCOM_CL-CL_RF', \
@@ -1338,8 +1339,8 @@ class simulation_parameters():
             self.output_file_start="biofuels_"
             self.output_file_end="_2019_v1.png" 
             self.titleending=r" : CO$_2$ emissions from biofuel combustion"
-            facec_master['UNFCCC_biofuels']='red'
-            facec_master['TNO_biofuels']='blue'
+            master_datasets['UNFCCC_biofuels'].facec='red'
+            master_datasets['TNO_biofuels'].facec='blue'
             
         elif self.graphname == "emission_factors":
             self.desired_simulations=[ \
@@ -1352,7 +1353,7 @@ class simulation_parameters():
             self.output_file_start="FL-FLEmissionFactors_"
             self.output_file_end="_FCO2land_2019_v1.png" 
             self.titleending=r" : FL-FL bottom-up emission factors"
-            lplot_areas=False
+            self.lplot_areas=False
             
             
         elif self.graphname == "eurocom_inversions":
@@ -1371,7 +1372,7 @@ class simulation_parameters():
             self.output_file_end="_2019_v1.png" 
             self.titleending=r" : net land CO$_2$ fluxes from EUROCOM inversions"
             
-            lplot_errorbar_master['EUROCOM_ALL']=True
+            master_datasets['EUROCOM_ALL'].lplot_errorbar=True
             
         elif self.graphname == "gcp_inversions":
             self.desired_simulations=[ \
@@ -1384,10 +1385,10 @@ class simulation_parameters():
             self.output_file_end="_2019_v1.png" 
             self.titleending=r" : net land CO$_2$ fluxes from GCP inversions"
             
-            displayname_master['GCP_ALL']="Mean of GCP inversions"
-            displayname_err_master['GCP_ALL']="Min/Max of GCP inversions"
+            master_datasets['GCP_ALL'].displayname="Mean of GCP inversions"
+            master_datasets['GCP_ALL'].displayname_err="Min/Max of GCP inversions"
             
-            lplot_errorbar_master['GCP_ALL']=True
+            master_datasets['GCP_ALL'].lplot_errorbar=True
             
         elif self.graphname == "gcp_inversions_corrected":
             self.desired_simulations=[ \
@@ -1406,7 +1407,7 @@ class simulation_parameters():
             master_datasets["GCP_CTRACKER"].lcorrect_inversion=True
             master_datasets["GCP_CAMS"].lcorrect_inversion=True
             
-            lplot_errorbar_master['GCP_ALL']=True
+            master_datasets['GCP_ALL'].lplot_errorbar=True
             
         elif self.graphname in ("inversions_combined","inversions_combinedbar"):
             
@@ -1443,28 +1444,28 @@ class simulation_parameters():
                 # order.  Names are controled by the displayname variable, and this must
                 # match those names else an error is thrown.
                 self.desired_legend=[ \
-                                 displayname_master['UNFCCC_LULUCF'], \
-                                 displayname_err_master['UNFCCC_LULUCF'], \
-                                 displayname_master['FAOSTAT_LULUCF'], \
-                                 displayname_master['MS-NRT'], \
-                                 displayname_master['EUROCOM_ALL'],displayname_err_master['EUROCOM_ALL'],\
-                                 displayname_master['GCP_ALL'], displayname_err_master['GCP_ALL'], \
-                                 displayname_master['CSR-COMBINED'], \
-                                 displayname_master['TrendyV7'], displayname_err_master['TrendyV7'], \
-                                 displayname_master['ORCHIDEE'], \
-                                 #    displayname_master['EPIC'], \
-                                 #    displayname_master['EFISCEN'], \
-                                 displayname_master['BLUE'], \
-                                 displayname_master['H&N'], \
-                                 #displayname_master['TrendyV7_ORCHIDEE'], \
-                                 #displayname_master['ORCHIDEE-MICT'], \
+                                 master_datasets['UNFCCC_LULUCF'].displayname, \
+                                 master_datasets['UNFCCC_LULUCF'].displayname_err, \
+                                 master_datasets['FAOSTAT_LULUCF'].displayname, \
+                                 master_datasets['MS-NRT'].displayname, \
+                                 master_datasets['EUROCOM_ALL'],master_datasets['EUROCOM_ALL'].displayname_err,\
+                                 master_datasets['GCP_ALL'].displayname, master_datasets['GCP_ALL'].displayname_err, \
+                                 master_datasets['CSR-COMBINED'].displayname, \
+                                 master_datasets['TrendyV7'].displayname, master_datasets['TrendyV7'].displayname_err, \
+                                 master_datasets['ORCHIDEE'].displayname, \
+                                 #    master_datasets['EPIC'].displayname, \
+                                 #    master_datasets['EFISCEN'].displayname, \
+                                 master_datasets['BLUE'].displayname, \
+                                 master_datasets['H&N'].displayname, \
+                                 #master_datasets['TrendyV7_ORCHIDEE'].displayname, \
+                                 #master_datasets['ORCHIDEE-MICT'].displayname, \
                                  #      'FLUXCOM_rsonlyANN_os', \
                                  #      'FLUXCOM_rsonlyRF_os',
                              ]
                 
-                displaylegend_master['ORCHIDEE-MICT']=True
-                displaylegend_master['ORCHIDEE']=True      
-                displaylegend_master['TrendyV7_ORCHIDEE']=True
+                master_datasets['ORCHIDEE-MICT'].displaylegend=True
+                master_datasets['ORCHIDEE'].displaylegend=True      
+                master_datasets['TrendyV7_ORCHIDEE'].displaylegend=True
                 
             else:
                 self.output_file_start="TopDownLULUCFbar_"
@@ -1477,30 +1478,30 @@ class simulation_parameters():
                 #         self.overwrite_simulations["VERIFYBU"]=['ORCHIDEE-MICT','ORCHIDEE','BLUE']
                 self.overwrite_simulations["VERIFYBU"]=['ORCHIDEE','BLUE']
                 self.overwrite_operations["VERIFYBU"]="mean"
-                displaylegend_master["VERIFYBU"]=False
+                master_datasets["VERIFYBU"].displaylegend=False
                 
-                displayname_master["VERIFYBU"]="Mean of BU estimates (VERIFY)"
-                displayname_err_master["VERIFYBU"]="Min/Max of BU estimates (VERIFY)"
+                master_datasets["VERIFYBU"].displayname="Mean of BU estimates (VERIFY)"
+                master_datasets["VERIFYBU"].displayname_err="Min/Max of BU estimates (VERIFY)"
                 
                 # The legend is tricky.  You can use names not definied in the above
                 # simulation list if they are defined later on.  This just gives their
                 # order.  Names are controled by the displayname variable, and this must
                 # match those names else an error is thrown.
                 self.desired_legend=[ \
-                                 displayname_master['UNFCCC_LULUCF'], \
-                                 displayname_err_master['UNFCCC_LULUCF'], \
-                                 displayname_master['MS-NRT'], \
-                                 displayname_master['EUROCOM_ALL'],displayname_err_master['EUROCOM_ALL'],\
-                                 displayname_master['GCP_ALL'], displayname_err_master['GCP_ALL'], \
-                                 displayname_master['CSR-COMBINED'], \
-                                 displayname_master['TrendyV7'], displayname_err_master['TrendyV7'], \
-                                 displayname_master['FAOSTAT_LULUCF'], \
-                                 displayname_master['H&N'], \
-                                 displayname_master['VERIFYBU'], \
-                                 displayname_err_master['VERIFYBU'], \
-                                 #        displayname_master['ORCHIDEE'], \
-                                 #        displayname_master['TrendyV7_ORCHIDEE'], \
-                                 #        displayname_master['ORCHIDEE-MICT'], \
+                                 master_datasets['UNFCCC_LULUCF'].displayname, \
+                                 master_datasets['UNFCCC_LULUCF'].displayname_err, \
+                                 master_datasets['MS-NRT'].displayname, \
+                                 master_datasets['EUROCOM_ALL'].displayname,master_datasets['EUROCOM_ALL'].displayname_err,\
+                                 master_datasets['GCP_ALL'].displayname, master_datasets['GCP_ALL'].displayname_err, \
+                                 master_datasets['CSR-COMBINED'].displayname, \
+                                 master_datasets['TrendyV7'].displayname, master_datasets['TrendyV7'].displayname_err, \
+                                 master_datasets['FAOSTAT_LULUCF'].displayname, \
+                                 master_datasets['H&N'].displayname, \
+                                 master_datasets['VERIFYBU'].displayname, \
+                                 master_datasets['VERIFYBU'].displayname_err, \
+                                 #        master_datasets['ORCHIDEE'].displayname, \
+                                 #        master_datasets['TrendyV7_ORCHIDEE'].displayname, \
+                                 #        master_datasets['ORCHIDEE-MICT'].displayname, \
                              ]
                 
                 # These simulations will be combined together.
@@ -1509,13 +1510,13 @@ class simulation_parameters():
                 #self.overwrite_operations["VERIFYBU"]="mean"
                 
                 # So I don't want to generally plot the components
-                displaylegend_master['ORCHIDEE-MICT']=False
-                displaylegend_master['ORCHIDEE']=False
-                displaylegend_master['BLUE']=False
-                displaylegend_master['FLUXCOM_rsonlyANN_os']=False
-                displaylegend_master['FLUXCOM_rsonlyRF_os']=False
+                master_datasets['ORCHIDEE-MICT'].displaylegend=False
+                master_datasets['ORCHIDEE'].displaylegend=False
+                master_datasets['BLUE'].displaylegend=False
+                master_datasets['FLUXCOM_rsonlyANN_os'].displaylegend=False
+                master_datasets['FLUXCOM_rsonlyRF_os'].displaylegend=False
                 
-                displaylegend_master['TrendyV7_ORCHIDEE']=False
+                master_datasets['TrendyV7_ORCHIDEE'].displaylegend=False
                 
             #endif
 
@@ -1525,27 +1526,27 @@ class simulation_parameters():
             self.overwrite_coeffs["FAOSTAT_LULUCF"]=[1.0,1.0,1.0]
             
             # So I don't want to generally plot the components
-            displaylegend_master['FAOSTAT_Crp']=False
-            displaylegend_master['FAOSTAT_Grs']=False
-            displaylegend_master['FAOSTAT_For']=False
+            master_datasets['FAOSTAT_Crp'].displaylegend=False
+            master_datasets['FAOSTAT_Grs'].displaylegend=False
+            master_datasets['FAOSTAT_For'].displaylegend=False
             
             # Change some colors and symbols here
-            facec_master["FAOSTAT_LULUCF"]="yellow"
-            plotmarker_master['FAOSTAT_LULUCF']='^'
-            facec_master["ORCHIDEE"]="black"
-            facec_master["ORCHIDEE-MICT"]="none"
-            facec_master["TrendyV7_ORCHIDEE"]="none"
-            edgec_master["TrendyV7_ORCHIDEE"]="dimgrey"
-            edgec_master["ORCHIDEE-MICT"]="black"
-            #displaylegend_master['ORCHIDEE-MICT']=False
-            #displaylegend_master['TrendyV7_ORCHIDEE']=False
+            master_datasets["FAOSTAT_LULUCF"].facec="yellow"
+            master_datasets['FAOSTAT_LULUCF'].plotmarker='^'
+            master_datasets["ORCHIDEE"].facec="black"
+            master_datasets["ORCHIDEE-MICT"].facec="none"
+            master_datasets["TrendyV7_ORCHIDEE"].facec="none"
+            master_datasets["TrendyV7_ORCHIDEE"].edgec="dimgrey"
+            master_datasets["ORCHIDEE-MICT"].edgec="black"
+            #master_datasets['ORCHIDEE-MICT'].displaylegend=False
+            #master_datasets['TrendyV7_ORCHIDEE'].displaylegend=False
             
             # A couple of these plots will be displayed as bars instead of symbols
-            lplot_errorbar_master["EUROCOM_ALL"]=True
-            lplot_errorbar_master["GCP_ALL"]=True
-            lplot_errorbar_master["TrendyV7"]=True
-            lplot_errorbar_master["CSR-COMBINED"]=True
-            lwhiskerbars_master["CSR-COMBINED"]=True
+            master_datasets["EUROCOM_ALL"].lplot_errorbar=True
+            master_datasets["GCP_ALL"].lplot_errorbar=True
+            master_datasets["TrendyV7"].lplot_errorbar=True
+            master_datasets["CSR-COMBINED"].lplot_errorbar=True
+            master_datasets["CSR-COMBINED"].lwhiskerbars=True
             
         elif self.graphname == "inversions_verify":
             self.desired_simulations=[ \
@@ -1589,23 +1590,23 @@ class simulation_parameters():
             #endif
             
             self.desired_legend=[ \
-                             displayname_master['UNFCCC_LULUCF'], \
-                             displayname_err_master['UNFCCC_LULUCF'], \
+                             master_datasets['UNFCCC_LULUCF'].displayname, \
+                             master_datasets['UNFCCC_LULUCF'].displayname_err, \
                              'MS-NRT', \
                              'rivers_lakes_reservoirs_ULB', \
-                             displayname_master['CSR-COMBINED'], \
-                             displayname_master['EUROCOM_ALL'],displayname_err_master['EUROCOM_ALL'],\
-                             displayname_master['GCP_ALL'], displayname_err_master['GCP_ALL'], \
+                             master_datasets['CSR-COMBINED'].displayname, \
+                             master_datasets['EUROCOM_ALL'].displayname,master_datasets['EUROCOM_ALL'].displayname_err,\
+                             master_datasets['GCP_ALL'].displayname, master_datasets['GCP_ALL'].displayname_err, \
                          ]
             
             self.output_file_end="_FCO2land_2019_v2.png" 
-            edgec_master['MS-NRT']=facec_master['MS-NRT']
+            master_datasets['MS-NRT'].edgec=master_datasets['MS-NRT'].facec
             
             # A couple of these plots will be displayed as bars instead of symbols
-            lplot_errorbar_master["EUROCOM_ALL"]=True
-            lplot_errorbar_master["GCP_ALL"]=True
-            lplot_errorbar_master["CSR-COMBINED"]=True
-            lwhiskerbars_master["CSR-COMBINED"]=True
+            master_datasets["EUROCOM_ALL"].lplot_errorbar=True
+            master_datasets["GCP_ALL"].lplot_errorbar=True
+            master_datasets["CSR-COMBINED"].lplot_errorbar=True
+            master_datasets["CSR-COMBINED"].lwhiskerbars=True
             
             # And to correct some of the plots.
             master_datasets["GCP_ALL"].lcorrect_inversion=True
