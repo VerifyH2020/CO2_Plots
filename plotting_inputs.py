@@ -9,6 +9,7 @@
 import argparse
 import numpy as np
 import matplotlib as mpl
+import sys,traceback
 
 # These are my own that I have created locally
 from country_subroutines import get_countries_and_regions_from_cr_dict,get_country_region_data,get_country_codes_for_netCDF_file
@@ -160,7 +161,7 @@ class simulation_parameters():
         # Print some additional data about one of the timeseries.  For debugging
         # purposes.
         self.ltest_data=True
-        self.itest_sim=5
+        self.itest_sim=0
         self.itest_plot=0
         
         # Creates a horizontal line across the graph at zero.
@@ -361,20 +362,31 @@ class simulation_parameters():
         master_datasets["EUROCOM_EnKF"]=dataset_parameters( "EUROCOM_EnKF", "/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_EnKF-RAMS_vu_LAND_EU_1M_V1_20191020_Antoon_Grid-eurocom_CountryTotWithEEZ.nc", "REGIONAL_TD", "FCO2_NBP", "P", "darkred")
         master_datasets["EUROCOM_NAME"]=dataset_parameters( "EUROCOM_NAME", "/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_NAME-HB_bristol_LAND_EU_1M_V1_20191020_White_Grid-eurocom_CountryTotWithEEZ.nc", "REGIONAL_TD", "FCO2_NBP", "P", "magenta")
         master_datasets["EUROCOM_ALL"]=dataset_parameters( "EUROCOM_ALL", "/home/dods/verify/OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_AllEUROCOMInversions_XXX_LAND_GL_1M_V1_202003021_McGrath_WP3_CountryTotWithEEZ.nc", "MINMAX", "FCO2_NBP", "P", "blue")
+
+        # All the ECOSSE variables
         master_datasets["ECOSSE_CL-CL"]=dataset_parameters( "ECOSSE_CL-CL", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CropFluxes_ECOSSE-S1_UAbdn_CRP_EU_1M_V1_20200923_KUHNERT_WP3_CountryTotWithEEZ.nc", "VERIFY_BU", "FCO2_NBP_CRO", "o", "darkred")
         master_datasets["ECOSSE_CL-CL_0825"]=dataset_parameters( "ECOSSE_CL-CL_0825", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CropFluxes_ECOSSE-S1_UAbdn_CRP_EU_1M_V1_20200825_KUHNERT_WP3_CountryTotWithEEZ.nc", "VERIFY_BU", "FCO2_NBP_CRO", "o", "blue")
         master_datasets["ECOSSE_CL-CL_RH"]=dataset_parameters( "ECOSSE_CL-CL_RH", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CropFluxes_ECOSSE-S1_UAbdn_CRP_EU_1M_V1_20200923_KUHNERT_WP3_CountryTotWithEEZ.nc", "VERIFY_BU", "FCO2_RH_CRO", "o", "green")
         master_datasets["ECOSSE_CL-CL_NPP"]=dataset_parameters( "ECOSSE_CL-CL_NPP", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CropFluxes_ECOSSE-S1_UAbdn_CRP_EU_1M_V1_20200923_KUHNERT_WP3_CountryTotWithEEZ.nc", "VERIFY_BU", "FCO2_NPP_CRO", "o", "red")
         master_datasets["ECOSSE_CL-CL_FHARVEST"]=dataset_parameters( "ECOSSE_CL-CL_FHARVEST", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CropFluxes_ECOSSE-S1_UAbdn_CRP_EU_1M_V1_20200923_KUHNERT_WP3_CountryTotWithEEZ.nc", "VERIFY_BU", "FCO2_FHARVEST_CRO", "o", "blue")
-        master_datasets["ECOSSE_GL-GL"]=dataset_parameters( "ECOSSE_GL-GL", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_GrassFluxes_ECOSSE-SX_UAbdn_GRS_EU28_1M_V1_20200518_KUHNERT_WP3_CountryTotWithOutEEZ.nc", "VERIFY_BU", "FCO2_NEP_GRA", "o", "darkred")
         master_datasets["ECOSSE_CL-CL_us"]=dataset_parameters( "ECOSSE_CL-CL_us", "/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/WP3/EU28_swheat_co2_CountryTotWithOutEEZ.nc", "VERIFY_BU", "FCO2_SOIL_CRO", "o", "darkred")
+
+        # Grasslands
+        master_datasets["ECOSSE_GL-GL-lim"]=dataset_parameters( "ECOSSE_GL-GL lim", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_GrassFluxes_ECOSSE-lim-S1_UAbdn_CRP_EU_1M_V1_20200923_KUHNERT_WP3_CountryTotWithEEZ.nc", "VERIFY_BU", "FCO2_NBP_GRA", "o", "darkred")
+        master_datasets["ECOSSE_GL-GL-RH"]=dataset_parameters( "ECOSSE_GL-GL RH", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_GrassFluxes_ECOSSE-lim-S1_UAbdn_CRP_EU_1M_V1_20200923_KUHNERT_WP3_CountryTotWithEEZ.nc", "VERIFY_BU", "FCO2_RH_GRA", "o", "red")
+        master_datasets["ECOSSE_GL-GL-NPP"]=dataset_parameters( "ECOSSE_GL-GL NPP", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_GrassFluxes_ECOSSE-lim-S1_UAbdn_CRP_EU_1M_V1_20200923_KUHNERT_WP3_CountryTotWithEEZ.nc", "VERIFY_BU", "FCO2_NPP_GRA", "o", "pink")
+        master_datasets["ECOSSE_GL-GL-SOC"]=dataset_parameters( "ECOSSE_GL-GL SOC", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_GrassFluxes_ECOSSE-lim-S1_UAbdn_CRP_EU_1M_V1_20200923_KUHNERT_WP3_CountryTotWithEEZ.nc", "VERIFY_BU", "FCO2_SOC_GRA", "o", "magenta")
+
+        master_datasets["ECOSSE_GL-GL-nolim"]=dataset_parameters( "ECOSSE_GL-GL nolim", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_GrassFluxes_ECOSSE-nolim-S1_UAbdn_CRP_EU_1M_V1_20200923_KUHNERT_WP3_CountryTotWithEEZ.nc", "VERIFY_BU", "FCO2_NBP_GRA", "x", "darkred")
         master_datasets["ECOSSE_GL-GL_us"]=dataset_parameters( "ECOSSE_GL-GL_us", "/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/WP3/EU28_gra_co2_CountryTotWithOutEEZ.nc", "VERIFY_BU", "FCO2_SOIL_GRA", "o", "darkred")
+        
+
         master_datasets["EFISCEN-Space"]=dataset_parameters( "EFISCEN-Space", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_treeNEP_EFISCEN-Space-SX_WENR_FOR_EU_1M_V1_20190716_SCHELHAAS_WP3_CountryTotWithOutEEZ.nc", "VERIFY_BU", "FCO2_NBP_FOR", "o", "green", flipdatasign=True)
         master_datasets["UNFCCC_FL-FL"]=dataset_parameters( "UNFCCC_FL-FL", "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_ForestRemain_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTotWithOutEEZ.nc", "INVENTORY", "FCO2_NBP", "_", "green")
         master_datasets["UNFCCC_GL-GL"]=dataset_parameters( "UNFCCC_GL-GL", "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_GrasslandRemain_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTotWithOutEEZ.nc", "INVENTORY", "FCO2_NBP", "_", "brown")
         master_datasets["UNFCCC_CL-CL"]=dataset_parameters( "UNFCCC_CL-CL", "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_CroplandRemain_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTotWithOutEEZ.nc", "INVENTORY", "FCO2_NBP", "_", "gold")
         master_datasets["ORCHIDEE_FL-FL"]=dataset_parameters( "ORCHIDEE_FL-FL", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycleEcosystem_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ.nc", "VERIFY_BU", "FCO2_NBP_FOR", "D", "dodgerblue", flipdatasign=True)
-        master_datasets["EFISCEN"]=dataset_parameters( "EFISCEN", "/home/dods/verify/OTHER_PROJECTS/FCO2/EFISCEN/Tier3BUDD_CO2_TreesLUH2v2_EFISCEN-SX_WENR_FOR_EU_1M_V1_20191212_SCHELHAAS_WPX_CountryTotWithOutEEZ.nc", "NONVERIFY_BU", "FCO2_NBP_FOR", "o", "magenta", flipdatasign=True)
+        master_datasets["EFISCEN"]=dataset_parameters( "EFISCEN", "/home/dods/verify/OTHER_PROJECTS/FCO2/EFISCEN/Tier3BUDD_CO2_Trees_EFISCEN-SX_WENR_FOR_EU_1M_V1_20200601_SCHELHAAS_WPX_CountryTotWithOutEEZ.nc", "NONVERIFY_BU", "FCO2_NBP_FOR", "o", "magenta", flipdatasign=True)
         master_datasets["EFISCEN_NPP"]=dataset_parameters( "EFISCEN_NPP", "/home/dods/verify/OTHER_PROJECTS/FCO2/EFISCEN/Tier3BUDD_CO2_TreesLUH2v2_EFISCEN-SX_WENR_FOR_EU_1M_V1_20191212_SCHELHAAS_WPX_CountryTotWithOutEEZ.nc", "NONVERIFY_BU", "FCO2_NPP_FOR", "o", "orange", flipdatasign=True)
         master_datasets["EFISCEN_NEE"]=dataset_parameters( "EFISCEN_NEE", "/home/dods/verify/OTHER_PROJECTS/FCO2/EFISCEN/Tier3BUDD_CO2_TreesLUH2v2_EFISCEN-SX_WENR_FOR_EU_1M_V1_20191212_SCHELHAAS_WPX_CountryTotWithOutEEZ.nc", "NONVERIFY_BU", "FCO2_NEE_FOR", "o", "blue", flipdatasign=True)
         master_datasets["EFISCEN-unscaled"]=dataset_parameters( "EFISCEN-unscaled", "/home/dods/verify/OTHER_PROJECTS/FCO2/EFISCEN/Tier3BUDD_CO2_Trees_EFISCEN-SX_WENR_FOR_EU_1M_V1_20191212_SCHELHAAS_WPX_CountryTotWithOutEEZ.nc", "NONVERIFY_BU", "FCO2_NBP_FOR", "o", "magenta", flipdatasign=True)
@@ -389,8 +401,15 @@ class simulation_parameters():
         master_datasets["FLUXCOM_GL-GL_ANN"]=dataset_parameters( "FLUXCOM_GL-GL_ANN", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-ANNnoPFTLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTotWithOutEEZ.nc", "VERIFY_BU", "FCO2_NEP_grass", "s", "green")
         master_datasets["FLUXCOM_CL-CL_RF"]=dataset_parameters( "FLUXCOM_CL-CL_RF", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-RFmissLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTotWithOutEEZ.nc", "VERIFY_BU", "FCO2_NEP_crops", "s", "yellowgreen")
         master_datasets["FLUXCOM_CL-CL_ANN"]=dataset_parameters( "FLUXCOM_CL-CL_ANN", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-ANNnoPFTLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTotWithOutEEZ.nc", "VERIFY_BU", "FCO2_NEP_crops", "s", "green")
+
+        # ORCHIDEE stuff
         master_datasets["ORCHIDEE_GL-GL"]=dataset_parameters( "ORCHIDEE_GL-GL", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycleEcosystem_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ.nc", "VERIFY_BU", "FCO2_NBP_GRS", "D", "dodgerblue",flipdatasign=True)
+        #master_datasets["ORCHIDEE_GL-GL-RH"]=dataset_parameters( "ORCHIDEE_GL-GL", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycleEcosystem_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ.nc", "VERIFY_BU", "FCO2_NBP_GRS", "D", "dodgerblue",flipdatasign=True)
+        master_datasets["ORCHIDEE_GL-GL-NPP"]=dataset_parameters( "ORCHIDEE_GL-GL NPP", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycleEcosystem_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ.nc", "VERIFY_BU", "npp_grs", "D", "blue",flipdatasign=True)
+        #master_datasets["ORCHIDEE_GL-GL-SOC"]=dataset_parameters( "ORCHIDEE_GL-GL", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycleEcosystem_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ.nc", "VERIFY_BU", "FCO2_NBP_GRS", "D", "dodgerblue",flipdatasign=True)
+
         master_datasets["ORCHIDEE_CL-CL"]=dataset_parameters( "ORCHIDEE_CL-CL", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycleEcosystem_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ.nc", "VERIFY_BU", "FCO2_NBP_CRP", "D", "dodgerblue", flipdatasign=True)
+
         master_datasets["TNO_biofuels"]=dataset_parameters( "TNO_biofuels", "/home/dods/verify/OTHER_PROJECTS/FCO2/TNO/Tier3BUDD_CO2_BiofuelEmissions_XXX-SX_TNO_XXX_EU_1M_V1_20191110_DERNIER_WPX_CountryTotWithOutEEZ.nc", "INVENTORY_NOERR", "FCO2_NBP_TOT", "X", "saddlebrown")
         master_datasets["UNFCCC_biofuels"]=dataset_parameters( "UNFCCC_biofuels", "/home/dods/verify/OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_Biofuels_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTotWithOutEEZ.nc", "INVENTORY_NOERR", "FCO2_NBP", "o", "saddlebrown")
         master_datasets["rivers_lakes_reservoirs_ULB"]=dataset_parameters( "rivers_lakes_reservoirs_ULB", "/home/dods/verify/VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_RiverLakeEmissions_XXXX-SX_ULB_INLWAT_EU_1M_V1_20190911_LAUERWALD_WP3_CountryTotWithOutEEZ.nc", "VERIFY_BU", "FCO2_INLWAT", "o", "sandybrown")
@@ -1231,8 +1250,13 @@ class simulation_parameters():
         elif self.graphname == "grassland_full":
             self.desired_simulations=[ \
                                   'ORCHIDEE_GL-GL', \
+                                #  'ORCHIDEE_GL-GL-NPP', \
                                   #'ORCHIDEE_RH', \
-                                  'ECOSSE_GL-GL', \
+                                  'ECOSSE_GL-GL-lim', \
+                                #  'ECOSSE_GL-GL-RH', \
+                                #  'ECOSSE_GL-GL-NPP', \
+                               #   'ECOSSE_GL-GL-SOC', \
+                                #  'ECOSSE_GL-GL-nolim', \
                                   #  'ECOSSE_GL-GL_us', \
                                   'UNFCCC_GL-GL', \
                                   # 'FLUXCOM_GL-GL_ANN', \
@@ -1245,11 +1269,12 @@ class simulation_parameters():
             self.titleending=r" : GL-GL bottom-up net CO$_2$ emissions"
             
             # Change some things from the above
+            master_datasets['ECOSSE_GL-GL-lim'].displayname='ECOSSE_GL-GL'
             master_datasets['UNFCCC_GRASS'].displayname='UNFCCC_GL-GL area'
             master_datasets['LUH2v2_GRASS'].displayname='LUH2v2-ESACCI_GL-GL area (used in ORCHIDEE)'
-            self.lplot_areas=True
+            self.lplot_areas=False
             
-            master_datasets['ECOSSE_GL-GL'].displayname='ECOSSE GL-GL'
+            master_datasets['ECOSSE_GL-GL-lim'].displayname='ECOSSE GL-GL'
             
             #if lshow_productiondata:
             #   productiondata_master['ECOSSE_GL-GL']=False
@@ -1257,8 +1282,13 @@ class simulation_parameters():
             self.desired_legend=[\
                             "UNFCCC_GL-GL","UNFCCC_GL-GL uncertainty",\
                             master_datasets['ORCHIDEE_GL-GL'].displayname, \
+                          #  master_datasets['ORCHIDEE_GL-GL-NPP'].displayname, \
                             #master_datasets['ORCHIDEE_RH'].displayname, \
-                            master_datasets['ECOSSE_GL-GL'].displayname, \
+                            master_datasets['ECOSSE_GL-GL-lim'].displayname, \
+                         #   master_datasets['ECOSSE_GL-GL-RH'].displayname, \
+                         #   master_datasets['ECOSSE_GL-GL-NPP'].displayname, \
+                          #  master_datasets['ECOSSE_GL-GL-SOC'].displayname, \
+                            #master_datasets['ECOSSE_GL-GL-nolim'].displayname, \
                             # 'FLUXCOM_GL-GL_ANN', \
                             # 'FLUXCOM_GL-GL_RF', \
                             master_datasets['LUH2v2_GRASS'].displayname, \
@@ -1345,8 +1375,8 @@ class simulation_parameters():
         elif self.graphname == "emission_factors":
             self.desired_simulations=[ \
                                   'ORCHIDEE_Tier2_Forest_EF1', \
-                                  'ORCHIDEE_Tier2_Forest_EF2', \
-                                  'ORCHIDEE_Tier2_Forest_EF3', \
+#                                  'ORCHIDEE_Tier2_Forest_EF2', \
+#                                  'ORCHIDEE_Tier2_Forest_EF3', \
                                   'ORCHIDEE_Tier2_Forest_EF4', \
                               ]   
             

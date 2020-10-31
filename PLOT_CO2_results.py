@@ -754,9 +754,10 @@ for iplot,cplot in enumerate(sim_params.desired_plots):
 
    if "VERIFYBU" in desired_simulations:
       idata=desired_simulations.index("VERIFYBU")
+      ds=sim_params.dataset_parameters[idata]
       for iyear in range(sim_params.ndesiredyears):
-         p2=ax1.hlines(y=simulation_data[idata,iyear,iplot],xmin=sim_params.allyears[iyear]-0.5,xmax=sim_params.allyears[iyear]+0.5,color=facec[idata],linestyle='--')
-         p1=mpl.patches.Rectangle((sim_params.allyears[iyear]-0.5,simulation_min[idata,iyear,iplot]),1,simulation_max[idata,iyear,iplot]-simulation_min[idata,iyear,iplot], color=uncert_color[idata], alpha=sim_params.uncert_alpha)
+         p2=ax1.hlines(y=simulation_data[idata,iyear,iplot],xmin=sim_params.allyears[iyear]-0.5,xmax=sim_params.allyears[iyear]+0.5,color=ds.facec,linestyle='--')
+         p1=mpl.patches.Rectangle((sim_params.allyears[iyear]-0.5,simulation_min[idata,iyear,iplot]),1,simulation_max[idata,iyear,iplot]-simulation_min[idata,iyear,iplot], color=ds.uncert_color, alpha=sim_params.uncert_alpha)
          ax1.add_patch(p1)
       #endfor
       legend_axes.append(p2)
@@ -807,10 +808,11 @@ for iplot,cplot in enumerate(sim_params.desired_plots):
          
          barwidth=1.0
          for isim,csim in enumerate(temp_desired_sims):
-            if productiondata[desired_simulations.index(csim)]:
-               p1=ax1.bar(sim_params.allyears, temp_data[isim,:], bottom=data_stack[isim,:], color=facec[desired_simulations.index(csim)],width=barwidth,alpha=sim_params.production_alpha*0.5)
+            ds=sim_params.dataset_parameters[desired_simulations.index(csim)]
+            if ds.productiondata:
+               p1=ax1.bar(sim_params.allyears, temp_data[isim,:], bottom=data_stack[isim,:], color=ds.facec,width=barwidth,alpha=sim_params.production_alpha*0.5)
             else:
-               p1=ax1.bar(sim_params.allyears, temp_data[isim,:], bottom=data_stack[isim,:], color=facec[desired_simulations.index(csim)],width=barwidth,alpha=sim_params.nonproduction_alpha*0.5)
+               p1=ax1.bar(sim_params.allyears, temp_data[isim,:], bottom=data_stack[isim,:], color=ds.facec,width=barwidth,alpha=sim_params.nonproduction_alpha*0.5)
             #endif
             legend_axes.append(p1)
             legend_titles.append(csim)
@@ -1049,10 +1051,11 @@ for iplot,cplot in enumerate(sim_params.desired_plots):
 
       barwidth=0.3
       for isim,csim in enumerate(correction_simulations):
-         if productiondata[desired_simulations.index(csim)]:
-            p1=axsub.bar(sim_params.allyears, temp_data[isim,:], bottom=data_stack[isim,:], color=sim_params.dataset_parameters[desired_simulations.index(csim)].facec,width=barwidth,alpha=sim_params.production_alpha*0.3)
+         ds=sim_params.dataset_parameters[desired_simulations.index(csim)]
+         if ds.productiondata:
+            p1=axsub.bar(sim_params.allyears, temp_data[isim,:], bottom=data_stack[isim,:], color=ds.facec,width=barwidth,alpha=sim_params.production_alpha*0.3)
          else:
-            p1=axsub.bar(sim_params.allyears, temp_data[isim,:], bottom=data_stack[isim,:], color=sim_params.dataset_parameters[desired_simulations.index(csim)].facec,width=barwidth,alpha=sim_params.nonproduction_alpha*0.3)
+            p1=axsub.bar(sim_params.allyears, temp_data[isim,:], bottom=data_stack[isim,:], color=ds.facec,width=barwidth,alpha=sim_params.nonproduction_alpha*0.3)
          #endif
          legend_axes.append(p1)
          legend_titles.append(csim)
@@ -1081,7 +1084,13 @@ for iplot,cplot in enumerate(sim_params.desired_plots):
    # of the other timeseries.  I have already calculated
    # average values to use above.
    if sim_params.graphname == "unfccc_lulucf_bar":
-      lskip,ax1=create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,syear_average,eyear_average,sim_params.xplot_min,sim_params.xplot_max,sim_params.ndesiredyears,sim_params.allyears,ax1,facec,sim_params.production_alpha,legend_axes,legend_titles,displayname,canvas,sim_params.output_file_end)
+      # Not pretty, but the only way I see to do it.
+      facec_temp=[]
+      for isim,simname in enumerate(desired_simulations):
+         facec_temp.append(sim_params.dataset_parameters[isim].facec)
+      #endfor
+
+      lskip,ax1=create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,syear_average,eyear_average,sim_params.xplot_min,sim_params.xplot_max,sim_params.ndesiredyears,sim_params.allyears,ax1,facec_temp,sim_params.production_alpha,legend_axes,legend_titles,displayname,canvas,sim_params.output_file_end)
       if lskip:
          continue
       #endif
@@ -1278,7 +1287,15 @@ for iplot,cplot in enumerate(sim_params.desired_plots):
    # Tried doing this above, but having two figures open caused issues.
    #if False:
    if sim_params.lplot_means and sim_params.graphname != "unfccc_lulucf_bar" and sim_params.lplot_meangraph:
-      create_mean_plot(legend_titles,displayname,simulation_data,simulation_min,simulation_max,iplot,pa_string,kp_string,facec,zorder_value,uncert_color,simulation_mean,sim_params.lplot_countrytot,plot_titles,sim_params.output_file_start,sim_params.desired_plots,sim_params.output_file_end,sim_params.uncert_alpha,overlapping_years,exclude_simulation_means,desired_simulations)
+      # Not pretty, but the only way I see to do it.                                                                                                                        
+      facec_temp=[]
+      uncert_color_temp=[]
+      for isim,simname in enumerate(desired_simulations):
+         facec_temp.append(sim_params.dataset_parameters[isim].facec)
+         uncert_color_temp.append(sim_params.dataset_parameters[isim].uncert_color)
+      #endfor  
+
+      create_mean_plot(legend_titles,displayname,simulation_data,simulation_min,simulation_max,iplot,pa_string,kp_string,facec_temp,zorder_value,uncert_color_temp,simulation_mean,sim_params.lplot_countrytot,plot_titles,sim_params.output_file_start,sim_params.desired_plots,sim_params.output_file_end,sim_params.uncert_alpha,overlapping_years,exclude_simulation_means,desired_simulations)
 
    #endif
 

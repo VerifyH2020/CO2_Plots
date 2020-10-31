@@ -193,6 +193,9 @@ def get_country_region_data(country_region_plotting_order=["NONE"],loutput_codes
     country_region_data["SVK"].add_possible_names('slr')
     country_region_data["DNK"].add_possible_names('den')
 
+    # This is a typo in a CBM file
+    country_region_data["HUN"].add_possible_names('Hungay')
+
     # Now fill out the regional data
     region_names,country_list=get_region_data(country_names,country_region_data)
 
@@ -208,6 +211,7 @@ def get_country_region_data(country_region_plotting_order=["NONE"],loutput_codes
     country_region_data["E28"].add_possible_names("'EU-28'")
     country_region_data["E28"].add_possible_names("'European Union (Convention)'")
     country_region_data["E28"].add_possible_names("European Union (Convention)")
+    country_region_data["E28"].add_possible_names("Tot EU")
 
 
 
