@@ -7,6 +7,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 import numpy as np
+from matplotlib.patches import Ellipse, Circle
+from matplotlib import cm
 
 rainbow = {"red"   : ((0., 0.53, 0.53), (0.077, 0.69, 0.69), (0.154, 0.84, 0.84), (0.231, 0.1,  0.1),  (0.308, 0.32, 0.32), (0.385, 0.48, 0.48), (0.462, 0.3,  0.3),  (0.539, 0.56, 0.56), (0.616, 0.79,  0.79),  (0.693, 0.965, 0.965), (0.77, 0.96, 0.96), (0.847, 0.94, 0.94), (0.924, 0.91,  0.91),  (1., 0.86, 0.86)),
            "green" : ((0., 0.18, 0.28), (0.077, 0.47, 0.47), (0.154, 0.75, 0.75), (0.231, 0.39, 0.39), (0.308, 0.54, 0.54), (0.385, 0.68, 0.68), (0.462, 0.7,  0.7),  (0.539, 0.79, 0.79), (0.616, 0.875, 0.875), (0.693, 0.93,  0.93),  (0.77, 0.75, 0.75), (0.847, 0.57, 0.57), (0.924, 0.375, 0.375), (1., 0.02, 0.02)),
@@ -75,7 +77,15 @@ class Grid:
         return out
 
     def plotmap(self, data, ptype = "map", title = "", ltitle = "", rtitle = "", info = None, filename = "test.png", dpi = 125,
-                drawcoast = True, drawgrid = True, levels = 20, vmin = None, vmax = None, bounds = None, ticks = None, zoom = dict(north = 90, south = -90, west = -180, east = 180), custom_cmap=None, plot_cbar=True, label_cbar=""):
+                drawcoast = True, drawgrid = True, levels = 20, vmin = None, vmax = None, bounds = None, ticks = None, zoom = dict(north = 90, south = -90, west = -180, east = 180), custom_cmap=None, plot_cbar=True, label_cbar=None, region=None,cmap_ticks=None,cbar_tick_labels=None,alpha=None):
+
+        # What version supports using an array for alpha?  More recent
+        # than 3.4.
+        print("Plotting a map using Matplotlib version {}.".format(matplotlib.__version__))
+
+        # I need an axes object for some of these methods
+        fig, ax = plt.subplots(figsize=(7, 7))
+
         delta = 3
         north = min( 90, max(self.lat) + delta, zoom["north"] + delta)
         south = max(-90, min(self.lat) - delta, zoom["south"] - delta)
@@ -97,6 +107,30 @@ class Grid:
             vmax = lim
         elif ptype == "custom_cmap":
             cmap = custom_cmap
+        elif ptype == "correlation":
+            cmap = plt.get_cmap("coolwarm")
+        elif ptype == 'correlation_truncated':
+
+            # The point of this is go from blue to white, then stay white for
+            # a while, and then go white to red.  In this way, weak correlation
+            # values won't be shown.
+            coolwarm = cm.get_cmap('coolwarm', 256)
+            cool=coolwarm(0.0)
+            warm=coolwarm(1.0)
+            trunc_colors = {"red"   : [[0.0, cool[0], cool[0]],
+                                       [0.4, 1.0, 1.0],
+                                       [0.6, 1.0, 1.0],
+                                       [1.0, warm[0], warm[0]]],
+                            "green"   : [[0.0, cool[1],cool[1]],
+                                         [0.4, 1.0, 1.0],
+                                         [0.6, 1.0, 1.0],
+                                         [1.0, warm[1],warm[1]]],
+                            "blue"   : [[0.0, cool[2],cool[2]],
+                                        [0.4, 1.0, 1.0],
+                                        [0.6, 1.0, 1.0],
+                                        [1.0, warm[2],warm[2]]]}
+            cmap = matplotlib.colors.LinearSegmentedColormap("my_colormap", trunc_colors, levels)
+
         #endif
 
         norm = None if bounds is None else matplotlib.colors.BoundaryNorm(boundaries=bounds, ncolors=levels)
@@ -107,11 +141,14 @@ class Grid:
         iwest = np.where(self.lon >= west)[0][0]
         ieast = np.where(self.lon <= east)[0][-1]
         cmesh = m.pcolormesh(self.meshlon[inorth:isouth+2,iwest:ieast+2], self.meshlat[inorth:isouth+2,iwest:ieast+2], data[inorth:isouth+1,iwest:ieast+1],
-                                 shading = "flat", cmap = cmap, latlon = True, vmin = vmin, vmax = vmax, norm = norm)
+                                 shading = "flat", cmap = cmap, latlon = True, vmin = vmin, vmax = vmax, norm = norm, alpha = alpha)
         if plot_cbar:
             cbar = m.colorbar(cmesh, pad = 0.08, location = "right")
-            if label_cbar:
+            if label_cbar is not None:
                 cbar.set_label(label_cbar)
+            #endif
+            if cbar_tick_labels is not None:
+                cbar.set_ticklabels(cbar_tick_labels)
             #endif
         #endif
         if bounds is not None: cbar.set_ticks(bounds)
@@ -120,8 +157,36 @@ class Grid:
         if title != "": plt.title(title)
         if ltitle != "": plt.title(ltitle, loc = "left")
         if rtitle != "": plt.title(rtitle, loc = "right")
-        plt.savefig(filename, dpi = dpi)
-        plt.clf()
+        # Plot some regions
+        if region: # This is a list of lists
+
+            #x,y=m(0.0,0.0)
+            #print("Origin at ",x,y)
+
+            for region_bounds in region: # [lon, lat, width, height, angle]
+                # The map returns lon,lat
+                x,y=m(region_bounds[0],region_bounds[1])
+                #ax.text(x, y, 'Lagos{}'.format(region_bounds[0]),fontsize=12,fontweight='bold',
+                #    ha='left',va='bottom',color='k')
+                delx,dely=m(region_bounds[2],region_bounds[3])
+                width1,height1=m(region_bounds[0]-region_bounds[2],region_bounds[1]-region_bounds[3])
+                width2,height2=m(region_bounds[0]+region_bounds[2],region_bounds[1]+region_bounds[3])
+                width=width2-width1
+                height=height2-height1
+            #    print("REGION ",region_bounds,x,y,width,height)
+                ax.add_artist(Ellipse((x,y), width,height,angle=region_bounds[4],fc=None,Fill=False,ec="red",lw=2))
+
+            #endif
+
+            ax.add_artist(Ellipse((0.0,0.0), 0.5,0.5))
+
+        #endif
+
+        plt.tight_layout()
+
+        fig.savefig(filename, dpi = dpi)
+        #plt.clf()
+        plt.close()
 
     def setRegrid(self, grid):
         print("Building regrid...")
@@ -142,7 +207,11 @@ class Grid:
         self.regtask = "recalc %sx%s to %sx%s" % (self.nlat, self.nlon, grid.nlat, grid.nlon)
         print("Regrid has been set : %s" % self.regtask)
 
-    def regrid(self, data, add_masked_area = False):
+    def regrid(self, data, add_masked_area = False, ltake_dominant_fraction = False):
+        # I have added the take_dominant_fraction flag.  If True, this sets
+        # the value of the pixel equal to the value in the subpixel with
+        # the most area.  It's use for maps that are classifications, like
+        # the Koppen-Geiger maps.
         # If we have a time, lat, lon variable, do this
         if len(data.shape) == 3:
             nlat, nlon = self.reg.shape
@@ -162,20 +231,32 @@ class Grid:
                         if newdata[k,i,j] is not np.ma.masked: newdata[k,i,j] /= totarea
             return newdata
 
-            # But sometimes we just have lat,lon without a time axis.  Still can regrid
+        # But sometimes we just have lat,lon without a time axis.  Still can regrid
         elif len(data.shape) == 2:
             nlat, nlon = self.reg.shape
             newdata = np.ma.array(np.zeros((nlat, nlon)), mask=True)
             for i in range(nlat):
                 for j in range(nlon):
                     totarea = 0
+                    maxarea=-1.0
                     for n,m,subarea in self.reg[i,j]:
-                        if data[n,m] is not np.ma.masked:
-                            if newdata[i,j] is np.ma.masked: newdata[i,j] = 0
-                            newdata[i,j] += data[n,m] * subarea
-                            if data[n,m] is not np.ma.masked or add_masked_area:
-                                totarea += subarea
-                        if newdata[i,j] is not np.ma.masked: newdata[i,j] /= totarea
+                        if ltake_dominant_fraction:
+                            if data[n,m] is not np.ma.masked:
+#                                print("data ",n,m,data[n,m])
+                                if subarea > maxarea:
+                                    maxarea=subarea
+                                    newdata[i,j]=data[n,m]
+                                #endif
+                            #endif
+                        else:
+                            if data[n,m] is not np.ma.masked:
+                                if newdata[i,j] is np.ma.masked: newdata[i,j] = 0
+                                newdata[i,j] += data[n,m] * subarea
+                                if data[n,m] is not np.ma.masked or add_masked_area:
+                                    totarea += subarea
+                                    if newdata[i,j] is not np.ma.masked: newdata[i,j] /= totarea
+                        #endif
+                    #endfor
             return newdata
 
         # If we have a time, veget, lat, lon variable, do this
