@@ -3,7 +3,7 @@ from datetime import date, timedelta
 from calendar import isleap
 import math
 import netCDF4 as nc
-import sys
+import sys,traceback
 from mpl_toolkits.basemap import maskoceans
 import matplotlib as mpl
 import pandas as pd
@@ -25,7 +25,7 @@ def get_cumulated_array(data, **kwargs):
          d[1:] = cum[:-1]
          return d  
 
-def readfile(filename,variablename,ndesiredyears,lconvert_units,starting_year,ending_year):
+def readfile(filename,variablename,ndesiredyears,lconvert_units,starting_year,ending_year,ncountries):
    # The goal of this routine is to read in a slice from starting_year
    # until ending_ear.
    # The time axes for all these files starts as days from 1900-01-01,
@@ -35,24 +35,28 @@ def readfile(filename,variablename,ndesiredyears,lconvert_units,starting_year,en
    # CountryTot.nc files, so if that changes, this must change.  By hardcoding
    # it here, this serves as a check that we are using the files we think
    # we are using.
-   FCO2=np.zeros((ndesiredyears,12,79))*np.nan
+   FCO2=np.zeros((ndesiredyears,12,ncountries))*np.nan
    print("************************************************************")
    print("Reading in file: ",filename)
    print("************************************************************")
    ncfile=nc.Dataset(filename)
-   FCO2_file=ncfile.variables[variablename][:]  #kg C yr-1
-   
+   FCO2_file=ncfile.variables[variablename][:].filled(fill_value=np.nan)  #kg C yr-1
+
    # we only need to convert units if we are not dealing with uncertainties,
    # since uncertainties are given as a fraction
    if lconvert_units:
-      if ncfile.variables[variablename].units == "kg C yr-1":
+      if ncfile.variables[variablename].units in ["kg C yr-1","kg C yr-1 [country]"]:
          print("Converting units from {0} to Tg C yr-1".format(ncfile.variables[variablename].units))
          FCO2_TOT=FCO2_file/1e+9   #kg CO2/yr -->  Tg C/ year
+
+      elif ncfile.variables[variablename].units in ["KgC h-1"]:
+         print("Converting units from {0} to Tg C yr-1".format(ncfile.variables[variablename].units))
+         FCO2_TOT=FCO2_file/1e+9*24.0*365.0   #KgC h-1 -->  Tg C yr-1
       else:
          print("Not changing units from file: ",ncfile.variables[variablename].units)
          FCO2_TOT=FCO2_file*1.0
          print("Shape of input array: ",FCO2_TOT.shape)
-         print("Shape of input array: ",FCO2_TOT.mask)
+#         print("Shape of input array: ",FCO2_TOT.mask)
       #endif
    else:
       print("Not changing units from file: ",ncfile.variables[variablename].units)
@@ -629,10 +633,14 @@ def print_test_data(ltest_data,simulation_data,simulation_err,simulation_min,sim
       print("Plot: ",desired_plots[itest_plot])
       print("simulation data  ",simulation_data[itest_sim,:,itest_plot])
       print("simulation err ",simulation_err[itest_sim,:,itest_plot])
-      print("simulation min ",simulation_err[itest_sim,:,itest_plot])
-      print("simulation max ",simulation_err[itest_sim,:,itest_plot])
+      print("simulation min ",simulation_min[itest_sim,:,itest_plot])
+      print("simulation max ",simulation_max[itest_sim,:,itest_plot])
       print("**************************************************")
    #endif
+
+   #traceback.print_stack(file=sys.stdout)
+   #sys.exit(1)
+
 #####
 
 

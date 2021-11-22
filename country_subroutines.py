@@ -18,12 +18,15 @@
 
 # These are downloadable or standard modules
 from netCDF4 import Dataset as NetCDFFile 
-import sys
+import sys,traceback
 import re
 import numpy as np
 from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
+from mpl_toolkits.basemap import maskoceans
 
+# Locally written module
+from grid import Grid
 
 
 # The purpose of this class is to store information about
@@ -45,11 +48,15 @@ class countrydata:
         self.possible_names = []
 
         # Create a list of common possible names
+        self.possible_names.append(iso_code)
         self.possible_names.append(long_name)
         self.possible_names.append(long_name.upper()) 
         self.possible_names.append(long_name.lower())
         self.possible_names.append("'{}'".format(long_name))
-
+        # H&N file removed spaces between words.
+        self.possible_names.append(long_name.replace(" ",""))
+        self.possible_names.append(long_name.upper().replace(" ","")) 
+        self.possible_names.append(long_name.lower().replace(" ",""))
         self.uninit_int=-999
 
         # This is set if we search a file for the name of the country
@@ -69,17 +76,115 @@ class countrydata:
     def add_possible_names(self,possible_name):
         if isinstance(possible_name,str):
             self.possible_names.append(possible_name)
+            self.possible_names.append("'{}'".format(possible_name))
         else:
             self.possible_names.extend(possible_name)
-        #endif
+            self.possible_names.extend("'{}'".format(possible_name))
+       #endif
     #enddef
 
 #enddef
 
-def get_country_codes_for_netCDF_file():
+# Store the names of the mask files
+def get_country_region_mask_file_name(flag):
+
+    if flag == 'afr':
+
+        return "/home/dods/verify/VERIFY_INPUT/COUNTRY_MASKS/african_global_country_region_masks_0.1x0.1.nc"
+
+    elif flag == 'test':
+
+
+        return "/home/dods/verify/VERIFY_INPUT/COUNTRY_MASKS/test_country_region_masks_0.1x0.1.nc"
+
+    elif flag == "all_countries":
+
+        return "/home/dods/verify/VERIFY_INPUT/COUNTRY_MASKS/all_countries_masks_0.1x0.1.nc"
+
+    elif flag == "all_countries_regions":
+
+        return "/home/dods/verify/VERIFY_INPUT/COUNTRY_MASKS/all_countries_and_regions_masks_0.1x0.1.nc"
+
+    else:
+        print("Need to write this!")
+        print("flag ",flag)
+        sys.exit(1)
+    #endif
+
+#enddef
+
+def get_country_codes_for_netCDF_file(flag="eur"):
     # This is the order of country codes that I used to create
     # the country and regional masks.
-    return ["ALA", "ALB", "AND", "AUT", "BEL", "BGR", "BIH", "BLR", "CHE", "CYP", "CZE", "DEU", "DNK", "ESP", "EST", "FIN", "FRA", "FRO", "GBR", "GGY", "GEO", "GRC", "GRL", "HRV", "HUN", "IMN", "IRL", "ISL", "ITA", "JEY", "LIE", "LTU", "LUX", "LVA", "MDA", "MKD", "MLT", "MNE", "NLD", "NOR", "POL", "PRT", "ROU", "RUS", "SJM", "SMR", "SRB", "SVK", "SVN", "SWE", "TUR", "UKR", "BNL", "CSK", "CHL", "BLT", "NAC", "DSF", "UKI", "IBE", "WEE", "WEA", "CEE", "NOE", "SOE", "SOY", "SOZ", "SWN", "SEE", "SEA", "SEZ", "EAE", "EEA", "EER", "E12", "E15", "E27", "E28", "EUR"]
+    #return ["ARG", "AUS", "BRA", "CAN", "CHN", "COD", "IND", "IDN", "IRN", "JPN", "MEX", "NGA", "RUS", "SAU", "ZAF", "USA" ]
+    #return ["ALA", "ALB", "AND", "AUT", "BEL", "BGR", "BIH", "BLR", "CHE", "CYP", "CZE", "DEU", "DNK", "ESP", "EST", "FIN", "FRA", "FRO", "GBR", "GGY", "GEO", "GRC", "GRL", "HRV", "HUN", "IMN", "IRL", "ISL", "ITA", "JEY", "LIE", "LTU", "LUX", "LVA", "MDA", "MKD", "MLT", "MNE", "NLD", "NOR", "POL", "PRT", "ROU", "RUS", "SJM", "SMR", "SRB", "SVK", "SVN", "SWE", "TUR", "UKR", "BNL", "CSK", "SWL", "BLT", "NAC", "DSF", "UKI", "IBE", "WEE", "WEA", "CEE", "NOE", "SOE", "SOY", "SOZ", "SWN", "SEE", "SEA", "SEZ", "EAE", "EEA", "EER", "E12", "E15", "E27", "E28", "EUR"]
+
+    country_region_data=get_country_region_data(loutput_codes=True)
+    possible_country_list=get_countries_from_cr_dict(country_region_data)
+
+
+    # This is the total list
+    if flag.lower() == "eur":
+
+        return ["ALA", "ALB", "AND", "AUT", "BEL", "BGR", "BIH", "BLR", "CHE", "CYP", "CZE", "DEU", "DNK", "ESP", "EST", "FIN", "FRA", "FRO", "GBR", "GGY", "GEO", "GRC", "GRL", "HRV", "HUN", "IMN", "IRL", "ISL", "ITA", "JEY", "LIE", "LTU", "LUX", "LVA", "MDA", "MKD", "MLT", "MNE", "NLD", "NOR", "POL", "PRT", "ROU", "RUS", "SJM", "SMR", "SRB", "SVK", "SVN", "SWE", "TUR", "UKR", "BNL", "CSK", "SWL", "BLT", "NAC", "DSF", "UKI", "IBE", "WEE", "WEA", "CEE", "NOE", "SOE", "SOY", "SOZ", "SWN", "SEE", "SEA", "SEZ", "EAE", "EEA", "EER", "E12", "E15", "E27", "E28", "EUR"]
+
+    elif flag.lower() == "global":
+
+        return ["ALA", "ALB", "AND", "AUT", "BEL", "BGR", "BIH", "BLR", "CHE", "CYP", "CZE", "DEU", "DNK", "ESP", "EST", "FIN", "FRA", "FRO", "GBR", "GGY", "GEO", "GRC", "GRL", "HRV", "HUN", "IMN", "IRL", "ISL", "ITA", "JEY", "LIE", "LTU", "LUX", "LVA", "MDA", "MKD", "MLT", "MNE", "NLD", "NOR", "POL", "PRT", "ROU", "VRU", "SJM", "SMR", "SRB", "SVK", "SVN", "SWE", "TUR", "UKR", "BNL", "CSK", "SWL", "BLT", "NAC", "DSF", "UKI", "IBE", "WEE", "WEA", "CEE", "NOE", "SOE", "SOY", "SOZ", "SWN", "SEE", "SEA", "SEZ", "EAE", "EEA", "EER", "E12", "E15", "E27", "E28", "EUR", "ARG", "AUS", "BRA", "CAN", "CHN", "COD", "IND", "IDN", "IRN", "JPN", "MEX", "NGA", "RUS", "SAU", "ZAF", "USA"]
+
+    elif flag.lower() == "africa":
+        # A list covering Africa.  Notice that
+        # the code requires all countries in a region to be present in a file
+        # as well, so that it it's clear what countries make up which regions.
+        return ["COD", "NGA", "ZAF", "DZA", "SDN", "LBY", "TCD", "NER", "AGO", "MLI", "ETH", "MRT", "EGY", "TZA", "NAM", 'ERI','MAR','TUN', 'BEN','BFA','CIV','CPV','GHA','GIN','GMB','GNB', 'LBR', 'SEN', 'SLE', 'STP', 'TGO', 'CAF','CMR','COG','GAB','SSD', 'BDI','COM','DJI','KEN','SYC','UGA', 'SOM','MDG','MOZ','MUS','MWI','ZMB','ZWE','LSO','SWZ','BWA', "NAF", "SSA", "CNA", "HAF", "SAF", "ZAA", "AFR"]
+
+    elif flag.lower() == "all_countries":
+        # This tries to grab all possible countries that we know about.
+
+        country_region_data=get_country_region_data(loutput_codes=True)
+
+        country_list=[]
+
+        for ccode,cr in country_region_data.items():
+            if cr.is_country:
+                country_list.append(ccode)
+            #endif
+        #endfor
+
+
+        return country_list
+
+    elif flag.lower() in ["all_countries_regions","master","allcountriesregions"]:
+        # Grab everything
+
+        country_region_data=get_country_region_data(loutput_codes=True)
+
+        country_list=[]
+
+        for ccode,cr in country_region_data.items():
+            country_list.append(ccode)
+        #endfor
+
+
+        return country_list
+
+    elif flag in possible_country_list:
+
+        return flag
+
+    elif flag.lower() == "test":
+
+        return ["FRA","BEL","LUX"]
+
+    else:
+
+        print("Do not recognize this country listing!")
+        print(flag)
+        traceback.print_stack(file=sys.stdout)
+        sys.exit(1)
+        
+    #endif
+
 #enddef
 
 
@@ -138,7 +243,7 @@ def get_country_region_data(country_region_plotting_order=["NONE"],loutput_codes
     country_names=add_key_to_country_region_names("POL","Poland",country_names)
     country_names=add_key_to_country_region_names("PRT","Portugal",country_names)
     country_names=add_key_to_country_region_names("ROU","Romania",country_names)
-    country_names=add_key_to_country_region_names("RUS","Russian Federation",country_names)
+    country_names=add_key_to_country_region_names("VRU","Russian Federation (VERIFY region)",country_names)
     country_names=add_key_to_country_region_names("SJM","Svalbard and Jan Mayen",country_names)
     country_names=add_key_to_country_region_names("SMR","San Marino",country_names)
     country_names=add_key_to_country_region_names("SRB","Serbia",country_names)
@@ -148,11 +253,155 @@ def get_country_region_data(country_region_plotting_order=["NONE"],loutput_codes
     country_names=add_key_to_country_region_names("TUR","Turkey",country_names)
     country_names=add_key_to_country_region_names("UKR","Ukraine",country_names)
 
+# Non-EU countries
+    country_names=add_key_to_country_region_names("USA","United States of America",country_names)
+    country_names=add_key_to_country_region_names("CHN","China",country_names)
+    country_names=add_key_to_country_region_names("AUS","Australia",country_names)
+    country_names=add_key_to_country_region_names("ARG","Argentina",country_names)
+    country_names=add_key_to_country_region_names("BRA","Brazil",country_names)
+    country_names=add_key_to_country_region_names("CAN","Canada",country_names)
+    country_names=add_key_to_country_region_names("COD","Democratic Republic of the Congo",country_names)
+    country_names=add_key_to_country_region_names("IND","India",country_names)
+    country_names=add_key_to_country_region_names("IDN","Indonesia",country_names)
+    country_names=add_key_to_country_region_names("IRN","Iran",country_names)
+    country_names=add_key_to_country_region_names("JPN","Japan",country_names)
+    country_names=add_key_to_country_region_names("MEX","Mexico",country_names)
+    country_names=add_key_to_country_region_names("NGA","Nigeria",country_names)
+    country_names=add_key_to_country_region_names("RUS","Russian Federation",country_names)
+    country_names=add_key_to_country_region_names("SAU","Saudi Arabia",country_names)
+    country_names=add_key_to_country_region_names("ZAF","South Africa",country_names)
+
+    # Additional global countries
+    country_names=add_key_to_country_region_names("AFG","Afghanistan",country_names)
+    country_names=add_key_to_country_region_names("DZA","Algeria",country_names)
+    country_names=add_key_to_country_region_names("AGO","Angola",country_names)
+    country_names=add_key_to_country_region_names("AZE","Azerbaijan",country_names)
+    country_names=add_key_to_country_region_names("BGD","Bangladesh",country_names)
+    country_names=add_key_to_country_region_names("BEN","Benin",country_names)
+    country_names=add_key_to_country_region_names("BTN","Bhutan",country_names)
+    country_names=add_key_to_country_region_names("BOL","Bolivia",country_names)
+    country_names=add_key_to_country_region_names("BWA","Botswana",country_names)
+    country_names=add_key_to_country_region_names("BRN","Brunei",country_names)
+    country_names=add_key_to_country_region_names("BFA","Burkina Faso",country_names)
+    country_names=add_key_to_country_region_names("BDI","Burundi",country_names)
+    country_names=add_key_to_country_region_names("KHM","Cambodia",country_names)
+    country_names=add_key_to_country_region_names("CMR","Cameroon",country_names)
+
+    country_names=add_key_to_country_region_names("CPV","Cape Verde",country_names)
+    country_names=add_key_to_country_region_names("CAF","Central African Republic",country_names)
+    country_names=add_key_to_country_region_names("TCD","Chad",country_names)
+    country_names=add_key_to_country_region_names("CHL","Chile",country_names)
+    country_names=add_key_to_country_region_names("COL","Colombia",country_names)
+    country_names=add_key_to_country_region_names("COM","Comores",country_names)
+    country_names=add_key_to_country_region_names("CRI","Costa Rica",country_names)
+    country_names=add_key_to_country_region_names("CUB","Cuba",country_names)
+    country_names=add_key_to_country_region_names("DJI","Djibouti",country_names)
+    country_names=add_key_to_country_region_names("DMA","Dominica",country_names)
+    country_names=add_key_to_country_region_names("DOM","Dominican Republic",country_names)
+    country_names=add_key_to_country_region_names("TLS","East Timor",country_names)
+    country_names=add_key_to_country_region_names("ECU","Ecuador",country_names)
+    country_names=add_key_to_country_region_names("EGY","Egypt",country_names)
+    country_names=add_key_to_country_region_names("SLV","El Salvador",country_names)
+    country_names=add_key_to_country_region_names("GNQ","Equatorial Guinea",country_names)
+    country_names=add_key_to_country_region_names("ERI","Eritrea",country_names)
+    country_names=add_key_to_country_region_names("ETH","Ethiopia",country_names)
+    country_names=add_key_to_country_region_names("SOM","Federal Republic of Somalia",country_names)
+    country_names=add_key_to_country_region_names("FJI","Fiji",country_names)
+
+    country_names=add_key_to_country_region_names("GUF","French Guiana",country_names)
+    country_names=add_key_to_country_region_names("GAB","Gabon",country_names)
+    country_names=add_key_to_country_region_names("GMB","Gambia",country_names)
+    country_names=add_key_to_country_region_names("GHA","Ghana",country_names)
+    country_names=add_key_to_country_region_names("GIB","Gibraltar",country_names)
+    country_names=add_key_to_country_region_names("GRD","Grenada",country_names)
+    country_names=add_key_to_country_region_names("GLP","Guadeloupe",country_names)
+    country_names=add_key_to_country_region_names("GUM","Guam",country_names)
+    country_names=add_key_to_country_region_names("GTM","Guatemala",country_names)
+    country_names=add_key_to_country_region_names("GIN","Guinea",country_names)
+    country_names=add_key_to_country_region_names("GNB","Guinea-Bissau",country_names)
+    country_names=add_key_to_country_region_names("GUY","Guyana",country_names)
+    country_names=add_key_to_country_region_names("HTI","Haiti",country_names)
+    country_names=add_key_to_country_region_names("HND","Honduras",country_names)
+    country_names=add_key_to_country_region_names("IRQ","Iraq",country_names)
+    country_names=add_key_to_country_region_names("ISR","Israel",country_names)
+    country_names=add_key_to_country_region_names("CIV","Ivory Coast",country_names)
+    country_names=add_key_to_country_region_names("JOR","Jordan",country_names)
+    country_names=add_key_to_country_region_names("KAZ","Kazakhstan",country_names)
+    country_names=add_key_to_country_region_names("KEN","Kenya",country_names)
+    country_names=add_key_to_country_region_names("KWT","Kuwait",country_names)
+    country_names=add_key_to_country_region_names("KGZ","Kyrgyzstan",country_names)
+    country_names=add_key_to_country_region_names("LAO","Laos",country_names)
+    country_names=add_key_to_country_region_names("LBN","Lebanon",country_names)
+    country_names=add_key_to_country_region_names("LSO","Lesotho",country_names)
+    country_names=add_key_to_country_region_names("LBR","Liberia",country_names)
+    country_names=add_key_to_country_region_names("LBY","Libya",country_names)
+    country_names=add_key_to_country_region_names("MDG","Madagascar",country_names)
+    country_names=add_key_to_country_region_names("MWI","Malawi",country_names)
+    country_names=add_key_to_country_region_names("MYS","Malaysia",country_names)
+    country_names=add_key_to_country_region_names("MLI","Mali",country_names)
+    country_names=add_key_to_country_region_names("MRT","Mauritania",country_names)
+    country_names=add_key_to_country_region_names("MNG","Mongolia",country_names)
+    country_names=add_key_to_country_region_names("MAR","Morocco",country_names)
+    country_names=add_key_to_country_region_names("MOZ","Mozambique",country_names)
+    country_names=add_key_to_country_region_names("MMR","Myanmar",country_names)
+    country_names=add_key_to_country_region_names("NAM","Namibia",country_names)
+    country_names=add_key_to_country_region_names("NPL","Nepal",country_names)
+    country_names=add_key_to_country_region_names("NZL","New Zealand",country_names)
+    country_names=add_key_to_country_region_names("NIC","Nicaragua",country_names)
+    country_names=add_key_to_country_region_names("NER","Niger",country_names)
+    country_names=add_key_to_country_region_names("PRK","North Korea",country_names)
+    country_names=add_key_to_country_region_names("OMN","Oman",country_names)
+    country_names=add_key_to_country_region_names("PAK","Pakistan",country_names)
+    country_names=add_key_to_country_region_names("PAN","Panama",country_names)
+    country_names=add_key_to_country_region_names("PNG","Papua New Guinea",country_names)
+    country_names=add_key_to_country_region_names("PRY","Paraguay",country_names)
+    country_names=add_key_to_country_region_names("PER","Peru",country_names)
+    country_names=add_key_to_country_region_names("PHL","Philippines",country_names)
+    country_names=add_key_to_country_region_names("QAT","Qatar",country_names)
+    country_names=add_key_to_country_region_names("MUS","Republic of Mauritius",country_names)
+    country_names=add_key_to_country_region_names("COG","Republic of the Congo",country_names)
+    country_names=add_key_to_country_region_names("RWA","Rwanda",country_names)
+    country_names=add_key_to_country_region_names("STP","Sao Tome and Principe",country_names)
+    country_names=add_key_to_country_region_names("SEN","Senegal",country_names)
+    country_names=add_key_to_country_region_names("SYC","Seychelles",country_names)
+    country_names=add_key_to_country_region_names("SLE","Sierra Leone",country_names)
+    country_names=add_key_to_country_region_names("SGP","Singapore",country_names)
+    country_names=add_key_to_country_region_names("KOR","South Korea",country_names)
+    country_names=add_key_to_country_region_names("SSD","South Sudan",country_names)
+    country_names=add_key_to_country_region_names("LKA","Sri Lanka",country_names)
+    country_names=add_key_to_country_region_names("SDN","Sudan",country_names)
+    country_names=add_key_to_country_region_names("SUR","Suriname",country_names)
+    country_names=add_key_to_country_region_names("SWZ","Swaziland",country_names)
+    country_names=add_key_to_country_region_names("SYR","Syria",country_names)
+    country_names=add_key_to_country_region_names("TWN","Taiwan",country_names)
+    country_names=add_key_to_country_region_names("TJK","Tajikistan",country_names)
+    country_names=add_key_to_country_region_names("TZA","Tanzania",country_names)
+    country_names=add_key_to_country_region_names("THA","Thailand",country_names)
+    country_names=add_key_to_country_region_names("TGO","Togo",country_names)
+    country_names=add_key_to_country_region_names("TUN","Tunisia",country_names)
+    country_names=add_key_to_country_region_names("TKM","Turkmenistan",country_names)
+    country_names=add_key_to_country_region_names("UGA","Uganda",country_names)
+    country_names=add_key_to_country_region_names("ARE","United Arab Emirates",country_names)
+    country_names=add_key_to_country_region_names("URY","Uruguay",country_names)
+    country_names=add_key_to_country_region_names("UZB","Uzbekistan",country_names)
+    country_names=add_key_to_country_region_names("VEN","Venezuela",country_names)
+    country_names=add_key_to_country_region_names("VNM","Vietnam",country_names)
+    country_names=add_key_to_country_region_names("ESH","Western Sahara",country_names)
+    country_names=add_key_to_country_region_names("YEM","Yemen",country_names)
+    country_names=add_key_to_country_region_names("ZMB","Zambia",country_names)
+    country_names=add_key_to_country_region_names("ZWE","Zimbabwe",country_names)
+
+    country_names=add_key_to_country_region_names("PSE","Palestine",country_names)
+    country_names=add_key_to_country_region_names("FSM","Micronesia (Federated States of)",country_names)
+    country_names=add_key_to_country_region_names("MCO","Monaco",country_names)
+    country_names=add_key_to_country_region_names("BLZ","Belize",country_names)
+    country_names=add_key_to_country_region_names("BHR","Bahrain",country_names)
+    country_names=add_key_to_country_region_names("ARM","Armenia",country_names)
+
 
     for ccode,cname in country_names.items():
         composant_countries=[]
         composant_countries.append(ccode)
-
         country_region_data[ccode]=countrydata(ccode,cname,composant_countries)
     #endfor
 
@@ -168,8 +417,20 @@ def get_country_region_data(country_region_plotting_order=["NONE"],loutput_codes
     country_region_data["CZE"].add_possible_names('Czechia')
     country_region_data["GBR"].add_possible_names('UK')
     country_region_data["GBR"].add_possible_names('UnitedKingdom')
+    country_region_data["GBR"].add_possible_names('United Kingdom inc. territories (ex. Bermuda)')
+    country_region_data["GBR"].add_possible_names('United Kingdom of Great Britain and Northern Ireland')
     country_region_data["BIH"].add_possible_names('BosniaandHerzegovina')
+    # This was in H&N.  Assuming it's correct?
+    country_region_data["BIH"].add_possible_names('Bosnia')
     country_region_data["RUS"].add_possible_names('Russia')
+
+    country_region_data["FRA"].add_possible_names('France inc. EU territories')
+
+    country_region_data["FRO"].add_possible_names('Faeroe')
+    country_region_data["LUX"].add_possible_names('Grand Duchy of Luxembourg')
+    country_region_data["SJM"].add_possible_names('Jan Mayen')
+    country_region_data["USA"].add_possible_names('United States')
+#    country_region_data["USA"].add_possible_names('USA')
 
     # These are all used in EFISCEN...lowercase values of the code
     for ccode,cname in country_names.items():
@@ -192,9 +453,42 @@ def get_country_region_data(country_region_plotting_order=["NONE"],loutput_codes
     country_region_data["LVA"].add_possible_names('lat')
     country_region_data["SVK"].add_possible_names('slr')
     country_region_data["DNK"].add_possible_names('den')
+    country_region_data["MDA"].add_possible_names('mol')
+    country_region_data["NOR"].add_possible_names('nor')
+    country_region_data["UKR"].add_possible_names('ukr')
+    country_region_data["BLR"].add_possible_names('blr')
+    country_region_data["NLD"].add_possible_names('The Netherlands')
+    country_region_data["CZE"].add_possible_names('Czeck Republick')
 
-    # This is a typo in a CBM file
+    country_region_data["VNM"].add_possible_names('Viet Nam')
+    country_region_data["VEN"].add_possible_names('Venezuela (Bolivarian Republic of)')
+    country_region_data["TZA"].add_possible_names('United Republic of Tanzania')
+    country_region_data["TLS"].add_possible_names('Timor-Leste')
+    country_region_data["TLS"].add_possible_names('TimorLeste')
+    country_region_data["SYR"].add_possible_names('Syrian Arab Republic')
+    country_region_data["SJM"].add_possible_names('Svalbard and Jan Mayen Islands')
+    country_region_data["SOM"].add_possible_names('Somalia')
+    country_region_data["KOR"].add_possible_names('Republic of Korea')
+    country_region_data["PRK"].add_possible_names('Democratic People\'s Republic of Korea')
+    country_region_data["LAO"].add_possible_names('Lao People\'s Democratic Republic')
+    country_region_data["IRN"].add_possible_names('Iran (Islamic Republic of)')
+    country_region_data["ETH"].add_possible_names('Ethiopia PDR')
+    country_region_data["SWZ"].add_possible_names('Eswatini')
+    country_region_data["CIV"].add_possible_names('Côte d\'Ivoire')
+    country_region_data["COG"].add_possible_names('Congo')
+    country_region_data["BRN"].add_possible_names('Brunei Darussalam')
+    country_region_data["BOL"].add_possible_names('Bolivia (Plurinational State of)')
+    country_region_data["FSM"].add_possible_names('Micronesia')
+
+    # These are typos in various files
     country_region_data["HUN"].add_possible_names('Hungay')
+    country_region_data["ESP"].add_possible_names('Spania')
+
+    # This is in H&N files
+    country_region_data["PRK"].add_possible_names('NorthKorea')
+    country_region_data["KOR"].add_possible_names('SouthKorea')
+    country_region_data["COD"].add_possible_names('DRC')
+
 
     # Now fill out the regional data
     region_names,country_list=get_region_data(country_names,country_region_data)
@@ -208,10 +502,14 @@ def get_country_region_data(country_region_plotting_order=["NONE"],loutput_codes
     country_region_data["SEE"].add_possible_names('South-Eastern Europe')
     country_region_data["SOE"].add_possible_names('Southern Europe')
     country_region_data["E28"].add_possible_names('EU-28')
-    country_region_data["E28"].add_possible_names("'EU-28'")
-    country_region_data["E28"].add_possible_names("'European Union (Convention)'")
+    country_region_data["E28"].add_possible_names('TOT EU28') # For H&N
+    # Don't use the single quotes...they are added automatically above
+    #country_region_data["E28"].add_possible_names("'EU-28'")
+    #country_region_data["E28"].add_possible_names("'European Union (Convention)'")
     country_region_data["E28"].add_possible_names("European Union (Convention)")
     country_region_data["E28"].add_possible_names("Tot EU")
+    country_region_data["E28"].add_possible_names("EU27+UK")
+    country_region_data["E28"].add_possible_names("European Union (28)")
 
 
 
@@ -241,6 +539,7 @@ def convert_country_to_code(cname,country_region_data):
 
     if not output_code:
         print("Could not find the ISO code for this country: ",cname)
+        traceback.print_stack(file=sys.stdout)
         sys.exit(1)
     #endif
 
@@ -265,6 +564,7 @@ def add_key_to_country_region_names(keyname,keyvalue,names):
         print("Key already exists in the country_region_data!")
         print("Should not happen.  Check your 3-letter ISO codes, as one seems to be used more than once.")
         print("Offending code: ",keyname,keyvalue)
+        traceback.print_stack(file=sys.stdout)
         sys.exit(1)
     #endif
 
@@ -308,7 +608,9 @@ def get_region_data(country_names,country_region_data):
     region_names=add_key_to_country_region_names("E28","EU-27+UK",region_names)
     region_names=add_key_to_country_region_names("EUR","all Europe",region_names)
     region_names=add_key_to_country_region_names("CSK","Former Czechoslovakia",region_names)
-    region_names=add_key_to_country_region_names("CHL","Switzerland + Liechtenstein",region_names)
+    # This conflicted with Chile
+    #region_names=add_key_to_country_region_names("CHL","Switzerland + Liechtenstein",region_names)
+    region_names=add_key_to_country_region_names("SWL","Switzerland + Liechtenstein",region_names)
     region_names=add_key_to_country_region_names("BLT","Baltic countries",region_names)
     region_names=add_key_to_country_region_names("NAC","North Adriatic Countries",region_names)
     region_names=add_key_to_country_region_names("DSF","Denmark, Sweden, Finland",region_names)
@@ -316,6 +618,21 @@ def get_region_data(country_names,country_region_data):
     region_names=add_key_to_country_region_names("UMB","Ukraine, Rep. of Moldova, Belarus",region_names)
     region_names=add_key_to_country_region_names("RUG","Russia and Georgia",region_names)
 
+    # For Africa
+    region_names=add_key_to_country_region_names("NAF","North Africa",region_names)
+    region_names=add_key_to_country_region_names("SSA","Subsahelian West Africa",region_names)
+    region_names=add_key_to_country_region_names("CNA","Central Africa",region_names)
+    region_names=add_key_to_country_region_names("HAF","Horn of Africa",region_names)
+    region_names=add_key_to_country_region_names("SAF","Southern Africa",region_names)
+    region_names=add_key_to_country_region_names("ZAA","South Africa and enclaves",region_names)
+
+    # Continents
+    region_names=add_key_to_country_region_names("AFR","Africa",region_names)
+    region_names=add_key_to_country_region_names("NOA","North America",region_names)
+    region_names=add_key_to_country_region_names("SOA","South America",region_names)
+    region_names=add_key_to_country_region_names("AIS","Asia",region_names)
+
+    region_names=add_key_to_country_region_names("WLD","World",region_names)
 
     country_list={}
 
@@ -362,12 +679,12 @@ def get_region_data(country_names,country_region_data):
         elif keyval == "E28":
             country_list[keyval]=("Austria","Belgium","Bulgaria","Croatia","Cyprus","Czech Republic","Denmark","Estonia","Finland","France","Germany","Greece","Hungary","Ireland","Italy","Latvia","Lithuania","Luxembourg","Malta","Netherlands","Poland","Portugal","Romania","Slovakia","Slovenia","Spain","Sweden","United Kingdom")
         elif keyval == "EUR":
-            country_list[keyval]=("Aaland Islands","Albania","Andorra","Austria","Belgium","Bulgaria","Bosnia and Herzegovina","Belarus","Switzerland","Cyprus","Czech Republic","Germany","Denmark","Spain","Estonia","Finland","France","Faroe Islands","United Kingdom","Guernsey","Greece","Croatia","Hungary","Isle of Man","Ireland","Iceland","Italy","Jersey","Liechtenstein","Lithuania","Luxembourg","Latvia","Moldova, Republic of","Macedonia, the former Yugoslav","Malta","Montenegro","Netherlands","Norway","Poland","Portugal","Romania","Russian Federation","Svalbard and Jan Mayen","San Marino","Serbia","Slovakia","Slovenia","Sweden","Turkey","Ukraine")
+            country_list[keyval]=("Albania","Andorra","Austria","Belgium","Bulgaria","Bosnia and Herzegovina","Belarus","Switzerland","Cyprus","Czech Republic","Germany","Denmark","Spain","Estonia","Finland","France","Faroe Islands","United Kingdom","Guernsey","Greece","Croatia","Hungary","Ireland","Iceland","Italy","Jersey","Liechtenstein","Lithuania","Luxembourg","Latvia","Moldova, Republic of","Macedonia, the former Yugoslav","Malta","Montenegro","Netherlands","Norway","Poland","Portugal","Romania","Russian Federation","Svalbard and Jan Mayen","San Marino","Serbia","Slovakia","Slovenia","Sweden","Turkey","Ukraine")
         elif keyval == "WEA":
             country_list[keyval]=('BEL','FRA','NLD','DEU','CHE','GBR','ESP','PRT')
         elif keyval == "CSK":
             country_list[keyval]=('CZE','SVK')
-        elif keyval == "CHL":
+        elif keyval == "SWL":
             country_list[keyval]=('CHE','LIE')
         elif keyval == "BLT":
             country_list[keyval]=('EST','LTU','LVA')
@@ -381,9 +698,35 @@ def get_region_data(country_names,country_region_data):
             country_list[keyval]=('UKR','MDA','BLR')
         elif keyval == "RUG":
             country_list[keyval]=('RUS','GEO')
+            # Regions in Africa
+        elif keyval == "NAF": # For North Africa 
+            country_list[keyval]=('DZA','EGY','ERI','LBY','MAR','MLI','MRT','NER','SDN','TCD','TUN') 
+        elif keyval == "SSA": # For Subsahelian western countries   
+            country_list[keyval]=('BEN','BFA','CIV','CPV','GHA','GIN','GMB','GNB', 'LBR','NGA', 'SEN', 'SLE', 'STP', 'TGO') 
+
+        elif keyval == "CNA":  # For Central African (wet) countries.  CAF is
+            # already taken by the Central African Republic
+            country_list[keyval]=('CAF','CMR','COD','COG','GAB','SSD') 
+        elif keyval == "HAF":  # For Countries in the Horn of Africa 
+            country_list[keyval]=('BDI','COM','DJI','ETH','KEN','SYC','TZA','UGA', 'SOM') 
+        elif keyval == "SAF":  # For Southern countries   
+            country_list[keyval]=('AGO','MDG','MOZ','MUS','MWI','NAM','ZMB','ZWE') 
+        elif keyval == "ZAA":  # For South Africa & its enclaves 
+            country_list[keyval]=('LSO','SWZ','ZAF','BWA') 
+        elif keyval == "AFR":  # all the above regions: NAF, SSA, CNA, HAF, SAF, ZAA
+            country_list[keyval]=('LSO','SWZ','ZAF','BWA','AGO','MDG','MOZ','MUS','MWI','NAM','ZMB','ZWE', 'BDI','COM','DJI','ETH','KEN','SYC','TZA','UGA', 'SOM', 'CAF','CMR','COD','COG','GAB','SSD','BEN','BFA','CIV','CPV','GHA','GIN','GMB','GNB', 'LBR','NGA', 'SEN', 'SLE', 'STP', 'TGO','DZA','EGY','ERI','LBY','MAR','MLI','MRT','NER','SDN','TCD','TUN')
+        elif keyval == "NOA":  # North America
+            country_list[keyval]=("BLZ","CAN","CRI","CUB","DMA","DOM","SLV","GRD","GTM","HTI","MEX","NIC","PAN","USA")
+        elif keyval == "SOA":  # South America
+            country_list[keyval]=("ARG","BOL","BRA","CHL","COL","ECU","GUY","PRY","PER","SUR","URY","VEN")
+        elif keyval == "AIS":  # Asia
+            country_list[keyval]=("AFG","ARM","AZE","BHR","BGD","BTN","BRN","KHM","CHN","GEO","IND","IDN","IRN","IRQ","ISR","JPN","JOR","KAZ","KWT","KGZ","LAO","LBN","MYS","MNG","MMR","NPL","PRK","OMN","PAK","PSE","PHL","QAT","RUS","SAU","SGP","KOR","LKA","SYR","TWN","TJK","THA","TLS","TUR","TKM","ARE","UZB","VNM","YEM")
+        elif keyval == "WLD": # All of the countries in the world
+            country_list[keyval]=("ALB","AND","AUT","BEL","BGR","BIH","BLR","CHE","CYP","CZE","DEU","DNK","ESP","EST","FIN","FRA","FRO","GBR","GGY","GEO","GRC","GRL","HRV","HUN","IMN","IRL","ISL","ITA","JEY","LIE","LTU","LUX","LVA","MDA","MKD","MLT","MNE","NLD","NOR","POL","PRT","ROU","SJM","SMR","SRB","SVK","SVN","SWE","TUR","UKR","USA","CHN","AUS","ARG","BRA","CAN","COD","IND","IDN","IRN","JPN","MEX","NGA","RUS","SAU","ZAF","AFG","DZA","AGO","AZE","BGD","BEN","BTN","BOL","BWA","BRN","BFA","BDI","KHM","CMR","CPV","CAF","TCD","CHL","COL","COM","CRI","CUB","DJI","DMA","DOM","TLS","ECU","EGY","SLV","GNQ","ERI","ETH","SOM","FJI","GUF","GAB","GMB","GHA","GIB","GRD","GLP","GUM","GTM","GIN","GNB","GUY","HTI","HND","IRQ","ISR","CIV","JOR","KAZ","KEN","KWT","KGZ","LAO","LBN","LSO","LBR","LBY","MDG","MWI","MYS","MLI","MRT","MNG","MAR","MOZ","MMR","NAM","NPL","NZL","NIC","NER","PRK","OMN","PAK","PAN","PNG","PRY","PER","PHL","QAT","MUS","COG","RWA","STP","SEN","SYC","SLE","SGP","KOR","SSD","LKA","SDN","SUR","SWZ","SYR","TWN","TJK","TZA","THA","TGO","TUN","TKM","UGA","ARE","URY","UZB","VEN","VNM","ESH","YEM","ZMB","ZWE","PSE","FSM","MCO","BLZ","BHR","ARM")
         else:
             print("Should not be be here.  Not a region!")
             print(keyval)
+            traceback.print_stack(file=sys.stdout)
             sys.exit() 
         #endif
 
@@ -399,6 +742,7 @@ def get_region_data(country_names,country_region_data):
                         
                 if not ccode:
                     print("Did not find a code for country: {}".format(country))
+                    traceback.print_stack(file=sys.stdout)
                     sys.exit(1)
                 #endif
 
@@ -457,7 +801,7 @@ def find_countries_and_regions_in_file(filename,country_region_data,lremove_unfo
     for cr_code,cr_data in country_region_data.items():
         cr_data.filename=filename
 
-        #print("jfioezjef ",cr_code,country_codes_in_file)
+#        print("jfioezjef ",cr_code,country_codes_in_file)
         if cr_code in country_codes_in_file:
             cr_data.file_index=country_codes_in_file.index(cr_code)
 
@@ -469,6 +813,7 @@ def find_countries_and_regions_in_file(filename,country_region_data,lremove_unfo
                     print("Code: {}, Long name: \"{}\"".format(cr_code,country_names_in_file[cr_data.file_index]))
                     print("Possible names: ",cr_data.possible_names)
                     print("Please add it to the possible names list.")
+                    traceback.print_stack(file=sys.stdout)
                     sys.exit(1)
 
                 else:
@@ -525,6 +870,7 @@ def get_selected_country_list(list_name,country_region_data,loutput_codes):
     else:
         print("I do not know what this list name is!")
         print(list_name)
+        traceback.print_stack(file=sys.stdout)
         sys.exit(1)
     #endif
 
@@ -540,6 +886,7 @@ def get_selected_country_list(list_name,country_region_data,loutput_codes):
 
             if not ccode:
                 print("Did not find a code for country: {}".format(country))
+                traceback.print_stack(file=sys.stdout)
                 sys.exit(1)
             #endif
         #endif
@@ -613,6 +960,7 @@ def harmonize_country_lists(country_region_data,loutput_codes):
             print("Lists should be the same length.")
             print("New countries: ",new_country_list)
             print("Old countries: ",cr_data.composant_countries)
+            traceback.print_stack(file=sys.stdout)
             sys.exit(1)
         #endif
         cr_data.replace_country_list(new_country_list)
@@ -718,7 +1066,14 @@ def print_regions_and_countries(country_region_plotting_order,country_region_dat
         
         for icount,country in enumerate(country_region_plotting_order):
             ccode=country
-            cr_data=country_region_data[ccode]
+            try:
+                cr_data=country_region_data[ccode]
+            except:
+                print("Code does not exist! ",ccode)
+                traceback.print_stack(file=sys.stdout)
+                traceback.print_stack(file=sys.stdout)
+                sys.exit(1)
+            #endtry
             if loutput_codes:
                 print("{1} ({0}) : ".format(ccode,cr_data.long_name),cr_data.composant_countries)
             else:
@@ -859,6 +1214,7 @@ if __name__ == '__main__':
                         print("Two countries/regions have the same possible name!")
                         print("{} ({})".format(country,ccode))
                         print("{} ({})".format(country2,ccode2))
+                        traceback.print_stack(file=sys.stdout)
                         sys.exit(1)
                     #endif
                 #endfor
@@ -868,7 +1224,7 @@ if __name__ == '__main__':
 
     # This is also a feature I need often: printing out the current countries
     # and regions in the .nc country mask file.
-    country_region_plotting_order=get_country_codes_for_netCDF_file()
+    country_region_plotting_order=get_country_codes_for_netCDF_file('all_countries')
     country_region_data=get_country_region_data(country_region_plotting_order,False)
     print_regions_and_countries(country_region_plotting_order,country_region_data,3,False)
 
@@ -876,100 +1232,484 @@ if __name__ == '__main__':
 
 def get_country_areas():
 
-    # This is taken from our map with 79 regions.  Values are in square meters.
+    # This is taken from our map with 231 regions.  Values are in square meters.
     # Note that this likely does not correspond exactly to reported values from
     # other sources, like the CIA World Factbook.  The reason is that our
-    # maps are at 0.1 degree resolution, and areas outside our lat/long window
-    # are not accounted for.  But it's the correct value for our purposes.
+    # maps are at 0.1 degree resolution, and different islands may or may
+    # not be included for different countries.
+    # But it's the correct value for our purposes.
     
     
     country_areas={}
-    country_areas["Aaland Islands"]=1578897664.0
-    country_areas["Albania"]=28352174080.0
-    country_areas["Andorra"]=447315584.0
-    country_areas["Austria"]=83591815168.0
-    country_areas["Belgium"]=30669848576.0
-    country_areas["Bulgaria"]=112254164992.0
-    country_areas["Bosnia and Herzegovina"]=50907799552.0
-    country_areas["Belarus"]=206009483264.0
-    country_areas["Switzerland"]=41593430016.0
-    country_areas["Cyprus"]=5524352512.0
-    country_areas["Czech Republic"]=78416461824.0
-    country_areas["Germany"]=356221026304.0
-    country_areas["Denmark"]=44500295680.0
-    country_areas["Spain"]=498337873920.0
-    country_areas["Estonia"]=45490667520.0
-    country_areas["Finland"]=334269054976.0
-    country_areas["France"]=547293986816.0
-    country_areas["Faroe Islands"]=1354416512.0
-    country_areas["United Kingdom"]=245327314944.0
-    country_areas["Guernsey"]=125637592.0
-    country_areas["Georgia"]=56721285120.0
-    country_areas["Greece"]=131507568640.0
-    country_areas["Greenland"]=28462256128.0
-    country_areas["Croatia"]=56145813504.0
-    country_areas["Hungary"]=92676333568.0
-    country_areas["Isle of Man"]=718484352.0
-    country_areas["Ireland"]=69942263808.0
-    country_areas["Iceland"]=101657755648.0
-    country_areas["Italy"]=299969642496.0
-    country_areas["Jersey"]=126276816.0
-    country_areas["Liechtenstein"]=164011744.0
-    country_areas["Lithuania"]=64425762816.0
-    country_areas["Luxembourg"]=2557641728.0
-    country_areas["Latvia"]=64558092288.0
-    country_areas["Moldova, Republic of"]=33723500544.0
-    country_areas["Macedonia, the former Yugoslav"]=24797104128.0
-    country_areas["Malta"]=312614048.0
-    country_areas["Montenegro"]=12890724352.0
-    country_areas["Netherlands"]=35655667712.0
-    country_areas["Norway"]=325791744000.0
-    country_areas["Poland"]=311556964352.0
-    country_areas["Portugal"]=87435624448.0
-    country_areas["Romania"]=236436160512.0
-    country_areas["Russian Federation"]=1995897176064.0
-    country_areas["Svalbard and Jan Mayen"]=251208448.0
-    country_areas["San Marino"]=59646068.0
-    country_areas["Serbia"]=88679014400.0
-    country_areas["Slovakia"]=48968114176.0
-    country_areas["Slovenia"]=19864659968.0
-    country_areas["Sweden"]=447214321664.0
-    country_areas["Turkey"]=791915069440.0
-    country_areas["Ukraine"]=596645642240.0
-    country_areas["BENELUX"]=68883161088.0
-    country_areas["Former Czechoslovakia"]=127384567808.0
-    country_areas["Switzerland + Liechtenstein"]=41757442048.0
-    country_areas["Baltic countries"]=174474510336.0
-    country_areas["North Adriatic Countries"]=76010471424.0
-    country_areas["Denmark, Sweden, Finland"]=825983631360.0
-    country_areas["United Kingdom + Ireland"]=315269578752.0
-    country_areas["Iberia"]=585773481984.0
-    country_areas["Western Europe"]=931446718464.0
-    country_areas["Western Europe (alternative)"]=1842534678528.0
-    country_areas["Central Europe"]=1013024096256.0
-    country_areas["Northern Europe"]=1326249934848.0
-    country_areas["Southern Europe (all)"]=2502051495936.0
-    country_areas["Southern Europe (non-EU)"]=1054263214080.0
-    country_areas["Southern Europe (EU)"]=1447788412928.0
-    country_areas["South-Western Europe"]=886055698432.0
-    country_areas["South-Eastern Europe (all)"]=1615995863040.0
-    country_areas["South-Eastern Europe (non-EU)"]=1054263214080.0
-    country_areas["South-Eastern Europe (EU)"]=561732714496.0
-    country_areas["Eastern Europe"]=2832275603456.0
-    country_areas["Eastern Europe (alternative)"]=1288686665728.0
-    country_areas["Eastern Europe (including Russia)"]=3284583317504.0
-    country_areas["EU-11+CHE"]=2273153908736.0
-    country_areas["EU-15"]=3214493614080.0
-    country_areas["EU-27"]=4105796583424.0
-    country_areas["EU-27+UK"]=4351123783680.0
-    country_areas["all Europe"]=8654811561984.0
-    
+    country_areas["ALA"]=0.0
+    country_areas["Aaland Islands"]=0.0
+    country_areas["ALB"]=28403729964.533092
+    country_areas["Albania"]=28403729964.533092
+    country_areas["AND"]=467339618.26239836
+    country_areas["Andorra"]=467339618.26239836
+    country_areas["AUT"]=83748548378.0139
+    country_areas["Austria"]=83748548378.0139
+    country_areas["BEL"]=30507407847.67136
+    country_areas["Belgium"]=30507407847.67136
+    country_areas["BGR"]=110794845627.58957
+    country_areas["Bulgaria"]=110794845627.58957
+    country_areas["BIH"]=50892196600.18733
+    country_areas["Bosnia and Herzegovina"]=50892196600.18733
+    country_areas["BLR"]=206744026372.2419
+    country_areas["Belarus"]=206744026372.2419
+    country_areas["CHE"]=41173435818.76799
+    country_areas["Switzerland"]=41173435818.76799
+    country_areas["CYP"]=9513605364.135891
+    country_areas["Cyprus"]=9513605364.135891
+    country_areas["CZE"]=78583121937.57463
+    country_areas["Czech Republic"]=78583121937.57463
+    country_areas["DEU"]=356597496940.14374
+    country_areas["Germany"]=356597496940.14374
+    country_areas["DNK"]=44282759405.7745
+    country_areas["Denmark"]=44282759405.7745
+    country_areas["ESP"]=499014620746.97473
+    country_areas["Spain"]=499014620746.97473
+    country_areas["EST"]=44435815746.95287
+    country_areas["Estonia"]=44435815746.95287
+    country_areas["FIN"]=335009537265.25946
+    country_areas["Finland"]=335009537265.25946
+    country_areas["FRA"]=548281675248.06555
+    country_areas["France"]=548281675248.06555
+    country_areas["FRO"]=1158914740.7913857
+    country_areas["Faroe Islands"]=1158914740.7913857
+    country_areas["GBR"]=244179574861.43985
+    country_areas["United Kingdom"]=244179574861.43985
+    country_areas["GGY"]=80386254.91157633
+    country_areas["Guernsey"]=80386254.91157633
+    country_areas["GEO"]=69545435837.88736
+    country_areas["Georgia"]=69545435837.88736
+    country_areas["GRC"]=132632295326.31711
+    country_areas["Greece"]=132632295326.31711
+    country_areas["GRL"]=2148418183679.8105
+    country_areas["Greenland"]=2148418183679.8105
+    country_areas["HRV"]=57432208149.80404
+    country_areas["Croatia"]=57432208149.80404
+    country_areas["HUN"]=92758085842.22244
+    country_areas["Hungary"]=92758085842.22244
+    country_areas["IMN"]=0.0
+    country_areas["Isle of Man"]=0.0
+    country_areas["IRL"]=70376306240.37564
+    country_areas["Ireland"]=70376306240.37564
+    country_areas["ISL"]=101379044008.18846
+    country_areas["Iceland"]=101379044008.18846
+    country_areas["ITA"]=300630072490.7499
+    country_areas["Italy"]=300630072490.7499
+    country_areas["JEY"]=80713916.22927046
+    country_areas["Jersey"]=80713916.22927046
+    country_areas["LIE"]=158966779.4316861
+    country_areas["Liechtenstein"]=158966779.4316861
+    country_areas["LTU"]=64560432490.915825
+    country_areas["Lithuania"]=64560432490.915825
+    country_areas["LUX"]=2587131008.421216
+    country_areas["Luxembourg"]=2587131008.421216
+    country_areas["LVA"]=64137018229.44409
+    country_areas["Latvia"]=64137018229.44409
+    country_areas["MDA"]=33747329045.029793
+    country_areas["Moldova, Republic of"]=33747329045.029793
+    country_areas["MKD"]=25402634628.62013
+    country_areas["Macedonia, the former Yugoslav"]=25402634628.62013
+    country_areas["MLT"]=400528138.612553
+    country_areas["Malta"]=400528138.612553
+    country_areas["MNE"]=13739613620.7069
+    country_areas["Montenegro"]=13739613620.7069
+    country_areas["NLD"]=35210041538.28647
+    country_areas["Netherlands"]=35210041538.28647
+    country_areas["NOR"]=323609880277.346
+    country_areas["Norway"]=323609880277.346
+    country_areas["POL"]=310582664237.88336
+    country_areas["Poland"]=310582664237.88336
+    country_areas["PRT"]=89355276715.31728
+    country_areas["Portugal"]=89355276715.31728
+    country_areas["ROU"]=236942550565.27542
+    country_areas["Romania"]=236942550565.27542
+    country_areas["VRU"]=0.0
+    country_areas["Russian Federation (VERIFY region)"]=0.0
+    country_areas["SJM"]=281912751.39908695
+    country_areas["Svalbard and Jan Mayen"]=281912751.39908695
+    country_areas["SMR"]=60545543.22146265
+    country_areas["San Marino"]=60545543.22146265
+    country_areas["SRB"]=88158467496.20255
+    country_areas["Serbia"]=88158467496.20255
+    country_areas["SVK"]=48878657696.59709
+    country_areas["Slovakia"]=48878657696.59709
+    country_areas["SVN"]=20145893399.826733
+    country_areas["Slovenia"]=20145893399.826733
+    country_areas["SWE"]=447987652064.10236
+    country_areas["Sweden"]=447987652064.10236
+    country_areas["TUR"]=780314085755.859
+    country_areas["Turkey"]=780314085755.859
+    country_areas["UKR"]=597228267471.4784
+    country_areas["Ukraine"]=597228267471.4784
+    country_areas["USA"]=7945097358056.648
+    country_areas["United States of America"]=7945097358056.648
+    country_areas["CHN"]=9373603223691.232
+    country_areas["China"]=9373603223691.232
+    country_areas["AUS"]=7703725444299.86
+    country_areas["Australia"]=7703725444299.86
+    country_areas["ARG"]=2780389413459.763
+    country_areas["Argentina"]=2780389413459.763
+    country_areas["BRA"]=8508548673700.444
+    country_areas["Brazil"]=8508548673700.444
+    country_areas["CAN"]=9929164446392.24
+    country_areas["Canada"]=9929164446392.24
+    country_areas["COD"]=2339539118145.888
+    country_areas["Democratic Republic of the Congo"]=2339539118145.888
+    country_areas["IND"]=3155397248175.8125
+    country_areas["India"]=3155397248175.8125
+    country_areas["IDN"]=1899543491759.521
+    country_areas["Indonesia"]=1899543491759.521
+    country_areas["IRN"]=1682537655545.9219
+    country_areas["Iran"]=1682537655545.9219
+    country_areas["JPN"]=373085465629.33044
+    country_areas["Japan"]=373085465629.33044
+    country_areas["MEX"]=1960822920298.7317
+    country_areas["Mexico"]=1960822920298.7317
+    country_areas["NGA"]=913778575565.5973
+    country_areas["Nigeria"]=913778575565.5973
+    country_areas["RUS"]=16914279148081.172
+    country_areas["Russian Federation"]=16914279148081.172
+    country_areas["SAU"]=1930110156233.9976
+    country_areas["Saudi Arabia"]=1930110156233.9976
+    country_areas["ZAF"]=1221293672141.8518
+    country_areas["South Africa"]=1221293672141.8518
+    country_areas["AFG"]=642125588882.7921
+    country_areas["Afghanistan"]=642125588882.7921
+    country_areas["DZA"]=2317127437857.8687
+    country_areas["Algeria"]=2317127437857.8687
+    country_areas["AGO"]=1252404974718.7832
+    country_areas["Angola"]=1252404974718.7832
+    country_areas["AZE"]=166367710247.79614
+    country_areas["Azerbaijan"]=166367710247.79614
+    country_areas["BGD"]=140223377467.76868
+    country_areas["Bangladesh"]=140223377467.76868
+    country_areas["BEN"]=115879107428.06175
+    country_areas["Benin"]=115879107428.06175
+    country_areas["BTN"]=40102969225.3669
+    country_areas["Bhutan"]=40102969225.3669
+    country_areas["BOL"]=1086349364369.755
+    country_areas["Bolivia"]=1086349364369.755
+    country_areas["BWA"]=579636193917.893
+    country_areas["Botswana"]=579636193917.893
+    country_areas["BRN"]=5772558977.731426
+    country_areas["Brunei"]=5772558977.731426
+    country_areas["BFA"]=275090510072.5573
+    country_areas["Burkina Faso"]=275090510072.5573
+    country_areas["BDI"]=26950535402.53504
+    country_areas["Burundi"]=26950535402.53504
+    country_areas["KHM"]=181791295658.5821
+    country_areas["Cambodia"]=181791295658.5821
+    country_areas["CMR"]=467165071869.8608
+    country_areas["Cameroon"]=467165071869.8608
+    country_areas["CPV"]=4161968009.7531824
+    country_areas["Cape Verde"]=4161968009.7531824
+    country_areas["CAF"]=622976534806.5375
+    country_areas["Central African Republic"]=622976534806.5375
+    country_areas["TCD"]=1275383683156.3767
+    country_areas["Chad"]=1275383683156.3767
+    country_areas["CHL"]=757954559479.7275
+    country_areas["Chile"]=757954559479.7275
+    country_areas["COL"]=1141850206818.395
+    country_areas["Colombia"]=1141850206818.395
+    country_areas["COM"]=1694343314.1047904
+    country_areas["Comores"]=1694343314.1047904
+    country_areas["CRI"]=51273204627.45103
+    country_areas["Costa Rica"]=51273204627.45103
+    country_areas["CUB"]=110219761920.26
+    country_areas["Cuba"]=110219761920.26
+    country_areas["DJI"]=21630871957.62253
+    country_areas["Djibouti"]=21630871957.62253
+    country_areas["DMA"]=715166775.1916752
+    country_areas["Dominica"]=715166775.1916752
+    country_areas["DOM"]=48775913294.378105
+    country_areas["Dominican Republic"]=48775913294.378105
+    country_areas["TLS"]=14479137568.18766
+    country_areas["East Timor"]=14479137568.18766
+    country_areas["ECU"]=249459550228.98538
+    country_areas["Ecuador"]=249459550228.98538
+    country_areas["EGY"]=983629773201.4208
+    country_areas["Egypt"]=983629773201.4208
+    country_areas["SLV"]=20316892281.853947
+    country_areas["El Salvador"]=20316892281.853947
+    country_areas["GNQ"]=26752578892.394943
+    country_areas["Equatorial Guinea"]=26752578892.394943
+    country_areas["ERI"]=121257148056.9079
+    country_areas["Eritrea"]=121257148056.9079
+    country_areas["ETH"]=1133816763066.5762
+    country_areas["Ethiopia"]=1133816763066.5762
+    country_areas["SOM"]=634836948198.8097
+    country_areas["Federal Republic of Somalia"]=634836948198.8097
+    country_areas["FJI"]=18277289962.67599
+    country_areas["Fiji"]=18277289962.67599
+    country_areas["GUF"]=82684732092.43335
+    country_areas["French Guiana"]=82684732092.43335
+    country_areas["GAB"]=264535477261.3062
+    country_areas["Gabon"]=264535477261.3062
+    country_areas["GMB"]=10371152346.774075
+    country_areas["Gambia"]=10371152346.774075
+    country_areas["GHA"]=239759684232.79828
+    country_areas["Ghana"]=239759684232.79828
+    country_areas["GIB"]=46942718.61660928
+    country_areas["Gibraltar"]=46942718.61660928
+    country_areas["GRD"]=362740923.615077
+    country_areas["Grenada"]=362740923.615077
+    country_areas["GLP"]=1662254258.953976
+    country_areas["Guadeloupe"]=1662254258.953976
+    country_areas["GUM"]=481084335.73081803
+    country_areas["Guam"]=481084335.73081803
+    country_areas["GTM"]=109844225845.32791
+    country_areas["Guatemala"]=109844225845.32791
+    country_areas["GIN"]=245935164401.5874
+    country_areas["Guinea"]=245935164401.5874
+    country_areas["GNB"]=34428342130.71771
+    country_areas["Guinea-Bissau"]=34428342130.71771
+    country_areas["GUY"]=211605039454.75156
+    country_areas["Guyana"]=211605039454.75156
+    country_areas["HTI"]=27608995143.334095
+    country_areas["Haiti"]=27608995143.334095
+    country_areas["HND"]=113265833995.51172
+    country_areas["Honduras"]=113265833995.51172
+    country_areas["IRQ"]=437505529646.8777
+    country_areas["Iraq"]=437505529646.8777
+    country_areas["ISR"]=20746226882.149605
+    country_areas["Israel"]=20746226882.149605
+    country_areas["CIV"]=323570806179.01447
+    country_areas["Ivory Coast"]=323570806179.01447
+    country_areas["JOR"]=89399781030.96234
+    country_areas["Jordan"]=89399781030.96234
+    country_areas["KAZ"]=2828915956234.09
+    country_areas["Kazakhstan"]=2828915956234.09
+    country_areas["KEN"]=586067931510.2465
+    country_areas["Kenya"]=586067931510.2465
+    country_areas["KWT"]=17403760273.50218
+    country_areas["Kuwait"]=17403760273.50218
+    country_areas["KGZ"]=199396774036.09842
+    country_areas["Kyrgyzstan"]=199396774036.09842
+    country_areas["LAO"]=230493888740.39655
+    country_areas["Laos"]=230493888740.39655
+    country_areas["LBN"]=10203548980.37331
+    country_areas["Lebanon"]=10203548980.37331
+    country_areas["LSO"]=30590722847.48671
+    country_areas["Lesotho"]=30590722847.48671
+    country_areas["LBR"]=96327383750.51065
+    country_areas["Liberia"]=96327383750.51065
+    country_areas["LBY"]=1619104624205.637
+    country_areas["Libya"]=1619104624205.637
+    country_areas["MDG"]=594300718446.775
+    country_areas["Madagascar"]=594300718446.775
+    country_areas["MWI"]=118988083350.91748
+    country_areas["Malawi"]=118988083350.91748
+    country_areas["MYS"]=331120563193.0198
+    country_areas["Malaysia"]=331120563193.0198
+    country_areas["MLI"]=1256519336979.918
+    country_areas["Mali"]=1256519336979.918
+    country_areas["MRT"]=1042378089366.7018
+    country_areas["Mauritania"]=1042378089366.7018
+    country_areas["MNG"]=1560941359857.5664
+    country_areas["Mongolia"]=1560941359857.5664
+    country_areas["MAR"]=406310645588.0444
+    country_areas["Morocco"]=406310645588.0444
+    country_areas["MOZ"]=788647672584.5015
+    country_areas["Mozambique"]=788647672584.5015
+    country_areas["MMR"]=671509805946.8481
+    country_areas["Myanmar"]=671509805946.8481
+    country_areas["NAM"]=827336324129.0366
+    country_areas["Namibia"]=827336324129.0366
+    country_areas["NPL"]=147522990653.09576
+    country_areas["Nepal"]=147522990653.09576
+    country_areas["NZL"]=269216637568.30383
+    country_areas["New Zealand"]=269216637568.30383
+    country_areas["NIC"]=129198749731.9308
+    country_areas["Nicaragua"]=129198749731.9308
+    country_areas["NER"]=1185086610022.303
+    country_areas["Niger"]=1185086610022.303
+    country_areas["PRK"]=122299898595.31816
+    country_areas["North Korea"]=122299898595.31816
+    country_areas["OMN"]=308802771388.3172
+    country_areas["Oman"]=308802771388.3172
+    country_areas["PAK"]=873753807256.1276
+    country_areas["Pakistan"]=873753807256.1276
+    country_areas["PAN"]=75106744382.37599
+    country_areas["Panama"]=75106744382.37599
+    country_areas["PNG"]=467073074624.61755
+    country_areas["Papua New Guinea"]=467073074624.61755
+    country_areas["PRY"]=401708410465.88196
+    country_areas["Paraguay"]=401708410465.88196
+    country_areas["PER"]=1298001228410.8037
+    country_areas["Peru"]=1298001228410.8037
+    country_areas["PHL"]=296572775183.66125
+    country_areas["Philippines"]=296572775183.66125
+    country_areas["QAT"]=11434194501.487688
+    country_areas["Qatar"]=11434194501.487688
+    country_areas["MUS"]=1972509287.9617226
+    country_areas["Republic of Mauritius"]=1972509287.9617226
+    country_areas["COG"]=343906651834.36975
+    country_areas["Republic of the Congo"]=343906651834.36975
+    country_areas["RWA"]=25436453186.48775
+    country_areas["Rwanda"]=25436453186.48775
+    country_areas["STP"]=865555777.1559033
+    country_areas["Sao Tome and Principe"]=865555777.1559033
+    country_areas["SEN"]=197288929979.9065
+    country_areas["Senegal"]=197288929979.9065
+    country_areas["SYC"]=613783255.1460347
+    country_areas["Seychelles"]=613783255.1460347
+    country_areas["SLE"]=72883804670.50806
+    country_areas["Sierra Leone"]=72883804670.50806
+    country_areas["SGP"]=584697733.4522979
+    country_areas["Singapore"]=584697733.4522979
+    country_areas["KOR"]=99733519348.43994
+    country_areas["South Korea"]=99733519348.43994
+    country_areas["SSD"]=635316232070.4131
+    country_areas["South Sudan"]=635316232070.4131
+    country_areas["LKA"]=66052609512.99855
+    country_areas["Sri Lanka"]=66052609512.99855
+    country_areas["SDN"]=1877537241346.0352
+    country_areas["Sudan"]=1877537241346.0352
+    country_areas["SUR"]=146238435329.08807
+    country_areas["Suriname"]=146238435329.08807
+    country_areas["SWZ"]=17414059422.170784
+    country_areas["Swaziland"]=17414059422.170784
+    country_areas["SYR"]=187771183171.93817
+    country_areas["Syria"]=187771183171.93817
+    country_areas["TWN"]=35992885838.724236
+    country_areas["Taiwan"]=35992885838.724236
+    country_areas["TJK"]=142310835054.88702
+    country_areas["Tajikistan"]=142310835054.88702
+    country_areas["TZA"]=944123890237.4835
+    country_areas["Tanzania"]=944123890237.4835
+    country_areas["THA"]=516919865966.75616
+    country_areas["Thailand"]=516919865966.75616
+    country_areas["TGO"]=56981658744.712875
+    country_areas["Togo"]=56981658744.712875
+    country_areas["TUN"]=155312977669.75787
+    country_areas["Tunisia"]=155312977669.75787
+    country_areas["TKM"]=549574363964.98047
+    country_areas["Turkmenistan"]=549574363964.98047
+    country_areas["UGA"]=242595522086.42502
+    country_areas["Uganda"]=242595522086.42502
+    country_areas["ARE"]=70977108668.2415
+    country_areas["United Arab Emirates"]=70977108668.2415
+    country_areas["URY"]=177979385432.38406
+    country_areas["Uruguay"]=177979385432.38406
+    country_areas["UZB"]=446652586958.7213
+    country_areas["Uzbekistan"]=446652586958.7213
+    country_areas["VEN"]=915139397499.4437
+    country_areas["Venezuela"]=915139397499.4437
+    country_areas["VNM"]=328883531922.08624
+    country_areas["Vietnam"]=328883531922.08624
+    country_areas["ESH"]=270909500006.36896
+    country_areas["Western Sahara"]=270909500006.36896
+    country_areas["YEM"]=455702549413.3471
+    country_areas["Yemen"]=455702549413.3471
+    country_areas["ZMB"]=754013445256.9473
+    country_areas["Zambia"]=754013445256.9473
+    country_areas["ZWE"]=391888320610.12494
+    country_areas["Zimbabwe"]=391888320610.12494
+    country_areas["PSE"]=6208537679.336817
+    country_areas["Palestine"]=6208537679.336817
+    country_areas["FSM"]=857843883.3652279
+    country_areas["Micronesia (Federated States of)"]=857843883.3652279
+    country_areas["MCO"]=16978472.15597799
+    country_areas["Monaco"]=16978472.15597799
+    country_areas["BLZ"]=23032203836.19505
+    country_areas["Belize"]=23032203836.19505
+    country_areas["BHR"]=669145414.8170683
+    country_areas["Bahrain"]=669145414.8170683
+    country_areas["ARM"]=29707085156.504025
+    country_areas["Armenia"]=29707085156.504025
+    country_areas["BNL"]=68304580376.18573
+    country_areas["BENELUX"]=68304580376.18573
+    country_areas["UKI"]=314555881106.3246
+    country_areas["United Kingdom + Ireland"]=314555881106.3246
+    country_areas["IBE"]=588369897424.3368
+    country_areas["Iberia"]=588369897424.3368
+    country_areas["WEE"]=931142136734.0924
+    country_areas["Western Europe"]=931142136734.0924
+    country_areas["WEA"]=1844319529655.1924
+    country_areas["Western Europe (alternative)"]=1844319529655.1924
+    country_areas["CEE"]=1012322010858.0117
+    country_areas["Central Europe"]=1012322010858.0117
+    country_areas["NOE"]=1324023095475.4663
+    country_areas["Northern Europe"]=1324023095475.4663
+    country_areas["SOE"]=2513318060345.7095
+    country_areas["Southern Europe (all)"]=2513318060345.7095
+    country_areas["SOY"]=1056456163857.9772
+    country_areas["Southern Europe (non-EU)"]=1056456163857.9772
+    country_areas["SOZ"]=1456861896509.854
+    country_areas["Southern Europe (EU)"]=1456861896509.854
+    country_areas["SWN"]=889400498053.6991
+    country_areas["South-Western Europe"]=889400498053.6991
+    country_areas["SEE"]=1623917562288.8496
+    country_areas["South-Eastern Europe (all)"]=1623917562288.8496
+    country_areas["SEA"]=1056456163857.9772
+    country_areas["South-Eastern Europe (non-EU)"]=1056456163857.9772
+    country_areas["SEZ"]=567461398452.9948
+    country_areas["South-Eastern Europe (EU)"]=567461398452.9948
+    country_areas["EAE"]=17751998770921.242
+    country_areas["Eastern Europe"]=17751998770921.242
+    country_areas["EEA"]=1287688224535.7583
+    country_areas["Eastern Europe (alternative)"]=1287688224535.7583
+    country_areas["EER"]=18201967372589.3
+    country_areas["Eastern Europe (including Russia)"]=18201967372589.3
+    country_areas["E12"]=2275568040915.4844
+    country_areas["EU-11+CHE"]=2275568040915.4844
+    country_areas["E15"]=3220400395985.2227
+    country_areas["EU-15"]=3220400395985.2227
+    country_areas["E27"]=4115386248583.687
+    country_areas["EU-27"]=4115386248583.687
+    country_areas["E28"]=4359565823449.636
+    country_areas["EU-27+UK"]=4359565823449.636
+    country_areas["EUR"]=23566926462107.133
+    country_areas["all Europe"]=23566926462107.133
+    country_areas["CSK"]=127461779621.59377
+    country_areas["Former Czechoslovakia"]=127461779621.59377
+    country_areas["SWL"]=41332402594.12012
+    country_areas["Switzerland + Liechtenstein"]=41332402594.12012
+    country_areas["BLT"]=173133266456.40247
+    country_areas["Baltic countries"]=173133266456.40247
+    country_areas["NAC"]=77578101547.92053
+    country_areas["North Adriatic Countries"]=77578101547.92053
+    country_areas["DSF"]=827279948742.7716
+    country_areas["Denmark, Sweden, Finland"]=827279948742.7716
+    country_areas["FMA"]=548749014866.83673
+    country_areas["France, Monaco, Andorra"]=548749014866.83673
+    country_areas["UMB"]=837719622864.343
+    country_areas["Ukraine, Rep. of Moldova, Belarus"]=837719622864.343
+    country_areas["RUG"]=16983824583927.598
+    country_areas["Russia and Georgia"]=16983824583927.598
+    country_areas["NAF"]=12239647567319.156
+    country_areas["North Africa"]=12239647567319.156
+    country_areas["SSA"]=2587322643297.5386
+    country_areas["Subsahelian West Africa"]=2587322643297.5386
+    country_areas["CNA"]=4673439086093.647
+    country_areas["Central Africa"]=4673439086093.647
+    country_areas["HAF"]=3592330589112.7456
+    country_areas["Horn of Africa"]=3592330589112.7456
+    country_areas["SAF"]=4729552048515.692
+    country_areas["Southern Africa"]=4729552048515.692
+    country_areas["ZAA"]=1848934648290.9885
+    country_areas["South Africa and enclaves"]=1848934648290.9885
+    country_areas["AFR"]=29671226582580.883
+    country_areas["Africa"]=29671226582580.883
+    country_areas["NOA"]=20431539323256.02
+    country_areas["North America"]=20431539323256.02
+    country_areas["SOA"]=17675202274370.383
+    country_areas["South America"]=17675202274370.383
+    country_areas["AIS"]=48465010513493.76
+    country_areas["Asia"]=48465010513493.76
+    country_areas["WLD"]=133244135658830.34
+    country_areas["World"]=133244135658830.34
+
     return country_areas
 #enddef
 
 # Give a possible name of a country, find out which code corresponds to
 # this country, returning a None if the country isn't found 
-def find_country_code(country_region_data,cname):
+def find_country_code(country_region_data,cname,lstop=False):
 
     return_code=None
 
@@ -981,6 +1721,114 @@ def find_country_code(country_region_data,cname):
 
     #endif
 
+    if not return_code and lstop:
+        print("Could not find a country code for: ",cname)
+        traceback.print_stack(file=sys.stdout)
+        sys.exit(1)
+    #endif
+
     return return_code
 
 #enddef
+
+# When we get a new mask file, I need to create country definitions from
+# that match up, with the ISO code and a country name.  I do that above,
+# but creating those lines by hand for a couple hundred countries is tedious.
+# This routine reads in a .nc file and creates the lines for me, which
+# I can then copy above.
+def create_country_list_from_file(filename):
+
+    # Open up the file
+    srcnc=NetCDFFile(filename,"r")
+
+    # Both country names and country codes are stored as byte strings.
+    country_codes_in_file=srcnc["country_code"][:]
+    country_codes_in_file = ["".join([letter.decode('utf-8') for letter in item if letter is not np.ma.masked]) for item in country_codes_in_file]
+    country_names_in_file = srcnc.variables["country_name"][:]
+    country_names_in_file = ["".join([letter.decode('utf-8') for letter in item if letter is not np.ma.masked]) for item in country_names_in_file]
+
+    for ccode,cname in zip(country_codes_in_file,country_names_in_file):
+        print("country_names=add_key_to_country_region_names(\"{}\",\"{}\",country_names)".format(ccode,cname))
+    #endfor
+
+    srcnc.close()
+              
+    print("Stopping early.")
+    traceback.print_stack(file=sys.stdout)
+    sys.exit(1)
+#enddef
+
+######################################################
+# This calculates all the country areas, based on a mask file.
+# It then outputs it in a format that one of the above
+# routines can use so that we don't have to calculate them 
+# all the time.
+# country_areas["Western Europe (alternative)"]=1842534678528.0
+def calculate_country_areas():
+    #print("Mask files have EEZs!  These values will not be correct.  Need to change.")
+    #sys.exit(1)
+    path_mask = "/home/dods/verify/VERIFY_INPUT/COUNTRY_MASKS/all_countries_and_regions_masks_0.1x0.1.nc"
+    print("Calculating mask file area.")
+    print("File: ",path_mask)
+
+    ncmask = NetCDFFile(path_mask)
+    clat = ncmask.variables["latitude"][:]
+    clon = ncmask.variables["longitude"][:]
+    cmask = ncmask.variables["country_mask"][:]
+    cname = ncmask.variables["country_name"][:]
+    ccode = ncmask.variables["country_code"][:]
+    ncmask.close()
+
+    cgrid = Grid(lat = clat, lon = clon)
+
+    country_region_data=get_country_region_data()
+    clons, clats = np.meshgrid(clon, clat)
+
+    if True:
+
+        for icount in range(cmask.shape[0]):
+            
+            ccode_mask=b"".join([letter for letter in ccode[icount] if letter is not np.ma.masked])
+            #print("Making mask without EEZ for {}".format(ccode_mask))
+            ccode_mask=ccode_mask.decode('UTF-8')
+
+            # Something for speed, since I generally only add new regions
+            if country_region_data[ccode_mask].is_country:
+                continue
+            #endif
+
+            
+            cmaskNoEEZ = maskoceans(clons, clats, cmask[icount], inlands = False, resolution = "f", grid = 1.25).filled(0)
+            
+            area=np.where(cmaskNoEEZ, cmaskNoEEZ * cgrid.area, 0).sum(axis=(-1,-2))
+            
+            print('    country_areas["{}"]={}'.format(ccode_mask,area))
+            print('    country_areas["{}"]={}'.format(country_region_data[ccode_mask].long_name,area))
+
+            #for name in country_region_data[ccode_mask].possible_names:
+            #print(" Area for {} ({}): {} m**2".format(cname_mask[-1],ccode_mask[-1],country_region_areas[-1]))
+            #    print('    country_areas["{}"]={}'.format(name,area))
+            #endfor
+        #endfor 
+    #endif
+
+    if False:
+        # Also print out all the countries so I can make a global map.  This is
+        # used right now so I can compare BLUE against values submitted to the
+        # Global Carbon Project
+        print("country_list[keyval]=(")
+        for icount in range(cmask.shape[0]):
+            
+            ccode_mask=b"".join([letter for letter in ccode[icount] if letter is not np.ma.masked])
+            ccode_mask=ccode_mask.decode('UTF-8')
+            if country_region_data[ccode_mask].is_country:
+                print('"' +ccode_mask + '",',end='')
+            #endif
+        #endfor
+    #endif
+    sys.exit(1)
+#endfor
+
+#enddef
+
+#######################################################

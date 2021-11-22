@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
-import sys
+import sys,traceback
 from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 from matplotlib.lines import Line2D
 import re
@@ -16,6 +16,144 @@ from scikit_posthocs import outliers_grubbs as grubbs
 # of stacked bar plots.
 def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,syear_average,eyear_average,xplot_min,xplot_max,ndesiredyears,allyears,ax1,facec,production_alpha,legend_axes,legend_titles,displayname,canvas,output_file_end):
 
+    # Need to make this more generalized to deal with 2021 as well
+    # as 2019
+    #### Total LULUCF
+    possible_names=["UNFCCC2019_LULUCF","UNFCCC2021_LULUCF"]
+    temp_names=list(set(possible_names) & set(desired_simulations))
+    if len(temp_names) != 1:
+        print("Had problem finding total LULUCF name!")
+        print(desired_simulations)
+        print(possible_names)
+        traceback.print_stack(file=sys.stdout)
+        sys.exit(1)
+    #endif
+    total_lulucf_name=temp_names[0]
+    #### forest remaining forests
+    possible_names=["UNFCCC2019_FL-FL","UNFCCC2021_FL-FL"]
+    temp_names=list(set(possible_names) & set(desired_simulations))
+    if len(temp_names) != 1:
+        print("Had problem finding forest remaining forest name!")
+        print(desired_simulations)
+        print(possible_names)
+        traceback.print_stack(file=sys.stdout)
+        sys.exit(1)
+    #endif
+    fl_fl_name=temp_names[0]
+    #### grassland remaining grassland
+    possible_names=["UNFCCC2019_GL-GL","UNFCCC2021_GL-GL"]
+    temp_names=list(set(possible_names) & set(desired_simulations))
+    if len(temp_names) != 1:
+        print("Had problem finding grassland remaining grassland name!")
+        print(desired_simulations)
+        print(possible_names)
+        traceback.print_stack(file=sys.stdout)
+        sys.exit(1)
+    #endif
+    gl_gl_name=temp_names[0]
+    #### cropland remaining cropland
+    possible_names=["UNFCCC2019_CL-CL","UNFCCC2021_CL-CL"]
+    temp_names=list(set(possible_names) & set(desired_simulations))
+    if len(temp_names) != 1:
+        print("Had problem finding cropland remaining cropland name!")
+        print(desired_simulations)
+        print(possible_names)
+        traceback.print_stack(file=sys.stdout)
+        sys.exit(1)
+    #endif
+    cl_cl_name=temp_names[0]
+    #### forest convert
+    possible_names=["UNFCCC2019_forest_convert","UNFCCC2021_forest_convert"]
+    temp_names=list(set(possible_names) & set(desired_simulations))
+    if len(temp_names) != 1:
+        print("Had problem finding forest convert name!")
+        print(desired_simulations)
+        print(possible_names)
+        traceback.print_stack(file=sys.stdout)
+        sys.exit(1)
+    #endif
+    fl_convert_name=temp_names[0]
+    #### grassland convert
+    possible_names=["UNFCCC2019_grassland_convert","UNFCCC2021_grassland_convert"]
+    temp_names=list(set(possible_names) & set(desired_simulations))
+    if len(temp_names) != 1:
+        print("Had problem finding grassland convert name!")
+        print(desired_simulations)
+        print(possible_names)
+        traceback.print_stack(file=sys.stdout)
+        sys.exit(1)
+    #endif
+    gl_convert_name=temp_names[0]
+    #### cropland convert
+    possible_names=["UNFCCC2019_cropland_convert","UNFCCC2021_cropland_convert"]
+    temp_names=list(set(possible_names) & set(desired_simulations))
+    if len(temp_names) != 1:
+        print("Had problem finding cropland convert name!")
+        print(desired_simulations)
+        print(possible_names)
+        traceback.print_stack(file=sys.stdout)
+        sys.exit(1)
+    #endif
+    cl_convert_name=temp_names[0]
+    #### wetland convert
+    possible_names=["UNFCCC2019_wetland_convert","UNFCCC2021_wetland_convert"]
+    temp_names=list(set(possible_names) & set(desired_simulations))
+    if len(temp_names) != 1:
+        print("Had problem finding wetland convert name!")
+        print(desired_simulations)
+        print(possible_names)
+        traceback.print_stack(file=sys.stdout)
+        sys.exit(1)
+    #endif
+    wl_convert_name=temp_names[0]
+    #### settlement convert
+    possible_names=["UNFCCC2019_settlement_convert","UNFCCC2021_settlement_convert"]
+    temp_names=list(set(possible_names) & set(desired_simulations))
+    if len(temp_names) != 1:
+        print("Had problem finding settlement convert name!")
+        print(desired_simulations)
+        print(possible_names)
+        traceback.print_stack(file=sys.stdout)
+        sys.exit(1)
+    #endif
+    sl_convert_name=temp_names[0]
+    #### other convert
+    possible_names=["UNFCCC2019_other_convert","UNFCCC2021_other_convert"]
+    temp_names=list(set(possible_names) & set(desired_simulations))
+    if len(temp_names) != 1:
+        print("Had problem finding other convert name!")
+        print(desired_simulations)
+        print(possible_names)
+        traceback.print_stack(file=sys.stdout)
+        sys.exit(1)
+    #endif
+    ol_convert_name=temp_names[0]
+    #### woodharvest
+    possible_names=["UNFCCC2019_woodharvest","UNFCCC2021_woodharvest"]
+    temp_names=list(set(possible_names) & set(desired_simulations))
+    if len(temp_names) != 1:
+        print("Had problem finding woodharvest name!")
+        print(desired_simulations)
+        print(possible_names)
+        traceback.print_stack(file=sys.stdout)
+        sys.exit(1)
+    #endif
+    hwp_name=temp_names[0]
+
+    required_simulations=[ \
+                           total_lulucf_name, \
+                           fl_fl_name, \
+                           gl_gl_name, \
+                           cl_cl_name, \
+                           fl_convert_name, \
+                           gl_convert_name, \
+                           cl_convert_name, \
+                           wl_convert_name, \
+                           sl_convert_name, \
+                           ol_convert_name, \
+                           hwp_name, \
+    ]
+    
 
     #####
     # A couple options for showing different versions.
@@ -123,25 +261,7 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
     # want all of the objects taken into account, just some.
     text_objects=[]
 
-    required_simulations=['UNFCCC_LULUCF', \
-                          'UNFCCC_FL-FL', \
-                          'UNFCCC_GL-GL', \
-                          'UNFCCC_CL-CL', \
-                          'UNFCCC_forest_convert', \
-                          'UNFCCC_grassland_convert', \
-                          'UNFCCC_cropland_convert', \
-                          'UNFCCC_wetland_convert', \
-                          'UNFCCC_settlement_convert', \
-                          'UNFCCC_other_convert', \
-                          'UNFCCC_woodharvest']
-    for csim in required_simulations:
-        if csim not in desired_simulations:
-            print("Need to include {} in the simulation list!".format(csim))
-        #endif
-    #endif
-
-
-    tot_index=desired_simulations.index("UNFCCC_LULUCF")
+    tot_index=desired_simulations.index(total_lulucf_name)
 
     # If we have no data, there is no reason to make this plot.
     test_vals=simulation_data[tot_index,:,iplot]
@@ -157,7 +277,7 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
     # other categories.
     new_sum_vals=np.zeros((len(required_simulations),len(test_vals)))*np.nan
     for isim,csim in enumerate(required_simulations):
-        if csim == 'UNFCCC_LULUCF':
+        if csim == total_lulucf_name:
             continue
         #endif
 
@@ -197,7 +317,7 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
     # How wide the bars are between the LULUCF totals depends on how many bars we have
     # I know I will have five bars in addition to the total: FL-FL, GL-GL, CL-CL, net gain (LUC), net loss (LUC)
     # The net gain and net loss will be stacked from some of the other categories.
-    barnames=["UNFCCC_FL-FL", "UNFCCC_GL-GL", "UNFCCC_CL-CL", 'UNFCCC_woodharvest',"LUC (+)", "LUC (+)"]
+    barnames=[fl_fl_name, gl_gl_name, cl_cl_name, hwp_name,"LUC (+)", "LUC (+)"]
     nbars=len(barnames)
 
     nbars_tot=(len(barnames)+1)*(naverages-1)+1
@@ -261,7 +381,13 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
     # This gets tricky for the net gain and net loss.  I need to loop over all the possible data at every point
     # to see if it's positive or negative, and then add it to the correct one.
 
-    netsims=['UNFCCC_forest_convert','UNFCCC_grassland_convert','UNFCCC_cropland_convert','UNFCCC_wetland_convert','UNFCCC_settlement_convert','UNFCCC_other_convert']
+    netsims=[fl_convert_name, \
+                           gl_convert_name, \
+                           cl_convert_name, \
+                           wl_convert_name, \
+                           sl_convert_name, \
+                           ol_convert_name, \
+             ]
 
     # I will do some odd manipulations and will have to rescale the plotting axes after.
     # So keep track of the min and max values.
@@ -352,7 +478,7 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
     #enddef
 
     if lplot_lulucf_tot_bars:
-        lulucf_bars=ax1.bar(plotting_positions, lulucf_total_values[:], color=facec[desired_simulations.index("UNFCCC_LULUCF")],width=barwidth,alpha=production_alpha)
+        lulucf_bars=ax1.bar(plotting_positions, lulucf_total_values[:], color=facec[desired_simulations.index(total_lulucf_name)],width=barwidth,alpha=production_alpha)
         #legend_axes.append(lulucf_bars)
         #legend_titles.append(displayname[tot_index])
     else:
@@ -366,7 +492,7 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
             # First, negative values
             yval=0.0
             for isim,simname in enumerate(required_simulations):
-                if simname == "UNFCCC_LULUCF":
+                if simname == total_lulucf_name:
                     continue
                 #endif
                 plot_value=temp_data[isim,iyear]
@@ -376,7 +502,7 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
                     # Net loss
                     #print("vcxv loss ",netsims[jsim],xval,yval,plot_value)
                     #p1=ax1.bar(xval-barwidth/4.0, plot_value, bottom=yval,color=color_value,width=barwidth/2.0,alpha=production_alpha)
-                    p1=gradient_bar(ax1,xval-barwidth/2.0, xval, yval, plot_value+yval, color_value, facec[desired_simulations.index("UNFCCC_LULUCF")])
+                    p1=gradient_bar(ax1,xval-barwidth/2.0, xval, yval, plot_value+yval, color_value, facec[desired_simulations.index(total_lulucf_name)])
                     #if displayname[isim] not in legend_titles:
                     #    legend_axes.append(p1)
                     #    legend_titles.append(displayname[isim])
@@ -392,14 +518,14 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
 
             # now, positive values
             for isim,simname in enumerate(required_simulations):
-                if simname == "UNFCCC_LULUCF":
+                if simname == total_lulucf_name:
                     continue
                 #endif
                 plot_value=temp_data[isim,iyear]
 
                 color_value=facec[isim]
                 if plot_value > 0.0:
-                    p1=gradient_bar(ax1,xval+barwidth/2.0, xval, yval, plot_value+yval, color_value, facec[desired_simulations.index("UNFCCC_LULUCF")])
+                    p1=gradient_bar(ax1,xval+barwidth/2.0, xval, yval, plot_value+yval, color_value, facec[desired_simulations.index(total_lulucf_name)])
                     #p1=ax1.bar(xval+barwidth/4.0, plot_value, bottom=yval,color=color_value,width=barwidth/2.0,alpha=production_alpha)
                     #if displayname[isim] not in legend_titles:
                     #    legend_axes.append(p1)
@@ -487,7 +613,7 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
         print(lulucf_total_diffs)
         print(lulucf_total_values)
          
-        barnames_normal=["UNFCCC_FL-FL", "UNFCCC_GL-GL", "UNFCCC_CL-CL","UNFCCC_woodharvest"]
+        barnames_normal=[fl_fl_name, gl_gl_name, cl_cl_name,hwp_name]
         for ibar,cbar in enumerate(barnames_normal):
             xval=plotting_positions[iyear]+barwidth*(ibar+1)
             
@@ -784,7 +910,11 @@ def create_mean_plot(legend_titles,displayname,simulation_data,simulation_min,si
     #endfor
 
     # We need this because we need to know where to make a division
-    #expected_simulations=['UNFCCC_LULUCF','FAOSTAT_LULUCF','EUROCOM_ALL','GCP_ALL','CSR-COMBINED','TrendyV7','ORCHIDEE','BLUE','H&N']
+    ##### Only way to do this seems to be to create a second run with the
+    # order of plots that you want, instead of having a different order here
+    # than is done in the main code
+    #expected_simulations=[displayname.index['UNFCCC_LULUCF'],displayname.index['FAOSTAT_LULUCF'],displayname.index['EUROCOM_ALL'],displayname.index['GCP_ALL'],displayname.index['CSR-COMBINED'],displayname.index['TrendyV7'],displayname.index['ORCHIDEE-BU'],displayname.index['BLUE'],displayname.index['H&N']]
+    
 
 
 
@@ -890,18 +1020,30 @@ def create_mean_plot(legend_titles,displayname,simulation_data,simulation_min,si
     #   ax2mean.legend(legend_axes,labels,bbox_to_anchor=(0,0,1,1), loc="lower left",mode="expand", borderaxespad=0, ncol=3,fontsize='large')                     
     #endif
     #ax2mean.axis('off')
-    ax1mean.set_title("Timeseries means\n" + plot_titles[iplot],fontsize=16)
+    ax1mean.set_title("Mean of overlapping timeseries (2006-2015)\n" + plot_titles[iplot],fontsize=16)
     ax1mean.set_xlim(-1,nsims)
     ax1mean.hlines(y=0.0,xmin=-1,xmax=nsims,color="black",linestyle='--',linewidth=0.1)
     
-    ax1mean.text(0.02,0.05, 'sink', transform=ax1mean.transAxes,fontsize=12,color='black')
-    ax1mean.text(0.02,0.85, 'source', transform=ax1mean.transAxes,fontsize=12,color='black')
+    ax1mean.text(0.02,0.05, 'sink', transform=ax1mean.transAxes,fontsize=14,color='darkgreen',weight='bold',alpha=0.6)
+    ax1mean.text(0.02,0.85, 'source', transform=ax1mean.transAxes,fontsize=14,color='firebrick',weight='bold',alpha=0.6)
 
     #####
     # This won't work for every graph, but i'm trying to show different groups of results.
     # Give a little more space at the top
     ymin,ymax=ax1mean.get_ylim()
     ax1mean.set_ylim(ymin=ymin,ymax=ymax+0.1*(ymax-ymin))
+
+    # This is for UNFCCC, FAO, GCP, EUROCOM, CSR, TRENDY, H&N, VERIFY_BU
+    if False:
+        ymin,ymax=ax1mean.get_ylim()
+        p1=mpl.patches.Rectangle((1.5,ymin),3.0,ymax-ymin, color="lightgray", zorder=-100,alpha=0.3)
+        ax1mean.add_patch(p1)
+        p1=mpl.patches.Rectangle((6.5,ymin),2.5,ymax-ymin, color="lightgray", zorder=-100,alpha=0.3)
+        ax1mean.add_patch(p1)
+        ax1mean.text(0.5,0.98*(ymax-ymin)+ymin, 'Inventories', va='top', ha="center",fontsize=12,color='black')
+        ax1mean.text(3.0,0.98*(ymax-ymin)+ymin, 'Top-down', va='top', ha="center",fontsize=12,color='black')
+        ax1mean.text(5.5,0.98*(ymax-ymin)+ymin, 'Bottom-up\n(DGVMs, bookkeeping)', va='top', ha="center",fontsize=12,color='black')
+        ax1mean.text(7.3,0.98*(ymax-ymin)+ymin, 'Bottom-up\n(combined)', va='top', ha="center",fontsize=12,color='black')
 
     # This is for UNFCCC, FAO, GCP, EUROCOM, CSR, TRENDY, ORCHIDEE, BLUE, H&N
     if True:

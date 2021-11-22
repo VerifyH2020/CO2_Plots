@@ -1,8 +1,13 @@
  #!/usr/bin/env python
 import numpy as np, netCDF4, os
 from mpl_toolkits.basemap import maskoceans
+import sys,traceback
+import re
+
+# Local modules
 from grid import Grid
-import sys
+from country_subroutines import get_country_region_data,calculate_country_areas,get_country_areas
+from netcdf_subroutines import create_time_axis_from_netcdf
 
 ######
 # python calc_ecoregts_v2.py PATH PATH_OUT
@@ -33,6 +38,129 @@ import sys
 # Standard time/lat/lon variables are in files which end with _2D.nc.
 # The script also now processes _2Dmod.nc files, which are similar
 # to CountryTot files.
+
+#############################################################
+# A subroutine to print missing information from regions to the
+# NetCDF file.  Only used for the2Dmod file.
+# Takes as input a dictionary of lists of the same length as
+# the timeseries.  If the value is False, data is missing
+# for that timestep and that country in that region.
+# Also takes a timeaxis.  We only want to print out years
+# that are missing, but sometimes we have monthly data.
+############################################################
+def print_missing_region_information(timeaxis,country_region_data,data_present,dstnc,output_varname):
+   # I want to format it nicely, like
+   # variable_name_REGION = "The following countries and years are missing for this region: Belarus (1990-1991), Russian Federation (1990-1991), Ukraine (1990-1991)"
+   
+   formatted_region_missing={}
+   for ccode in country_region_data.keys():
+      # What if a country has missing years?
+      formatted_region_missing[ccode]=""
+   #endfor
+
+   for region_code in data_present.keys():
+
+      print("data present ",region_code,data_present[region_code].shape,len(timeaxis.values))
+      if data_present[region_code].shape[0] != len(timeaxis.values):
+         print("I seem to have the wrong timeaxis here!")
+         print("Length of timeaxis: ",len(timeaxis.values))
+         print("Shape of data_present: ",data_present[region_code].shape,region_code)
+         traceback.print_stack(file=sys.stdout)
+         sys.exit(1)
+      #endif
+
+      # data_present a nyears,ncoutries array with True and False.  False means that data is missing for that year and
+      # that composant country.
+   
+      print("Analyzing missing data for {}.".format(country_region_data[region_code].long_name))
+      #print("Composant countries: ",country_region_data[region_code].composant_countries)
+      
+      info_string="The following countries and years are missing for this region:"
+
+      # This dictionary will hold all the years each country is missing.
+      country_missing={}
+      for ccode in country_region_data[region_code].composant_countries:
+         country_missing[ccode]=[]
+      #endfor
+   
+      for icode,ccode in enumerate(country_region_data[region_code].composant_countries):
+         # Do we have any missing data?
+         temp_array=data_present[region_code]
+         if not temp_array[:,icode].all():
+            
+            years_string="("
+            #print("missing data for ",ccode)
+            #print(temp_array[:,icode])
+            lstart=True
+            years_missing=[]
+            for itime in range(len(timeaxis.values[:])):
+               if not temp_array[itime,icode]:
+                  # Year is missing.
+                  years_missing.append(timeaxis.year_values[itime])
+               #endif
+            #endfor
+            # Remove duplicates
+            years_missing=set(years_missing)
+            for year in years_missing:
+               if lstart:
+                  years_string=years_string + "{}".format(year)
+                  previous_year=year
+                  previous_start_year=year
+                  lstart=False
+               else:
+                  if year-previous_year != 1:
+                     if previous_year == previous_start_year:
+                        years_string=years_string + ",".format(previous_year)
+                     else:
+                        years_string=years_string + "-{},".format(previous_year)
+                     #endif
+                     lstart=True
+                  #endif
+                  previous_year=year
+               #endif
+            #endfor
+            if previous_year == previous_start_year:
+               years_string=years_string + ",".format(previous_year)
+            else:
+               years_string=years_string + "-{})".format(previous_year)
+            #endif
+            ### Do I need this to clean up?
+            #if len(country_missing[ccode]) == 1:
+            #    p=re.compile(',$')
+            #    years_string=re.sub(p,')',years_string)
+            ##endif
+            ###
+            info_string=info_string + " {} {},".format(country_region_data[ccode].long_name,years_string) 
+            #print(years_string)
+
+         #endif
+      #endfor
+      #print(info_string)
+
+      # If there is no trailing comma, no countries are missing and
+      # we don't have to write anything.
+      p=re.compile(',$')
+      m=p.search(info_string)
+      if m:
+         # Strip off the trailing comma
+         info_string=re.sub(p,'',info_string)
+         attname=output_varname+"_{}".format(region_code.replace(" ","_"))
+
+         dstnc.setncatts({attname: info_string})
+         
+         print(country_region_data[region_code].long_name)
+         print(attname," : ",info_string)
+      #endif
+
+   #endfor
+
+#enddef
+
+#############################################################
+
+#############################################################
+### The start of the main program                        ###
+#############################################################
 
 try:
    path=sys.argv[1]
@@ -98,9 +226,9 @@ elif region_flag.lower() in ["afr","africa"]:
    path_mask = "/home/dods/verify/VERIFY_INPUT/COUNTRY_MASKS/african_global_country_region_masks_0.1x0.1.nc"
    region_tag="Africa"
    
-elif region_flag.lower() in ["all_countries_regions"]:
+elif region_flag.lower() in ["all_countries_regions","allcountriesregions"]:
 
-   #TRYING A NEW MASK FILE FOR AFRICA
+   #TRYING A NEW MASK FILE FOR ALL REGION
    path_regs = "/home/dods/verify/VERIFY_INPUT/COUNTRY_MASKS/all_countries_and_regions_masks_%(EEZ)s_%(nlat)sx%(nlon)s_%(slat)s%(elat)s_%(slon)s%(elon)s.nc"
    path_mask = "/home/dods/verify/VERIFY_INPUT/COUNTRY_MASKS/all_countries_and_regions_masks_0.1x0.1.nc"
    region_tag="AllCountriesRegions"
@@ -124,7 +252,6 @@ means = ["tas", "pr", "rsds", "mrso", "mrro", "evapotrans", "transpft", "landCov
 sums = ["CO2", "FOREST_AREA", "GRASSLAND_AREA", "CROPLAND_AREA", "AREA"]
 # all other variables are proccessed as country totals : CountryTot = sum(data * area * fraction)
 
-#strlength_size=50
 #code_size=3
 
 # possible netcdf variable names for time/lat/lon
@@ -167,13 +294,21 @@ print("Calculating mask file area.")
 country_region_areas=[]
 cname_mask=[]
 ccode_mask=[]
+#calculate_country_areas()
+country_region_areas=get_country_areas()
 for icount in range(cmask.shape[0]):
-   area=np.ma.where(cmask[icount].mask == False, cmask[icount] * cgrid.area, 0).sum(axis=(-1,-2))
-   country_region_areas.append(area)
-   cname_mask.append(b"".join([letter for letter in cname[icount] if letter is not np.ma.masked]))
-   ccode_mask.append(b"".join([letter for letter in ccode[icount] if letter is not np.ma.masked]))
-   print(" Area for {} ({}): {} m**2".format(cname_mask[-1],ccode_mask[-1],country_region_areas[-1]))
+   #area=np.ma.where(cmask[icount].mask == False, cmask[icount] * cgrid.area, 0).sum(axis=(-1,-2))
+   #country_region_areas.append(area)
+   cname_mask.append("".join([letter.decode('utf-8') for letter in cname[icount] if letter is not np.ma.masked]))
+   ccode_mask.append("".join([letter.decode('utf-8') for letter in ccode[icount] if letter is not np.ma.masked]))
+   # Convert the bytes into strings
+
+   print(" Area for {} ({}): {} m**2".format(cname_mask[-1],ccode_mask[-1],country_region_areas[ccode_mask[-1]]))
+   
 #endfor
+
+# Information about all our countries and regions
+country_region_data=get_country_region_data()
 ##################################
 
 for item in [path] if path.endswith(".nc") else [os.path.join(path, filename) for filename in os.listdir(path)]:
@@ -201,6 +336,10 @@ for item in [path] if path.endswith(".nc") else [os.path.join(path, filename) fo
           print("File exists!  Not overwriting.")
           continue
        #endif
+
+       # Create a time axis that we will use with missing data to know
+       # the years.
+       timeaxis=create_time_axis_from_netcdf(item)
 
        srcnc = netCDF4.Dataset(item)
 
@@ -275,47 +414,81 @@ for item in [path] if path.endswith(".nc") else [os.path.join(path, filename) fo
              #endif
              print("Copying over countries and regions for: ",var)
 
+             # Create the variable
              ncout.createVariable(var, srcnc.variables[var].dtype, srcnc.variables[var].dimensions)
              ncout.variables[var].setncatts(srcnc.variables[var].__dict__)
+
+             # Initialize an array that we will use to tell us what
+             # is missing for every region.  This is a little more difficult
+             # to process since we have monthly timesteps here, but
+             # I'll deal with that later.
+             data_present={}
+             ntimesteps=srcnc[var][:,:].shape[0]
+             for mcode in ccode_mask:
+                # What if we have a country which is missing a few years?
+                # That is also good to know.
+                #if country_region_data[mcode].is_country:
+                #   continue
+                #endif
+                data_present[mcode]=np.zeros((ntimesteps,len(country_region_data[mcode].composant_countries)))
+             #endif
 
              # For every line in the mask file, loop through all
              # the codes for the component countries.  If I find something,
              # add it.  The component_countries in the mask file gives
              # the index of the countries in the mask file, but I need
              # to find the index of the countries in the src file.
-             for ireg in range(ccode.shape[0]):
-                ccode_mask=b"".join([letter for letter in ccode[ireg] if letter is not np.ma.masked])
+             # Note that I don't need to avoid regions that already have
+             # data, such as the EU27+UK, since I will overwrite those
+             # with a different script.
+             for ireg,mcode in enumerate(ccode_mask):
+##### TESTING
+#             for ireg,mcode in zip([62],['CEE']):
+                print("Creating region: ",mcode)
                 timeseries_total=np.zeros((len(srcnc.variables[timevar][:])))
-                for icomp in range(ncmask["component_countries"].shape[1]):
+                total_surface_area=0.0
+
+                # Loop over all the component countries in this region.
+                for icomp,ccomp in enumerate(country_region_data[mcode].composant_countries):
+#                   print('feklj ',ireg,mcode,ccomp,icomp)
                    if ncmask["component_countries"][ireg,icomp] is not np.ma.masked:
                       iindex=ncmask["component_countries"][ireg,icomp]
-                      comp_code=b"".join([letter for letter in ccode[iindex] if letter is not np.ma.masked])
+                      #comp_code=b"".join([letter for letter in ccode[iindex] if letter is not np.ma.masked])
                       # Find this code in the source file that we are
                       # working on
                       for jreg in range(srcnc["country_code"][:].shape[0]):
-                         test_code=b"".join([letter for letter in srcnc["country_code"][jreg] if letter is not np.ma.masked])
-                         if test_code == comp_code:
+                         test_code="".join([letter.decode('utf-8') for letter in srcnc["country_code"][jreg] if letter is not np.ma.masked])
+#                         print("jfioew ",jreg,test_code,ccomp,test_code == ccomp)
+                         if test_code == ccomp:
+
+                            data_present[mcode][:,icomp]=~np.isnan(srcnc[var][:,jreg])
+                            
+                            # If values are NaN, set them equal to zero before
+                            # adding.
+                            # Will this mess up our weighting by
+                            # country area for the region?
+                            timeseries_temp=np.isnan(srcnc[var][:,jreg])
+                            #if mcode == "E28":
+                            #   print("DEBUG BEFORE: {}, {} - ".format(mcode,ccomp),timeseries_temp)
+                            #   print(timeseries_total)
+                            #endif
+                            timeseries_temp=np.where(timeseries_temp,0.0,srcnc[var][:,jreg])
+
+                            #if mcode == "E28":
+                            #   print("DEBUG: {}, {} - ".format(mcode,ccomp),timeseries_temp)
+                            #   print(timeseries_total)
+                            #endif
+
                             if var in means:
-                               # Need to find the area of this country.  This
-                               # information comes from the mask file, so I need
-                               # to find the index of this country in the mask
-                               # file.
-                               kreg=-1
-                               for icount,code in enumerate(ccode_mask):
-                                  if code == comp_code:
-                                     kreg=icount
-                                  #endif
-                               #endfor
-                               if kreg == -1:
-                                  print("Was not able to find kreg code!")
-                                  sys.exit(1)
-                               #endif
+#                               print("Adding component mean ",test_code)
+                               # Need to find the area of this country.  
 
                                # Weight by the surface area of the region
-                               timeseries_total=timeseries_total+srcnc[var][:,jreg]*country_region_areas[kreg]
-                               total_surface_area=total_surface_area+country_region_areas[kreg]
+                               timeseries_total=timeseries_total+timeseries_temp*country_region_areas[test_code]
+                               total_surface_area=total_surface_area+country_region_areas[test_code]
                             else:
-                               timeseries_total=timeseries_total+srcnc[var][:,jreg]
+#                               print("Adding component not mean ",test_code)
+                               timeseries_total=timeseries_total+timeseries_temp
                             #endif
                          #endif
                       #endfor
@@ -330,7 +503,12 @@ for item in [path] if path.endswith(".nc") else [os.path.join(path, filename) fo
                 else:
                    ncout[var][:,ireg]=timeseries_total
                 #endif
+             
+             #endfor
 
+             print_missing_region_information(timeaxis,country_region_data,data_present,ncout,var)
+#             print("fioew STPPING")
+#             sys.exit(1)
           #endfor
 
           # And copy over the metadata
@@ -418,6 +596,7 @@ for item in [path] if path.endswith(".nc") else [os.path.join(path, filename) fo
         ncreg.createDimension("lon", nlon)
         ncreg.createDimension("lat", nlat)
         ncreg.createDimension("country", len(cmask))
+        strlength_size=50
         ncreg.createDimension("strlength", strlength_size)
         ncreg.createVariable("country_code", "S1", ("country", "strlength"))
         ncreg.createVariable("country_name", "S1", ("country", "strlength"))
@@ -472,6 +651,7 @@ for item in [path] if path.endswith(".nc") else [os.path.join(path, filename) fo
 
     for newpath, regmask in zip([pathEEZ, pathNoEEZ], [regmaskEEZ, regmaskNoEEZ]):
         print("Create", newpath)
+        strlength_size=50
         ncout = netCDF4.Dataset(newpath, "w")
         ncout.createDimension("country", len(regmask))
         if timedim != "": ncout.createDimension(timedim, None)

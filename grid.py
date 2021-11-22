@@ -342,3 +342,90 @@ class Grid:
                                     #    totarea += subarea
                                 #if newdata[k,kk,i,j] is not np.ma.masked: newdata[k,kk,i,j] /= totarea
             return newdata
+
+
+####################################################
+# Some other routines that I use related to grids.
+
+############
+# find a regular lat/lon grid that corresponds to a given
+# spatial resolution and is fully contained in a specified region.
+# The boundaries passed to the routine are the edges.
+# Return the values of the center points of the grid.
+def find_regular_grid(new_lat_min,new_lat_max,new_lon_min,new_lon_max,new_lat_diff,new_lon_diff):
+
+    new_lat_values=[]
+    lat_temp=-90.0+new_lat_diff/2.0
+    while lat_temp <= 90.0:
+        if lat_temp <= new_lat_max and lat_temp >= new_lat_min:
+            new_lat_values.append(lat_temp)
+        #endif
+        lat_temp=lat_temp+new_lat_diff
+    #endwhile
+    new_lat_values=np.asarray(new_lat_values)
+
+    new_lon_values=[]
+    lon_temp=-180.0+new_lon_diff/2.0
+    while lon_temp <= 180.0:
+        if lon_temp <= new_lon_max and lon_temp >= new_lon_min:
+            new_lon_values.append(lon_temp)
+        #endif
+        lon_temp=lon_temp+new_lon_diff
+    #endwhile
+    new_lon_values=np.asarray(new_lon_values)
+
+    # Also calculate the edges
+    north=np.amax(new_lat_values)+new_lat_diff/2.0
+    south=np.amin(new_lat_values)-new_lat_diff/2.0
+    west=np.amin(new_lon_values)-new_lon_diff/2.0
+    east=np.amax(new_lon_values)+new_lon_diff/2.0
+
+    return new_lat_values,new_lon_values,south,north,west,east
+#enddef
+
+def find_lat_and_lon_resolution(latitudes,longitudes):
+
+    latdiff=[]
+    for ilat in range(1,len(testlats)):
+        latdiff.append(abs(testlats[ilat]-testlats[ilat-1]))
+    #endfor
+
+    freq_dict={}
+    for ld in latdiff:
+        if ld in freq_dict.keys():
+            freq_dict[ld]=freq_dict[ld]+1
+        else:
+            freq_dict[ld]=1
+        #endif
+        #endfor
+    if len(freq_dict) > 1:
+        print("Possibly not a regular latitude grid: ",list(freq_dict.keys()))
+    else:
+        print("Latitude resolution is {} degrees.".format(list(freq_dict.keys())))
+    #endif
+    keys=freq_dict.keys()
+    lat_res=freq_dict[keys[0]]
+
+    ####
+    londiff=[]
+    for ilon in range(1,len(testlons)):
+        londiff.append(abs(testlons[ilon]-testlons[ilon-1]))
+    #endfor
+    #print(londiff)
+    freq_dict={}
+    for ld in londiff:
+        if ld in freq_dict.keys():
+            freq_dict[ld]=freq_dict[ld]+1
+        else:
+            freq_dict[ld]=1
+        #endif
+    #endfor
+    if len(freq_dict) > 1:
+        print("Possibly not a regular lonitude grid: ",list(freq_dict.keys()))
+    else:
+        print("Longitude resolution is {} degrees.".format(list(freq_dict.keys())))
+    #endif
+    keys=freq_dict.keys()
+    lon_res=freq_dict[keys[0]]
+    return lat_res,lon_res
+#enddef
