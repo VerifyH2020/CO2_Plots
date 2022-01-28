@@ -1832,3 +1832,104 @@ def calculate_country_areas():
 #enddef
 
 #######################################################
+
+
+# Sometimes I have a list of a mix of names and country codes, and I want
+# to return a list of either names or country codes.  This routine does that.
+def convert_names_and_codes(list_of_names,flag):
+
+    if flag not in ["names","codes"]:
+        print("Do not understand this flag!")
+        print(flag)
+        traceback.print_stack(file=sys.stdout)
+        sys.exit(1)
+    #endif
+
+    country_region_data=get_country_region_data()
+
+    output_names=[]
+
+    for item in list_of_names:
+        
+        if flag == "codes":
+            if item in country_region_data.keys():
+                # Already a code
+                output_names.append(item)
+            else:
+                # Find the code for this name.
+                ccode=find_country_code(country_region_data,item)
+                if ccode is None:
+                    print('Could not find a code for this name!')
+                    print(item)
+                    traceback.print_stack(file=sys.stdout)
+                    sys.exit(1)
+                #endif
+                output_names.append(ccode)
+            #endif
+        else:
+            print('Not yet ready for this flag.')
+            print(flag)
+            traceback.print_stack(file=sys.stdout)
+            sys.exit(1)
+        #endif
+
+    #endfor
+
+    return output_names
+
+#enddef
+
+# Takes the name of a country file along with a list of countries
+# and returns a mask from these countries: an array where a value
+# of True means that the values are to be masked of the shape nlats,nlons
+# If None is passed as the country_list, an array with all False values is 
+# returned
+def create_country_mask(filename,country_list):
+
+    srcnc = NetCDFFile(filename,"r")
+
+    # Find the list of country codes in this file
+    ccodes = srcnc.variables["country_code"][:]
+    ccodes = ["".join([letter.decode('utf-8') for letter in item if letter is not np.ma.masked]) for item in ccodes]
+
+    nlats=len(srcnc["lat"][:])
+    nlons=len(srcnc["lon"][:])
+    country_mask=np.zeros((nlats,nlons))*np.nan
+
+    if country_list is None:
+         # want all the values to be False in this case
+         country_mask=np.where(np.isnan(country_mask), False, True)
+         srcnc.close()
+         return country_mask
+    #endif
+
+    # Make sure we are dealing with all codes
+    country_list=convert_names_and_codes(country_list,"codes")
+
+    # For each country, put non-NaN values where that country exists
+    # on our map.
+    for country in country_list:
+
+        # Find the index of the country in this file.
+        if country not in ccodes:
+            print("You passed a country that does not exist in this file.")
+            print("Country code: ",country)
+            print("Filename: ",filename)
+            print("Stopping early.")
+            traceback.print_stack(file=sys.stdout)
+            sys.exit(1)
+        #endif
+
+        cindex=ccodes.index(country)
+
+        country_mask=np.where(srcnc["country_mask"][cindex,:,:] >= 1.0, 1.0, country_mask)
+
+    #endif
+
+    srcnc.close()
+
+    country_mask=np.where(np.isnan(country_mask), True, False)
+
+    return country_mask
+
+#enddef

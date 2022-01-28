@@ -9,6 +9,8 @@ from mpl_toolkits.basemap import Basemap
 import numpy as np
 from matplotlib.patches import Ellipse, Circle
 from matplotlib import cm
+import sys,traceback
+import math
 
 rainbow = {"red"   : ((0., 0.53, 0.53), (0.077, 0.69, 0.69), (0.154, 0.84, 0.84), (0.231, 0.1,  0.1),  (0.308, 0.32, 0.32), (0.385, 0.48, 0.48), (0.462, 0.3,  0.3),  (0.539, 0.56, 0.56), (0.616, 0.79,  0.79),  (0.693, 0.965, 0.965), (0.77, 0.96, 0.96), (0.847, 0.94, 0.94), (0.924, 0.91,  0.91),  (1., 0.86, 0.86)),
            "green" : ((0., 0.18, 0.28), (0.077, 0.47, 0.47), (0.154, 0.75, 0.75), (0.231, 0.39, 0.39), (0.308, 0.54, 0.54), (0.385, 0.68, 0.68), (0.462, 0.7,  0.7),  (0.539, 0.79, 0.79), (0.616, 0.875, 0.875), (0.693, 0.93,  0.93),  (0.77, 0.75, 0.75), (0.847, 0.57, 0.57), (0.924, 0.375, 0.375), (1., 0.02, 0.02)),
@@ -207,11 +209,15 @@ class Grid:
         self.regtask = "recalc %sx%s to %sx%s" % (self.nlat, self.nlon, grid.nlat, grid.nlon)
         print("Regrid has been set : %s" % self.regtask)
 
-    def regrid(self, data, add_masked_area = False, ltake_dominant_fraction = False):
+    def regrid(self, data, add_masked_area = False, ltake_dominant_fraction = False,nth_percentile=None):
         # I have added the take_dominant_fraction flag.  If True, this sets
         # the value of the pixel equal to the value in the subpixel with
         # the most area.  It's use for maps that are classifications, like
         # the Koppen-Geiger maps.
+        # I also add the nth_percentile flag.  The value should be 95.0 for
+        # the 95th percentile.  Instead of returning a mean value, for the 
+        # pixel, the 95th percentile value is returned.  This likely takes
+        # a lot more time!
         # If we have a time, lat, lon variable, do this
         if len(data.shape) == 3:
             nlat, nlon = self.reg.shape
@@ -239,24 +245,93 @@ class Grid:
                 for j in range(nlon):
                     totarea = 0
                     maxarea=-1.0
-                    for n,m,subarea in self.reg[i,j]:
-                        if ltake_dominant_fraction:
+                    values=[]
+                    areas=[]
+
+                    # If we are interested in a percentile instead
+                    # of a straight mean, we do that first.
+                    # This is clearly more expensive to do!
+                    if nth_percentile:
+
+                        # How do we calculate a distribution if the
+                        # subareas are not equal?  Find the smallest subarea
+                        # and renormalize.
+                        smallest_area=1.0e99
+                        for n,m,subarea in self.reg[i,j]:
                             if data[n,m] is not np.ma.masked:
-#                                print("data ",n,m,data[n,m])
-                                if subarea > maxarea:
-                                    maxarea=subarea
-                                    newdata[i,j]=data[n,m]
+                                if subarea < smallest_area:
+                                    smallest_area=subarea
+                                #endif
+#                                print("n,mn: ",n,m,subarea)
+                            #endif
+                        #endfor
+                        
+                        if smallest_area <= 0.0:
+                            print("Bad area value!")
+                            print(smallest_area)
+                            traceback.print_stack(file=sys.stdout)
+                            sys.exit(1)
+                        #endif
+                        values_list=[]
+                        for n,m,subarea in self.reg[i,j]:
+                            if data[n,m] is not np.ma.masked:
+                                noreps=math.ceil(subarea/smallest_area)
+                                for irep in range(noreps):
+                                    values_list.append(data[n,m])
+                                #endfor
+                            #endif
+                        #endfor
+
+                        if newdata[i,j] is np.ma.masked: newdata[i,j] = 0
+                        newdata[i,j]=np.percentile(values_list,nth_percentile)
+
+#                        print("vnkdsA ",i,j,newdata[i,j])
+                        
+                    else:
+                        for n,m,subarea in self.reg[i,j]:
+
+                        
+
+                            # This can really only be used for integers.
+                            # We need to figure out the total area covered
+                            # by a particular value, and then assign the largest to
+                            # the whole pixel.  This is not the same as taking
+                            # the value of the largest sub-pixel!
+                            if ltake_dominant_fraction:
+                                if data[n,m] is not np.ma.masked:
+                                    if data[n,m] in values:
+                                        iindex=values.index(data[n,m])
+                                        areas[iindex]=areas[iindex]+subarea
+                                    else:
+                                        values.append(data[n,m])
+                                        areas.append(subarea)
+                                    #endif
+                                #endif
+                            else:
+                                if data[n,m] is not np.ma.masked:
+                                    if newdata[i,j] is np.ma.masked: newdata[i,j] = 0
+                                    newdata[i,j] += data[n,m] * subarea
+                                    #print("data ",n,m,data[n,m],subarea)
+                                    if data[n,m] is not np.ma.masked or add_masked_area:
+                                        totarea += subarea
+                                    #endif
                                 #endif
                             #endif
+                        #endfor
+
+                        if ltake_dominant_fraction:
+                            # No need to normalize, but we do need to find the 
+                            # dominant value.
+                            newdata[i,j]=values[np.argmax(areas)]
                         else:
-                            if data[n,m] is not np.ma.masked:
-                                if newdata[i,j] is np.ma.masked: newdata[i,j] = 0
-                                newdata[i,j] += data[n,m] * subarea
-                                if data[n,m] is not np.ma.masked or add_masked_area:
-                                    totarea += subarea
-                                    if newdata[i,j] is not np.ma.masked: newdata[i,j] /= totarea
+                            if newdata[i,j] is not np.ma.masked: newdata[i,j] /= totarea
                         #endif
-                    #endfor
+
+#                        print("vnkdsB ",i,j,newdata[i,j])
+                    #endif
+                    #print("jifeow ",i,j,totarea,newdata[i,j])
+                #endfor
+            #endfor
             return newdata
 
         # If we have a time, veget, lat, lon variable, do this
@@ -305,7 +380,8 @@ class Grid:
                         #if newdata[k,i,j] is not np.ma.masked: newdata[k,i,j] /= totarea
             return newdata
 
-            # But sometimes we just have lat,lon without a time axis.  Still can regrid
+            # But sometimes we just have lat,lon without a time axis.  
+            # Still can regrid
         elif len(data.shape) == 2:
             nlat, nlon = self.reg.shape
             newdata = np.ma.array(np.zeros((nlat, nlon)), mask=True)

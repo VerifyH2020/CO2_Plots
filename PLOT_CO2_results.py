@@ -176,11 +176,14 @@ else:
          if ds.flipdatasign:
             print("Flipping the sign of the {} fluxes.".format(desired_simulations[isim]))
             annfCO2=-annfCO2
-         elif desired_simulations[isim] == "EUROCOM_Lumia":
+         #endif
+
+         if desired_simulations[isim] == "EUROCOM_Lumia":
             # One year in this inversion seems messed up.
             print("Correcting erroneously high values for Lumia fluxes.")
             annfCO2[annfCO2>1e30]=np.nan
          #endif
+
          if desired_simulations[isim] in ("EFISCEN","EFISCEN-unscaled"):
             # Some years in these simulations seem messed up
             print("Correcting erroneously high values for {} fluxes.".format(desired_simulations[isim]))
@@ -191,6 +194,34 @@ else:
             # The sum over the EU seems messed up
             print("Correcting erroneously high values for FAOSTAT_FL-FL fluxes.")
             annfCO2[abs(annfCO2)>1e35]=np.nan
+         #endif
+
+         if desired_simulations[isim] in ["FAOSTAT2021_GL-GL","FAOSTAT2021_CL-CL"]:
+            # Some countries don't have data available, so they are NaN.
+            # Change them to be equal to zero so that we can add them
+            # for the total LULUCF.  Note that we only want to change
+            # values to zero for years that have data, not for all years.
+            # Cannot use zero here, since zero values get zeroed out later.
+            # So try a really small value and hope it works.
+            first_year=1990
+            last_year=2019
+            print("Correcting no data for FAOSTAT cropland and grassland fluxes from {} to {}.".format(first_year,last_year))
+            for iplot in range(annfCO2[:,:].shape[1]):
+#                print("On country: ",iplot)
+                if np.isnan(annfCO2[:,iplot]).all():
+#                    print("jifoew ",iplot)
+#                    print(annfCO2[:,iplot])
+                    for iyear,year in enumerate(sim_params.allyears):
+                        if year in list(range(first_year,last_year+1)):
+                            annfCO2[iyear,iplot]=0.00000000001
+                        #endif
+                    #endfor
+#                    print(annfCO2[:,iplot])
+#                    sys.exit(1)
+#                    annfCO2[abs(annfCO2)>1e35]=np.nan
+                #endif
+            #endfor
+#            sys.exit(1)
          #endif
 
          simulation_data[isim,:,:],simulation_err[isim,:,:],simulation_min[isim,:,:],simulation_max[isim,:,:]=group_input(annfCO2,annfCO2,annfCO2_min,annfCO2_max,sim_params.desired_plots,False,sim_params.ndesiredyears,nplots,sim_params.all_regions_countries,desired_simulations[isim])
@@ -644,7 +675,7 @@ for iplot,cplot in enumerate(sim_params.desired_plots):
             print("Data: ",simulation_data[isim,:,iplot])
             print("Min: ",simulation_min[isim,:,iplot])
             # For certain edge cases, this happens.  Greenland, for example.
-            if sim_params.desired_plots[iplot] not in ("GRL","JEY"):
+            if sim_params.desired_plots[iplot] not in ("GRL","JEY","CYP"):
                sys.exit(1)
             else:
                temp_min=simulation_min[isim,:,iplot]
@@ -685,7 +716,7 @@ for iplot,cplot in enumerate(sim_params.desired_plots):
             print("Data: ",simulation_data[isim,:,iplot])
             print("Max: ",simulation_max[isim,:,iplot])
             # For certain edge cases, this happens.  Greenland, for example.
-            if sim_params.desired_plots[iplot] not in ("GRL","JEY"):
+            if sim_params.desired_plots[iplot] not in ("GRL","JEY","CYP"):
                sys.exit(1)
             else:
                temp_max=simulation_max[isim,:,iplot]
@@ -793,9 +824,10 @@ for iplot,cplot in enumerate(sim_params.desired_plots):
                ax1.add_patch(p1)
             #endfor
          else:
-            # This prints a symbol with whisker error bars
+            # This prints a symbol with whisker error bars.  Philippe thought
+            # that ms=10 and capsize=10 was a little too big.
             whiskerbars=np.array((simulation_data[isim,:,iplot]-lowerrange[:],upperrange[:]-simulation_data[isim,:,iplot])).reshape(2,sim_params.ndesiredyears)
-            p2=ax1.errorbar(sim_params.allyears,simulation_data[isim,:,iplot],yerr=whiskerbars,marker=ds.plotmarker,mfc=ds.facec,mec='black',ms=10,capsize=10,capthick=2,ecolor="black",linestyle='None',zorder=5)
+            p2=ax1.errorbar(sim_params.allyears,simulation_data[isim,:,iplot],yerr=whiskerbars,marker=ds.plotmarker,mfc=ds.facec,mec='black',ms=7,capsize=7,capthick=2,ecolor="black",linestyle='None',zorder=5)
             nandata=np.isnan(simulation_data[isim,:,iplot])
             if not nandata.all():
                ldata=True
@@ -1147,7 +1179,7 @@ for iplot,cplot in enumerate(sim_params.desired_plots):
       for isim,csim in enumerate(correction_simulations):
          ds=sim_params.dataset_parameters[desired_simulations.index(csim)]
          if ds.productiondata:
-            p1=axsub.bar(sim_params.allyears, temp_data[isim,:], bottom=data_stack[isim,:], color=ds.facec,width=barwidth,alpha=sim_params.production_alpha*0.3)
+            p1=axsub.bar(sim_params.allyears, temp_data[isim,:], bottom=data_stack[isim,:], color=ds.facec,width=barwidth,alpha=sim_params.production_alpha)
          else:
             p1=axsub.bar(sim_params.allyears, temp_data[isim,:], bottom=data_stack[isim,:], color=ds.facec,width=barwidth,alpha=sim_params.nonproduction_alpha*0.3)
          #endif
@@ -1159,7 +1191,7 @@ for iplot,cplot in enumerate(sim_params.desired_plots):
       if not sim_params.lplot_countrytot:
          axsub.set_ylabel(r'Correction for inversions\n[g C/yr/(m$^2$ of country)]')
       else:
-         axsub.set_ylabel(r'Correction for inversions\n[Tg C yr$^{-1}$]')
+         axsub.set_ylabel(r'Correction for inversions' + '\n' + r'[Tg C yr$^{-1}$]')
       #endif
 
       # I would like the limits of the secondary X axis to be the same as the first, only shifted down
@@ -1227,7 +1259,17 @@ for iplot,cplot in enumerate(sim_params.desired_plots):
             # It's bad to remove an element of the list inside the loop!  The next
             # element is missed.
             #desired_legend.remove(csim)
+            # Sometimes, we have a legend name that is the same.
+            if csim in remove_legends:
+                print("Trying to remove a legend twice!  Do you have")
+                print("two legends with the same name?")
+                print(desired_legend)
+                print(csim)
+                traceback.print_stack(file=sys.stdout)
+                sys.exit(1)
+            #endif
             remove_legends.append(csim)
+
          #endtry
       #endfor
 
@@ -1350,8 +1392,10 @@ for iplot,cplot in enumerate(sim_params.desired_plots):
 
    ax1.set_title(plot_titles[iplot],fontsize=16)
 
+   # Philippe thought that linewidth of 0.1 made this line a little too 
+   # hard to see.
    if sim_params.lprintzero:
-      ax1.hlines(y=0.0,xmin=sim_params.xplot_min,xmax=sim_params.xplot_max,color="black",linestyle='--',linewidth=0.1)
+      ax1.hlines(y=0.0,xmin=sim_params.xplot_min,xmax=sim_params.xplot_max,color="black",linestyle='--',linewidth=0.5)
    #endif
 
    # in this case, we have average simulation data plotted at the last

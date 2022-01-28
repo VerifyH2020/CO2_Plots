@@ -12,7 +12,7 @@ import matplotlib as mpl
 import sys,traceback
 
 # These are my own that I have created locally
-from country_subroutines import get_countries_and_regions_from_cr_dict,get_country_region_data,get_country_codes_for_netCDF_file
+from country_subroutines import get_countries_and_regions_from_cr_dict,get_country_region_data,get_country_codes_for_netCDF_file,convert_names_and_codes
 
 ##################################################################
 # This is the primary output of these routines: a class that holds
@@ -110,7 +110,7 @@ class dataset_parameters():
 class simulation_parameters():
     def __init__(self, parser):
 
-        self.possible_graphs=["test", "luc_full", "sectorplot_full", "forestry_full_2019", "forestry_full_2021", "grassland_full_2019", "grassland_full_2021", "crops_full_2019", "crops_full_2021", "topdownandinventories_2019","topdownandinventories_2021","biofuels","inversions_verify","lulucf","lulucf_full","topdownlulucf_2019","topdownlulucfbar_2019","topdownlulucf_2021","topdownlulucfbar_2021","verifybu","verifybu_detrend","fluxcom","lucf_full","lulucftrendy_2019","lulucftrendy_2021","unfccclulucfbar_2019","unfccclulucfbar_2021","all_orchidee","gcp_inversions_corrected","eurocom_inversions","eurocominversionsv2","eurocom_inversions_comparison","epic_comparison","lulucf_msnrt","orc_trendy","faolulucfcomparison","fao_crp_grs","fao_for","unfccc_fao","unfccc_fao_trendy","emission_factors","unfccc_woodharvest","d6.2","unfccc_forest_test","unfccc_lulucf_test","orchidee_test","trendyv9_all","trendyv9_removed","csr_inversions_comparison","trendyv9_gcp","trendy_gcp","trendyv7_all","trendyv7_removed","trendyv10_all","trendyv10_removed","trendycomparison","gcp2019_all","gcp2020_all","gcp2021_all","gcpcomparison","gcp_trendy","trendyv10_gcp2021_all","trendyv10_gcp2021","crops_fao_epic","grassland_all","bookkeeping","epic_test_rh","epic_test_npp","epic_test_fharvest","epic_test_leech","trendyv7_common","trendyv9_common","trendyv10_common","trendy_common","cbm","gcp_common","cams","ctracker","jena_global"]
+        self.possible_graphs=["test", "luc_full", "sectorplot_full", "forestremain_2019", "forestremain_2021", "grasslandremain_2019", "grasslandremain_2021", "croplandremain_2019", "croplandremain_2021", "topdownandinventories_2019","topdownandinventories_2021","biofuels","inversions_verify","lulucf","lulucf_full","topdownlulucf_2019","topdownlulucfbar_2019","topdownlulucf_2021","topdownlulucfbar_2021","verifybu","verifybu_detrend","fluxcom","lucf_full","lulucftrendy_2019","lulucftrendy_2021","unfccclulucfbar_2019","unfccclulucfbar_2021","all_orchidee","gcp_inversions_corrected","eurocominversions","eurocominversionsv2","eurocomcomparison","epic_comparison","lulucf_msnrt","orc_trendy","faostat2021","faolulucfcomparison","fao_crp_grs","fao_for","unfccc_fao","unfccc_fao_trendy","emission_factors","unfccc_woodharvest","d6.2","unfccc_forest_test","unfccclulucfcomparison","unfcccflcomparison","unfcccclcomparison","unfcccglcomparison","orchidees3comparison","trendyv9_all","trendyv9_removed","csr_inversions_comparison","trendyv9_gcp","trendy_gcp","trendyv7_all","trendyv7_removed","trendyv10_all","trendyv10_removed","trendycomparison","gcp2019_all","gcp2020_all","gcpinversion2021","gcpcomparison","gcp_trendy","trendyv10_gcp2021_all","trendyv10_gcp2021","crops_fao_epic","grassland_all","bookkeeping","epic_test_rh","epic_test_npp","epic_test_fharvest","epic_test_leech","trendyv7_common","trendyv9_common","trendyv10_common","trendycommon","cbm","gcpcommon","cams","ctracker","jena_global","roxana","roxanawater","efiscencomparison","regionalinversions","lumiainversions","coco2","unfcccuncert","camseez"]
         self.possible_true_values=["true","t","yes","y"]
 
         parser.add_argument('--graphname', dest='graphname', action='store',required=True, choices=self.possible_graphs, help='the type of graph that you wish to plot')
@@ -288,13 +288,28 @@ class simulation_parameters():
                 self.desired_plots=['COD','AFR','GAB','ZAA']
             elif self.country_scope == "Master":
                 self.desired_plots=["E28", "FRA", "USA", 'AFR','WLD']
+                self.desired_plots=["E28", "FRA", "DEU", 'NLD','Ireland']
+
+                # Special countries outside of Europe for COCO2
+                self.desired_plots=["E28", "IDN", "COD", 'BRA','CAN','MMR','PER','VEN','COL','BOL','PRY','CHN','MNG','IND','ZAF']
+                #self.desired_plots=["E28", "United Kingdom", "E27"]
+
+                # This is for Roxana
+                #self.desired_plots=["E28","Austria","Belgium","Bulgaria","Croatia","Cyprus","Czech Republic","Denmark","Estonia","Finland","France","Germany","Greece","Hungary","Ireland","Italy","Latvia","Lithuania","Luxembourg","Malta","Netherlands","Poland","Portugal","Romania","Slovakia","Slovenia","Spain","Sweden","United Kingdom","MDA","UKR","BLR","CHE","NOR","WEE","CEE","NOE","SOZ","EAE"]
+#                self.desired_plots=["E28","Austria","Belgium","Bulgaria","Croatia","Czech Republic","Denmark","Estonia","Finland","France","Germany","Greece","Hungary","Ireland","Italy","Latvia","Lithuania","Luxembourg","Malta","Netherlands","Poland","Portugal","Romania","Slovakia","Slovenia","Spain","Sweden","United Kingdom","MDA","UKR","BLR"]
+
+#                self.desired_plots=["Cyprus"]
+
                 #self.desired_plots=["DEU", "E28", 'FRA', 'WLD']
             #endif
+
+            self.desired_plots=convert_names_and_codes(self.desired_plots,"codes")
 
         else:
             self.desired_plots=self.all_regions_countries
         #endif
-
+        print("Plotting the following countries/regions: ",self.desired_plots)
+        
         # Sometimes I want to print debug information for a country.
         self.debug_country="E28"
         self.debug_country_index=self.all_regions_countries.index(self.debug_country)
@@ -386,9 +401,13 @@ class simulation_parameters():
         
         
         #### ORCHIDEE file
-        input_filename["ORCHIDEE-S3-V0"]=database_dir + "VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ{}.nc".format(self.country_scope)
-        input_filename["ORCHIDEE-S3-V1"]=database_dir + "VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V2_20200910_MCGRATH_WP3_CountryTotWithOutEEZ{}.nc".format(self.country_scope)
-        input_filename["ORCHIDEEv3-S3-V2"]=database_dir + "VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-N-S3_LSCE_LAND_EU_1M_V3_20211018_MCGRATH_WP3_CountryTotWithOutEEZ{}.nc".format(self.country_scope)
+        input_filename["ORCHIDEE-S3-V2019"]=database_dir + "VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ{}.nc".format(self.country_scope)
+        input_filename["ORCHIDEE-S3-V2020"]=database_dir + "VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V2_20200910_MCGRATH_WP3_CountryTotWithOutEEZ{}.nc".format(self.country_scope)
+        input_filename["ORCHIDEEv2-S3-V2021"]=database_dir + "VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V3_20211129_BASTRIKOV_WP3_CountryTotWithEEZ{}.nc".format(self.country_scope)
+        input_filename["ORCHIDEEv3-S3-V2021"]=database_dir + "VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-N-S3_LSCE_LAND_EU_1M_V3_20211129_BASTRIKOV_WP3_CountryTotWithEEZ{}.nc".format(self.country_scope)
+        # With an update correcting a SWdown bug
+        input_filename["ORCHIDEEv2-S3-V2021v2"]=database_dir + "VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V3_20211209_BASTRIKOV_WP3_CountryTotWithEEZ{}.nc".format(self.country_scope)
+        input_filename["ORCHIDEEv3-S3-V2021v2"]=database_dir + "VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-N-S3_LSCE_LAND_EU_1M_V3_20211209_BASTRIKOV_WP3_CountryTotWithEEZ{}.nc".format(self.country_scope)
 
         input_filename["ORCHIDEE2019_GL-GL"]=database_dir + "VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycleEcosystem_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ{}.nc".format(self.country_scope)
         input_filename["ORCHIDEE2019_GL-GL-RH"]=database_dir + "VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycleEcosystem_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ{}.nc".format(self.country_scope)
@@ -475,8 +494,10 @@ class simulation_parameters():
 
         # GCP CO2 2021
         input_filename["GCP2021_ALL"]=database_dir + "OTHER_PROJECTS/FCO2/Inversions-GCP2021/Tier3TD_CO2_LandFlux_AllGCP2021Inversions_XXX_LAND_GL_1M_V3_20211026_McGrath_WP3_CountryTotWithEEZ{}.nc".format(self.country_scope)
+        input_filename["GCP2021_NOCAMS"]=database_dir + "OTHER_PROJECTS/FCO2/Inversions-GCP2021/Tier3TD_CO2_LandFlux_AllGCP2021InversionsNoCAMS_XXX_LAND_GL_1M_V3_20211026_McGrath_WP3_CountryTotWithEEZ{}.nc".format(self.country_scope)
         input_filename["GCP2021_COMMON"]=database_dir + "OTHER_PROJECTS/FCO2/Inversions-GCP2021/Tier3TD_CO2_LandFlux_CommonGCP2021Inversions_XXX_LAND_GL_1M_V3_20211026_McGrath_WP3_CountryTotWithEEZ{}.nc".format(self.country_scope)
         input_filename["GCP2021_CAMS"]=database_dir + "OTHER_PROJECTS/FCO2/Inversions-GCP2021/Tier3TD_CO2_LandFlux_CAMS-V20-2-2021_lsce_LAND_GL_1M_V1_20201020_Chevallier_Grid-mask11_CountryTotWithEEZ{}.nc".format(self.country_scope)
+        input_filename["GCP2021_CAMSnoEEZ"]=database_dir + "OTHER_PROJECTS/FCO2/Inversions-GCP2021/Tier3TD_CO2_LandFlux_CAMS-V20-2-2021_lsce_LAND_GL_1M_V1_20201020_Chevallier_Grid-mask11_CountryTotWithOutEEZ{}.nc".format(self.country_scope)
 #        input_filename["GCP2021_CMS"]=database_dir + "OTHER_PROJECTS/FCO2/Inversions-GCP2021/_CountryTotWithEEZ{}.nc".format(self.country_scope)
         input_filename["GCP2021_CTRACKER"]=database_dir + "OTHER_PROJECTS/FCO2/Inversions-GCP2021/Tier3TD_CO2_LandFlux_CTRACKER-EU-v2021_wur_LAND_GL_1M_V1_20201020_Wouter_Grid-mask11_CountryTotWithEEZ{}.nc".format(self.country_scope)
         input_filename["GCP2021_JENA-s99"]=database_dir + "OTHER_PROJECTS/FCO2/Inversions-GCP2021/Tier3TD_CO2_LandFlux_JENA-s99-2021_bgc-jena_LAND_GL_1M_V1_20201020_Christian_Grid-mask11_CountryTotWithEEZ{}.nc".format(self.country_scope)
@@ -537,7 +558,7 @@ class simulation_parameters():
         input_filename["UNFCCC2020_FL-FL"]=database_dir + "OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_LULUCFsectors_Inventory-SX_UNFCCC_LAND_EU_1M_V2_20210629_PETRESCU_WP1_CountryTotWithEEZ{}.nc".format(self.country_scope)
         input_filename["UNFCCC2020_LULUCF"]=database_dir + "OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_LULUCFsectors_Inventory-SX_UNFCCC_LAND_EU_1M_V2_20210629_PETRESCU_WP1_CountryTotWithEEZ{}.nc".format(self.country_scope)
 
-        input_filename["UNFCCC2021_LULUCF"]=database_dir + "OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_LULUCFsectors_Inventory-SX_UNFCCC_LAND_EU_1M_V3_20211105_PETRESCU_WP1_CountryTotWithOutEEZ{}.nc".format(self.country_scope)
+        input_filename["UNFCCC2021_LULUCF"]=database_dir + "OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_LULUCFsectors_Inventory-SX_UNFCCC_LAND_EU_1M_V3_20220124_PETRESCU_WP1_CountryTotWithOutEEZ{}.nc".format(self.country_scope)
 
         ####### Bookkeeping models
         input_filename["BLUE2019"]=database_dir + "OTHER_PROJECTS/FCO2/BLUE/Tier3BUPB_CO2_LandFlux_BLUE-2019_bgc-jena_LAND_GL_1M_V1_20191020_Pongratz_WP3_CountryTotWithOutEEZ{}.nc".format(self.country_scope)
@@ -550,8 +571,15 @@ class simulation_parameters():
         ####### CSR
         input_filename["CSR-COMBINED-2020"]=database_dir + "VERIFY_OUTPUT/FCO2/Tier3TD_CO2_LandFlux_AllJENA_bgc-jena_LAND_GL_1M_V2_20210522_McGrath_WP3_CountryTotWithEEZ{}.nc".format(self.country_scope)
 
-        ####### EURCOM
+        ####### EUROCOM
         input_filename["EUROCOM_ALL_2020"]=database_dir + "OTHER_PROJECTS/FCO2/EUROCOM_UPDATE/Tier3TD_CO2_LandFlux_AllEUROCOMInversions_XXX_LAND_GL_1M_V2_20210914_McGrath_WP3_CountryTotWithEEZ{}.nc".format(self.country_scope)
+
+        ####### LUMIA
+        input_filename["LUMIA-COMBINED-v2021"]=database_dir + "VERIFY_OUTPUT/FCO2/Tier3TD_CO2_LandFlux_LUMIA-AllInversions-V2021_nateko_LAND_Europe_1M_Period-2006-2020_INVCO2-VERIFY-V2021_MCGRATH_Grid-mask05_CountryTotWithEEZ{}.nc".format(self.country_scope)
+        input_filename["LUMIA-REF-v2021"]=database_dir + "VERIFY_OUTPUT/FCO2/Tier3TD_CO2_LandFlux_LUMIA-REF-V2021_nateko_LAND_Europe_1M_Period-2006-2020_INVCO2-VERIFY-V2021_MONTEIL_Grid-mask05_CountryTotWithEEZ{}.nc".format(self.country_scope)
+        input_filename["LUMIA-Cor200km-v2021"]=database_dir + "VERIFY_OUTPUT/FCO2/Tier3TD_CO2_LandFlux_LUMIA-Cor200km-V2021_nateko_LAND_Europe_1M_Period-2006-2020_INVCO2-VERIFY-V2021_MONTEIL_Grid-mask05_CountryTotWithEEZ{}.nc".format(self.country_scope)
+        input_filename["LUMIA-CoreSites-v2021"]=database_dir + "VERIFY_OUTPUT/FCO2/Tier3TD_CO2_LandFlux_LUMIA-CoreSites-V2021_nateko_LAND_Europe_1M_Period-2006-2020_INVCO2-VERIFY-V2021_MONTEIL_Grid-mask05_CountryTotWithEEZ{}.nc".format(self.country_scope)
+        input_filename["LUMIA-AlterBG-v2021"]=database_dir + "VERIFY_OUTPUT/FCO2/Tier3TD_CO2_LandFlux_LUMIA-AlterBG-V2021_nateko_LAND_Europe_1M_Period-2019-2020_INVCO2-VERIFY-V2021_MONTEIL_Grid-mask05_CountryTotWithEEZ{}.nc".format(self.country_scope)
 
 
         # For these, the filenames are in an irregular format because they are old
@@ -690,11 +718,14 @@ class simulation_parameters():
         master_datasets["ORCHIDEE_S1"]=dataset_parameters( "ORCHIDEE_S1", database_dir + "VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S1_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ{}.nc".format(self.country_scope), "VERIFY_BU", "FCO2_NBP", "D", "green", flipdatasign=True,lcheck_for_mean_overlap=True)
         master_datasets["ORCHIDEE_S2"]=dataset_parameters( "ORCHIDEE_S2", database_dir + "VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S2_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ{}.nc".format(self.country_scope), "VERIFY_BU", "FCO2_NBP", "D", "red", flipdatasign=True,lcheck_for_mean_overlap=True)
         master_datasets["ORCHIDEE_S1_V2"]=dataset_parameters( "ORCHIDEE_S1_V2", "/home/orchidee03/mmcgrath/RUNDIR/CREATE_DRIVER_PLOTS/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S1_LSCE_LAND_EU_1M_V2_20200910_MCGRATH_WP3_CountryTotWithOutEEZEU.nc", "VERIFY_BU", "FCO2_NBP", "D", "green", flipdatasign=True,lcheck_for_mean_overlap=True)
-        master_datasets["ORCHIDEE-S3-V0"]=dataset_parameters( "ORCHIDEE-S3-V0", input_filename["ORCHIDEE-S3-V0"], "VERIFY_BU", "FCO2_NBP", "D", "dodgerblue", flipdatasign=True,lcheck_for_mean_overlap=True)
-        master_datasets["ORCHIDEE-S3-V1"]=dataset_parameters( "ORCHIDEE2020", input_filename["ORCHIDEE-S3-V1"], "VERIFY_BU", "FCO2_NBP", "D", "red", flipdatasign=True,lcheck_for_mean_overlap=True)
-        master_datasets["ORCHIDEEv3-S3-V2"]=dataset_parameters( "ORCHIDEE-S3-V0", input_filename["ORCHIDEEv3-S3-V2"], "VERIFY_BU", "FCO2_NBP", "D", "green", flipdatasign=True,lcheck_for_mean_overlap=True)
-#        master_datasets["ORCHIDEE-S3-V0"]=dataset_parameters( "ORCHIDEE-S3-V0", database_dir + "VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ.nc", "VERIFY_BU", "FCO2_NBP", "D", "dodgerblue", flipdatasign=True,lcheck_for_mean_overlap=True)
-#        master_datasets["ORCHIDEE-S3-V1"]=dataset_parameters( "ORCHIDEE-S3-V1", database_dir + "VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V2_20200910_MCGRATH_WP3_CountryTotWithEEZEU.nc", "VERIFY_BU", "FCO2_NBP", "D", "dodgerblue", flipdatasign=True,lcheck_for_mean_overlap=True)
+        master_datasets["ORCHIDEE-S3-V2019"]=dataset_parameters( "ORCHIDEE-S3-V2019", input_filename["ORCHIDEE-S3-V2019"], "VERIFY_BU", "FCO2_NBP", "D", "dodgerblue", flipdatasign=True,lcheck_for_mean_overlap=True,displayname="ORCHIDEE")
+        master_datasets["ORCHIDEE-S3-V2020"]=dataset_parameters( "ORCHIDEE2020", input_filename["ORCHIDEE-S3-V2020"], "VERIFY_BU", "FCO2_NBP", "D", "red", flipdatasign=True,lcheck_for_mean_overlap=True)
+        master_datasets["ORCHIDEEv3-S3-V2021"]=dataset_parameters( "ORCHIDEEv3-S3-V2021", input_filename["ORCHIDEEv3-S3-V2021"], "VERIFY_BU", "FCO2_NBP", "D", "green", flipdatasign=True,lcheck_for_mean_overlap=True)
+        master_datasets["ORCHIDEEv2-S3-V2021"]=dataset_parameters( "ORCHIDEEv2-S3-V2021", input_filename["ORCHIDEEv2-S3-V2021"], "VERIFY_BU", "FCO2_NBP", "D", "green", flipdatasign=True,lcheck_for_mean_overlap=True)
+        master_datasets["ORCHIDEEv3-S3-V2021v2"]=dataset_parameters( "ORCHIDEEv3-S3-V2021v2", input_filename["ORCHIDEEv3-S3-V2021v2"], "VERIFY_BU", "FCO2_NBP", "D", "green", flipdatasign=False,lcheck_for_mean_overlap=True)
+        master_datasets["ORCHIDEEv2-S3-V2021v2"]=dataset_parameters( "ORCHIDEEv2-S3-V2021v2", input_filename["ORCHIDEEv2-S3-V2021v2"], "VERIFY_BU", "FCO2_NBP", "D", "green", flipdatasign=False,lcheck_for_mean_overlap=True)
+#        master_datasets["ORCHIDEE-S3-V2019"]=dataset_parameters( "ORCHIDEE-S3-V2019", database_dir + "VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ.nc", "VERIFY_BU", "FCO2_NBP", "D", "dodgerblue", flipdatasign=True,lcheck_for_mean_overlap=True)
+#        master_datasets["ORCHIDEE-S3-V2020"]=dataset_parameters( "ORCHIDEE-S3-V2020", database_dir + "VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V2_20200910_MCGRATH_WP3_CountryTotWithEEZEU.nc", "VERIFY_BU", "FCO2_NBP", "D", "dodgerblue", flipdatasign=True,lcheck_for_mean_overlap=True)
         master_datasets["ORCHIDEE_RH"]=dataset_parameters( "ORCHIDEE_RH", database_dir + "VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ{}.nc".format(self.country_scope), "VERIFY_BU", "rh", "D", "red")
 
         master_datasets["ORCHIDEE2019_GL-GL"]=dataset_parameters( "ORCHIDEE2019_GL-GL", input_filename["ORCHIDEE2019_GL-GL"], "VERIFY_BU", "FCO2_NBP_GRS", "D", "dodgerblue",flipdatasign=True)
@@ -703,18 +734,18 @@ class simulation_parameters():
         master_datasets["ORCHIDEE2019_GL-GL-SOC"]=dataset_parameters( "ORCHIDEE2019_GL-GL", input_filename["ORCHIDEE2019_GL-GL-SOC"], "VERIFY_BU", "FCO2_NBP_GRS", "D", "dodgerblue",flipdatasign=True)
 
         ### EPIC
-        master_datasets["EPIC2019_NBP_CRP"]=dataset_parameters( "EPIC2019_NBP_CRP", input_filename["EPIC2019_NBP_CRP"], "VERIFY_BU", "FCO2_NBP_CRO", "o", "lightcoral")
+        master_datasets["EPIC2019_NBP_CRP"]=dataset_parameters( "EPIC2019_NBP_CRP", input_filename["EPIC2019_NBP_CRP"], "VERIFY_BU", "FCO2_NBP_CRO", "o", "lightcoral",displayname="EPIC_CL")
         master_datasets["EPIC2019_RH_CRP"]=dataset_parameters( "EPIC2019_RH_CRP", input_filename["EPIC2019_RH_CRP"], "VERIFY_BU", "FCO2_RH_CRO", "o", "yellow")
         master_datasets["EPIC2019_FHARVEST_CRP"]=dataset_parameters( "EPIC2019_FHARVEST_CRP", input_filename["EPIC2019_FHARVEST_CRP"], "VERIFY_BU", "FCO2_FHARVEST_CRO", "^", "red")
         master_datasets["EPIC2019_LEECH_CRP"]=dataset_parameters( "EPIC2019_LEECH_CRP", input_filename["EPIC2019_LEECH_CRP"], "VERIFY_BU", "FCO2_CLCH_CRO", "P", "blue")
         master_datasets["EPIC2019_NPP_CRP"]=dataset_parameters( "EPIC2019_NPP_CRP", input_filename["EPIC2019_NPP_CRP"], "VERIFY_BU", "FCO2_NPP_CRO", "s", "green")
-        master_datasets["EPIC2021_NBP_CRP"]=dataset_parameters( "EPIC2021_NBP_CRP", input_filename["EPIC2021_NBP_CRP"], "VERIFY_BU", "FCO2_NBP_CRP", "X", "lightcoral")
+        master_datasets["EPIC2021_NBP_CRP"]=dataset_parameters( "EPIC2021_NBP_CRP", input_filename["EPIC2021_NBP_CRP"], "VERIFY_BU", "FCO2_NBP_CRP", "o", "lightcoral",displayname="EPICv2_CL")
         master_datasets["EPIC2021_RH_CRP"]=dataset_parameters( "EPIC2021_RH_CRP", input_filename["EPIC2021_RH_CRP"], "VERIFY_BU", "FCO2_RH_CRP", "X", "yellow")
         master_datasets["EPIC2021_FHARVEST_CRP"]=dataset_parameters( "EPIC2021_FHARVEST_CRP", input_filename["EPIC2021_FHARVEST_CRP"], "VERIFY_BU", "FCO2_HARVEST_CRP", "X", "red")
         master_datasets["EPIC2021_LEECH_CRP"]=dataset_parameters( "EPIC2021_LEECH_CRP", input_filename["EPIC2021_LEECH_CRP"], "VERIFY_BU", "FCO2_LEECH_CRP", "X", "blue")
         master_datasets["EPIC2021_NPP_CRP"]=dataset_parameters( "EPIC2021_NPP_CRP", input_filename["EPIC2021_NPP_CRP"], "VERIFY_BU", "FCO2_NPP_CRP", "X", "green")
         # Grasslands
-        master_datasets["EPIC2021_NBP_GRS"]=dataset_parameters( "EPIC2021_NBP_GRS", input_filename["EPIC2021_NBP_GRS"], "VERIFY_BU", "FCO2_NBP_GRS", "P", "lightcoral")
+        master_datasets["EPIC2021_NBP_GRS"]=dataset_parameters( "EPIC2021_NBP_GRS", input_filename["EPIC2021_NBP_GRS"], "VERIFY_BU", "FCO2_NBP_GRS", "P", "lightcoral",displayname="EPICv2_GL")
         master_datasets["EPIC2021_RH_GRS"]=dataset_parameters( "EPIC2021_RH_GRS", input_filename["EPIC2021_RH_GRS"], "VERIFY_BU", "FCO2_RH_GRS", "P", "yellow")
         master_datasets["EPIC2021_FHARVEST_GRS"]=dataset_parameters( "EPIC2021_FHARVEST_GRS", input_filename["EPIC2021_FHARVEST_GRS"], "VERIFY_BU", "FCO2_HARVEST_GRS", "P", "red")
         master_datasets["EPIC2021_LEECH_GRS"]=dataset_parameters( "EPIC2021_LEECH_GRS", input_filename["EPIC2021_LEECH_GRS"], "VERIFY_BU", "FCO2_LEECH_GRS", "P", "blue")
@@ -733,11 +764,11 @@ class simulation_parameters():
         master_datasets["CSR-VPRMValid-V2"]=dataset_parameters( "CSR-VPRMValid-V2", database_dir + "VERIFY_OUTPUT/FCO2/Tier3TD_CO2_LandFlux_JENA-REG-VPRMValid100km_bgc-jena_LAND_GL_1M_V2_20201215_Gerbig_WP3_CountryTotWithEEZEU.nc", "VERIFY_TD", "FCO2_NBP", "P", "gold")
 
         ##
-        master_datasets["BLUE2019"]=dataset_parameters( "BLUE2019", input_filename["BLUE2019"], "VERIFY_BU", "CD_A", "^", "tan",lcheck_for_mean_overlap=True)
-        master_datasets["BLUE2021_VERIFY"]=dataset_parameters( "BLUE2021_VERIFY", input_filename["BLUE2021_VERIFY"], "VERIFY_BU", "FCO2_LUTOT_FOR", "^", "tan",lcheck_for_mean_overlap=True)
-        master_datasets["BLUE2021_GCP"]=dataset_parameters( "BLUE2021_GCP", input_filename["BLUE2021_GCP"], "VERIFY_BU", "FCO2_LUTOT_FOR", "^", "gold",lcheck_for_mean_overlap=True)
-        master_datasets["H&N2019"]=dataset_parameters( "H&N2019", input_filename["H&N2019"], "NONVERIFY_BU", "FCO2_NBP_LUC", "^", "orange",lcheck_for_mean_overlap=True)
-        master_datasets["H&N2021"]=dataset_parameters( "H&N2021", input_filename["H&N2021"], "NONVERIFY_BU", "FCO2_NBP_LUC", "^", "orange",lcheck_for_mean_overlap=True)
+        master_datasets["BLUE2019"]=dataset_parameters( "BLUE2019", input_filename["BLUE2019"], "VERIFY_BU", "CD_A", "^", "tan",lcheck_for_mean_overlap=True,displayname="BLUE")
+        master_datasets["BLUE2021_VERIFY"]=dataset_parameters( "BLUE2021_VERIFY", input_filename["BLUE2021_VERIFY"], "VERIFY_BU", "FCO2_LUTOT_FOR", "^", "tan",lcheck_for_mean_overlap=True,displayname="BLUEv2-VERIFY")
+        master_datasets["BLUE2021_GCP"]=dataset_parameters( "BLUE2021_GCP", input_filename["BLUE2021_GCP"], "VERIFY_BU", "FCO2_LUTOT_FOR", "^", "gold",lcheck_for_mean_overlap=True,displayname="BLUEv2-GCP")
+        master_datasets["H&N2019"]=dataset_parameters( "H&N2019", input_filename["H&N2019"], "NONVERIFY_BU", "FCO2_NBP_LUC", "^", "orange",lcheck_for_mean_overlap=True,displayname="H&N")
+        master_datasets["H&N2021"]=dataset_parameters( "H&N2021", input_filename["H&N2021"], "NONVERIFY_BU", "FCO2_NBP_LUC", "^", "orange",lcheck_for_mean_overlap=True,displayname="H&Nv2")
         master_datasets["ORCHIDEE-MICT"]=dataset_parameters( "ORCHIDEE-MICT", database_dir + "VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_LandUseChange_ORCHIDEEMICT-SX_LSCE_LAND_EU_1M_V1_20190925_YUE_WP3_CountryTotWithOutEEZ.nc", "VERIFY_BU", "FCO2_NBP", "D", "lightsteelblue", flipdatasign=True)
         master_datasets["FAOSTAT2019_FOR_TOT"]=dataset_parameters( "FAOSTAT2019_FOR_TOT", input_filename["FAO2019"], "INVENTORY_NOERR", "FCO2_LUTOT_FOR", "o", "darkviolet")
         master_datasets["FAOSTAT2019_FOR_REM"]=dataset_parameters( "FAOSTAT2019_FOR_REM", input_filename["FAO2019"], "INVENTORY_NOERR", "FCO2_NBP_FOR", "o", "darkviolet")
@@ -745,20 +776,21 @@ class simulation_parameters():
         master_datasets["FAOSTAT2019_CRP"]=dataset_parameters( "FAOSTAT2019_CRP", input_filename["FAO2019"], "INVENTORY_NOERR", "FCO2_SOIL_CRO", "P", "darkviolet")
         master_datasets["FAOSTAT2019_GRS"]=dataset_parameters( "FAOSTAT2019_GRS", input_filename["FAO2019"], "INVENTORY_NOERR", "FCO2_SOIL_GRA", "X", "darkviolet")
 
-        master_datasets["FAOSTAT2021_FOR_TOT"]=dataset_parameters( "FAOSTAT2021_FOR_TOT", input_filename["FAO2021"], "INVENTORY_NOERR", "FCO2_NBP_FOR_TOT", "o", "darkviolet")
-        master_datasets["FAOSTAT2021_FOR_REM"]=dataset_parameters( "FAOSTAT2021_FOR_REM", input_filename["FAO2021"], "INVENTORY_NOERR", "FCO2_NBP_FOR", "o", "darkviolet")
-        master_datasets["FAOSTAT2021_FOR_CON"]=dataset_parameters( "FAOSTAT2021_FOR_CON", input_filename["FAO2021"], "INVENTORY_NOERR", "FCO2_LUC_FOR", "o", "darkviolet")
-        master_datasets["FAOSTAT2021_CRP"]=dataset_parameters( "FAOSTAT2021_CRP", input_filename["FAO2021"], "INVENTORY_NOERR", "FCO2_SOIL_CRO", "P", "darkviolet")
-        master_datasets["FAOSTAT2021_GRS"]=dataset_parameters( "FAOSTAT2021_GRS", input_filename["FAO2021"], "INVENTORY_NOERR", "FCO2_SOIL_GRA", "X", "darkviolet")
-        
+        # FOR_TOT is the total remain + convert
+        master_datasets["FAOSTAT2021_FOR_TOT"]=dataset_parameters( "FAOSTAT2021_FOR_TOT", input_filename["FAO2021"], "INVENTORY_NOERR", "FCO2_NBP_FOR_TOT", "o", "darkviolet",displayname="FAOSTATv2_FL")
+        master_datasets["FAOSTAT2021_FL-FL"]=dataset_parameters( "FAOSTAT2021_FOR_TOT", input_filename["FAO2021"], "INVENTORY_NOERR", "FCO2_NBP_FOR", "P", "darkviolet",displayname="FAOSTATv2_FL-FL")
+        master_datasets["FAOSTAT2021_FOR_CON"]=dataset_parameters( "FAOSTAT2021_FOR_CON", input_filename["FAO2021"], "INVENTORY_NOERR", "FCO2_LUC_FOR", "o", "darkviolet",displayname="FAOSTATv2_FL-con")
+        master_datasets["FAOSTAT2021_CL-CL"]=dataset_parameters( "FAOSTAT2021_CL-CL", input_filename["FAO2021"], "INVENTORY_NOERR", "FCO2_SOIL_CRO", "P", "darkviolet",displayname="FAOSTATv2_CL-CL")
+        master_datasets["FAOSTAT2021_GL-GL"]=dataset_parameters( "FAOSTAT2021_GRS", input_filename["FAO2021"], "INVENTORY_NOERR", "FCO2_SOIL_GRA", "X", "darkviolet",displayname="FAOSTATv2_GL-GL")
+
         ##
-        master_datasets["EUROCOM_Carboscope"]=dataset_parameters( "EUROCOM_Carboscope", database_dir + "OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_CarboScopeRegional_bgc-jena_LAND_EU_1M_V1_20191020_Gerbig_Grid-eurocom_CountryTotWithEEZ.nc", "REGIONAL_TD", "FCO2_NBP", "P", "khaki")
-        master_datasets["EUROCOM_Flexinvert"]=dataset_parameters( "EUROCOM_Flexinvert", database_dir + "OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_FLEXINVERT_nilu_LAND_EU_1M_V1_20191020_Thompson_Grid-eurocom_CountryTotWithEEZ.nc", "REGIONAL_TD", "FCO2_NBP", "P", "orange")
-        master_datasets["EUROCOM_Lumia"]=dataset_parameters( "EUROCOM_Lumia", database_dir + "OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_LUMIA-ORC_nateko_LAND_EU_1M_V1_20191020_Monteil_Grid-eurocom_CountryTotWithEEZ.nc", "REGIONAL_TD", "FCO2_NBP", "P", "darkorange")
-        master_datasets["EUROCOM_Chimere"]=dataset_parameters( "EUROCOM_Chimere", database_dir + "OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_CHIMERE-ORC_lsce_LAND_EU_1M_V1_20191020_Broquet_Grid-eurocom_CountryTotWithEEZ.nc", "REGIONAL_TD", "FCO2_NBP", "P", "gold")
-        master_datasets["EUROCOM_CTE"]=dataset_parameters( "EUROCOM_CTE", database_dir + "OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_CTE_wur_LAND_EU_1M_V1_20191020_Ingrid_Grid-eurocom_CountryTotWithEEZ.nc", "REGIONAL_TD", "FCO2_NBP", "P", "red")
-        master_datasets["EUROCOM_EnKF"]=dataset_parameters( "EUROCOM_EnKF", database_dir + "OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_EnKF-RAMS_vu_LAND_EU_1M_V1_20191020_Antoon_Grid-eurocom_CountryTotWithEEZ.nc", "REGIONAL_TD", "FCO2_NBP", "P", "darkred")
-        master_datasets["EUROCOM_NAME"]=dataset_parameters( "EUROCOM_NAME", database_dir + "OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_NAME-HB_bristol_LAND_EU_1M_V1_20191020_White_Grid-eurocom_CountryTotWithEEZ.nc", "REGIONAL_TD", "FCO2_NBP", "P", "magenta")
+        master_datasets["EUROCOM_Carboscope"]=dataset_parameters( "EUROCOM_Carboscope", database_dir + "OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_CarboScopeRegional_bgc-jena_LAND_EU_1M_V1_20191020_Gerbig_Grid-eurocom_CountryTotWithEEZ{}.nc".format(self.country_scope), "REGIONAL_TD", "FCO2_NBP", "P", "khaki")
+        master_datasets["EUROCOM_Flexinvert"]=dataset_parameters( "EUROCOM_Flexinvert", database_dir + "OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_FLEXINVERT_nilu_LAND_EU_1M_V1_20191020_Thompson_Grid-eurocom_CountryTotWithEEZ{}.nc".format(self.country_scope), "REGIONAL_TD", "FCO2_NBP", "P", "orange")
+        master_datasets["EUROCOM_Lumia"]=dataset_parameters( "EUROCOM_Lumia", database_dir + "OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_LUMIA-ORC_nateko_LAND_EU_1M_V1_20191020_Monteil_Grid-eurocom_CountryTotWithEEZ{}.nc".format(self.country_scope), "REGIONAL_TD", "FCO2_NBP", "P", "darkorange")
+        master_datasets["EUROCOM_Chimere"]=dataset_parameters( "EUROCOM_Chimere", database_dir + "OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_CHIMERE-ORC_lsce_LAND_EU_1M_V1_20191020_Broquet_Grid-eurocom_CountryTotWithEEZ{}.nc".format(self.country_scope), "REGIONAL_TD", "FCO2_NBP", "P", "gold")
+        master_datasets["EUROCOM_CTE"]=dataset_parameters( "EUROCOM_CTE", database_dir + "OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_CTE_wur_LAND_EU_1M_V1_20191020_Ingrid_Grid-eurocom_CountryTotWithEEZ{}.nc".format(self.country_scope), "REGIONAL_TD", "FCO2_NBP", "P", "red")
+        master_datasets["EUROCOM_EnKF"]=dataset_parameters( "EUROCOM_EnKF", database_dir + "OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_EnKF-RAMS_vu_LAND_EU_1M_V1_20191020_Antoon_Grid-eurocom_CountryTotWithEEZ{}.nc".format(self.country_scope), "REGIONAL_TD", "FCO2_NBP", "P", "darkred")
+        master_datasets["EUROCOM_NAME"]=dataset_parameters( "EUROCOM_NAME", database_dir + "OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_NAME-HB_bristol_LAND_EU_1M_V1_20191020_White_Grid-eurocom_CountryTotWithEEZ{}.nc".format(self.country_scope), "REGIONAL_TD", "FCO2_NBP", "P", "magenta")
         master_datasets["EUROCOM_ALL_2019"]=dataset_parameters( "EUROCOM_ALL_2019", database_dir + "OTHER_PROJECTS/FCO2/EUROCOM/Tier3TD_CO2_LandFlux_AllEUROCOMInversions_XXX_LAND_GL_1M_V1_202003021_McGrath_WP3_CountryTotWithEEZ{}.nc".format(self.country_scope), "MINMAX", "FCO2_NBP", "P", "blue")
         ##
         master_datasets["EUROCOM_ALL_2020"]=dataset_parameters( "EUROCOM_ALL_2020", input_filename["EUROCOM_ALL_2020"], "MINMAX", "FCO2_NBP", "P", "blue",flipdatasign=True)
@@ -766,6 +798,16 @@ class simulation_parameters():
         master_datasets["EUROCOM_Lumia_V2"]=dataset_parameters( "EUROCOM_Lumia_V2", "/home/orchidee03/mmcgrath/RUNDIR/SPATIAL_PLOTS/SAVED/EUROCOMLUMIAall-NEE_2009-01-01_2018-12-31_0f5_33.0000Nx73.0000Nx15.0000Wx35.0000E_CountryTotWithEEZ{}.nc".format(self.country_scope), "REGIONAL_TD", "FCO2_NBP", "x", "darkorange",flipdatasign=True)
         master_datasets["EUROCOM_PYVAR_V2"]=dataset_parameters( "EUROCOM_PYVAR_V2", "/home/orchidee03/mmcgrath/RUNDIR/SPATIAL_PLOTS/SAVED/EUROCOMPYVARall-NEE_2009-01-01_2018-12-31_0f5_33.0000Nx73.0000Nx15.0000Wx35.0000E_CountryTotWithEEZ{}.nc".format(self.country_scope), "REGIONAL_TD", "FCO2_NBP", "o", "gold",flipdatasign=True)
         master_datasets["EUROCOM_CSR_V2"]=dataset_parameters( "EUROCOM_CSR_V2", "/home/orchidee03/mmcgrath/RUNDIR/SPATIAL_PLOTS/SAVED/CSR-NEE_2009-01-01_2018-12-31_0f5_33.0000Nx73.0000Nx15.0000Wx35.0000E_CountryTotWithEEZ{}.nc".format(self.country_scope), "REGIONAL_TD", "FCO2_NBP", "s", "red",flipdatasign=True)
+
+        # LUMIA inversions
+        master_datasets["LUMIA-COMBINED-v2021"]=dataset_parameters( "LUMIA-COMBINED-v2021", input_filename["LUMIA-COMBINED-v2021"], "MINMAX", "FCO2_NBP", "s", "red",flipdatasign=False)
+        master_datasets["LUMIA-REF-v2021"]=dataset_parameters( "LUMIA-REF-v2021", input_filename["LUMIA-REF-v2021"], "REGIONAL_TD", "FCO2_NBP", "P", "orange",flipdatasign=False)
+        master_datasets["LUMIA-Cor200km-v2021"]=dataset_parameters( "LUMIA-Cor200km-v2021", input_filename["LUMIA-Cor200km-v2021"], "REGIONAL_TD", "FCO2_NBP", "x", "darkorange",flipdatasign=False)
+        master_datasets["LUMIA-CoreSites-v2021"]=dataset_parameters( "LUMIA-CoreSites-v2021", input_filename["LUMIA-CoreSites-v2021"], "REGIONAL_TD", "FCO2_NBP", "o", "gold",flipdatasign=False)
+        master_datasets["LUMIA-AlterBG-v2021"]=dataset_parameters( "LUMIA-AlterBG-v2021", input_filename["LUMIA-AlterBG-v2021"], "REGIONAL_TD", "FCO2_NBP", "s", "red",flipdatasign=False)
+
+
+
 
         # All the ECOSSE variables
         master_datasets["ECOSSE2019_CL-CL"]=dataset_parameters( "ECOSSE2019_CL-CL", input_filename["ECOSSE2019_CL-CL"], "VERIFY_BU", "FCO2_NBP_CRO", "o", "darkred")
@@ -802,7 +844,8 @@ class simulation_parameters():
 
         #########################################
 
-        master_datasets["EFISCEN-Space"]=dataset_parameters( "EFISCEN-Space", database_dir + "VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_treeNEP_EFISCEN-Space-SX_WENR_FOR_EU_1M_V1_20190716_SCHELHAAS_WP3_CountryTotWithOutEEZ.nc", "VERIFY_BU", "FCO2_NBP_FOR", "o", "magenta", flipdatasign=True)
+        master_datasets["EFISCEN-Spacev2019"]=dataset_parameters( "EFISCEN-Space", database_dir + "VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_treeNEP_EFISCEN-Space-SX_WENR_FOR_EU_1M_V1_20190716_SCHELHAAS_WP3_CountryTotWithEEZ{}.nc".format(self.country_scope), "VERIFY_BU", "FCO2_NBP_FOR", "o", "magenta", flipdatasign=True)
+        master_datasets["EFISCEN-Spacev2021"]=dataset_parameters( "EFISCEN-Space", database_dir + "VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_ForestFluxes_EFISCENSpace-SX_WENR_FOR_EU_1M_V3_20211217_SCHELHAAS_WP3_CountryTotWithEEZ{}.nc".format(self.country_scope), "VERIFY_BU", "FCO2_NBP_FOR", "o", "magenta", flipdatasign=True)
         master_datasets["UNFCCC2019_FL-FL"]=dataset_parameters( "UNFCCC2019_FL-FL", database_dir + "OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_ForestRemain_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTotWithOutEEZ{}.nc".format(self.country_scope), "INVENTORY", "FCO2_NBP", "_", "green",displayname="UNFCCC FL-FL NGHGI (2019)")
         master_datasets["UNFCCC2019_GL-GL"]=dataset_parameters( "UNFCCC2019_GL-GL", input_filename["UNFCCC2019_GL-GL"], "INVENTORY", "FCO2_NBP", "_", "brown",displayname="UNFCCC GL-GL NGHGI (2019)")
         master_datasets["UNFCCC2019_CL-CL"]=dataset_parameters( "UNFCCC2019_CL-CL", database_dir + "OTHER_PROJECTS/FCO2/INVENTORIES/UNFCCC/Tier1_CO2_CroplandRemain_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_CountryTotWithOutEEZ{}.nc".format(self.country_scope), "INVENTORY", "FCO2_NBP", "_", "gold",displayname="UNFCCC CL-CL NGHGI (2019)")
@@ -813,8 +856,8 @@ class simulation_parameters():
         master_datasets["EFISCEN_NEE"]=dataset_parameters( "EFISCEN_NEE", database_dir + "OTHER_PROJECTS/FCO2/EFISCEN/Tier3BUDD_CO2_TreesLUH2v2_EFISCEN-SX_WENR_FOR_EU_1M_V1_20191212_SCHELHAAS_WPX_CountryTotWithOutEEZ.nc", "NONVERIFY_BU", "FCO2_NEE_FOR", "o", "blue", flipdatasign=True)
         master_datasets["EFISCEN-unscaled"]=dataset_parameters( "EFISCEN-unscaled", database_dir + "OTHER_PROJECTS/FCO2/EFISCEN/Tier3BUDD_CO2_Trees_EFISCEN-SX_WENR_FOR_EU_1M_V1_20191212_SCHELHAAS_WPX_CountryTotWithOutEEZ.nc", "NONVERIFY_BU", "FCO2_NBP_FOR", "o", "magenta", flipdatasign=True)
         master_datasets["CBM2019"]=dataset_parameters( "CBM2019", database_dir + "OTHER_PROJECTS/FCO2/CBM/Tier3BUDD_CO2_NBP_CBM-SX_JRC_FOR_EU_1Y_V1_20191212_PETRESCU_WPX_CountryTotWithOutEEZMaster.nc", "NONVERIFY_BU", "FCO2_NBP", "o", "crimson", flipdatasign=True,lcheck_for_mean_overlap=True)
-        master_datasets["CBM2021historical"]=dataset_parameters( "CBM2021historical", database_dir + "OTHER_PROJECTS/FCO2/CBM/Tier3BUDD_CO2_ForestFluxes_CBM-SX_JRC_FOR_EU_1M_V3_20211110_VIZZARRI_WPX_CountryTotWithOutEEZ{}.nc".format(self.country_scope), "NONVERIFY_BU", "FCO2_NBP_FOR", "o", "crimson", flipdatasign=True,lcheck_for_mean_overlap=True)
-        master_datasets["CBM2021simulated"]=dataset_parameters( "CBM2021simulated", database_dir + "OTHER_PROJECTS/FCO2/CBM/Tier3BUDD_CO2_ForestFluxesSimulated_CBM-SX_JRC_FOR_EU_1M_V3_20211110_VIZZARRI_WPX_CountryTotWithOutEEZMaster.nc", "NONVERIFY_BU", "FCO2_NBP_FOR", "X", "crimson", flipdatasign=True,lcheck_for_mean_overlap=True)
+        master_datasets["CBM2021historical"]=dataset_parameters( "CBM2021historical", database_dir + "OTHER_PROJECTS/FCO2/CBM/Tier3BUDD_CO2_ForestFluxes_CBM-SX_JRC_FOR_EU_1M_V3_20211110_VIZZARRI_WPX_CountryTotWithOutEEZ{}.nc".format(self.country_scope), "NONVERIFY_BU", "FCO2_NBP_FOR", "o", "crimson", flipdatasign=True,lcheck_for_mean_overlap=True,displayname="CBMv2his_FL-FL")
+        master_datasets["CBM2021simulated"]=dataset_parameters( "CBM2021simulated", database_dir + "OTHER_PROJECTS/FCO2/CBM/Tier3BUDD_CO2_ForestFluxesSimulated_CBM-SX_JRC_FOR_EU_1M_V3_20211110_VIZZARRI_WPX_CountryTotWithOutEEZMaster.nc", "NONVERIFY_BU", "FCO2_NBP_FOR", "X", "crimson", flipdatasign=True,lcheck_for_mean_overlap=True,displayname="CBMv2sim_FL-FL")
         # This is only a single year, so calculating the overlap will not work.
         master_datasets["CBM2021simulateddrop"]=dataset_parameters( "CBM2021simulateddrop", "/home/orchidee03/mmcgrath/TEST_DATABASE/Tier3BUDD_CO2_ForestFluxesSimulatedDrop_CBM-SX_JRC_FOR_EU_1M_V3_20211110_VIZZARRI_WPX_CountryTotWithOutEEZMaster.nc", "NONVERIFY_BU", "FCO2_NBP_FOR", "X", "lightblue", flipdatasign=True,lcheck_for_mean_overlap=False)
         master_datasets["FLUXCOM_rsonlyRF_os"]=dataset_parameters( "FLUXCOM_rsonlyRF_os", database_dir + "VERIFY_OUTPUT/FCO2/Tier3BUDD_CO2_LandFlux_Fluxcom-RFmissLUH2v2_bgc-jena_LAND_GL_1M_V1_20191020_Jung_WP3_CountryTotWithOutEEZ.nc", "VERIFY_BU", "FCO2_NEP", "s", "yellowgreen")
@@ -870,7 +913,9 @@ class simulation_parameters():
         #### GCP 2021
         master_datasets["GCP2021_ALL"]=dataset_parameters( "GCP2021_ALL", input_filename["GCP2021_ALL"], "MINMAX", "FCO2_NBP", "s", "red")
         master_datasets["GCP2021_COMMON"]=dataset_parameters( "GCP2021_COMMON", input_filename["GCP2021_COMMON"], "MINMAX", "FCO2_NBP", "s", "red")
+        master_datasets["GCP2021_NOCAMS"]=dataset_parameters( "GCP2021_NOCAMS", input_filename["GCP2021_NOCAMS"], "MINMAX", "FCO2_NBP", "s", "red")
         master_datasets["GCP2021_CAMS"]=dataset_parameters( "GCP2021_CAMS", input_filename["GCP2021_CAMS"], "GLOBAL_TD", "FCO2_NBP", "h", "black")
+        master_datasets["GCP2021_CAMSnoEEZ"]=dataset_parameters( "GCP2021_CAMSnoEEZ", input_filename["GCP2021_CAMSnoEEZ"], "GLOBAL_TD", "FCO2_NBP", "h", "blue")
         #master_datasets["GCP2021_CMS"]=dataset_parameters( "GCP2021_CMS", input_filename["GCP2021_CMS"], "GLOBAL_TD", "FCO2_NBP", "D", cb_orange)
         master_datasets["GCP2021_CTRACKER"]=dataset_parameters( "GCP2021_CTRACKER", input_filename["GCP2021_CTRACKER"], "GLOBAL_TD", "FCO2_NBP", "P", "black")
         master_datasets["GCP2021_JENA-s99"]=dataset_parameters( "GCP2021_JENA-s99", input_filename["GCP2021_JENA-s99"], "GLOBAL_TD", "FCO2_NBP", "o", "black")
@@ -896,7 +941,6 @@ class simulation_parameters():
         ##
 
         master_datasets["FAOSTAT2019_FL-FL"]=dataset_parameters( "FAOSTAT2019_FL-FL", input_filename["FAO2019"], "INVENTORY_NOERR", "FCO2_NBP_FOR", "P", "darkviolet",lcheck_for_mean_overlap=True)
-        master_datasets["FAOSTAT2021_FL-FL"]=dataset_parameters( "FAOSTAT2021_FL-FL", input_filename["FAO2021"], "INVENTORY_NOERR", "FCO2_NBP_FOR", "P", "darkviolet",lcheck_for_mean_overlap=True)
 
         master_datasets["VERIFYBU"]=dataset_parameters( "VERIFYBU", database_dir + "VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ{}.nc".format(self.country_scope), "VERIFY_BU", "FCO2_NBP", "D", "yellow")
         master_datasets["ORCHIDEE_LUC"]=dataset_parameters( "ORCHIDEE_LUC", database_dir + "VERIFY_OUTPUT/FCO2/Tier3BUPB_CO2_CarbonCycle_ORCHIDEE-S3_LSCE_LAND_EU_1M_V0_20190910_MCGRATH_WP3_CountryTotWithOutEEZ{}.nc".format(self.country_scope), "VERIFY_BU", "FCO2_NBP", "D", "sandybrown")
@@ -934,18 +978,19 @@ class simulation_parameters():
         master_datasets['UNFCCC2021_LULUCF'].displayname='UNFCCC LULUCF NGHGI (2021)'
         master_datasets['UNFCCC2021_LULUCF'].displayname_err='UNFCCC LULUCF NGHGI (2021) uncertainty'
         master_datasets['UNFCCC2019_FL-FL'].displayname='UNFCCC FL-FL NGHGI (2019)'
-        master_datasets['UNFCCC2019_FL-FL'].displayname_err='UNFCCC FL-FL NGHGI uncertainty'
+        master_datasets['UNFCCC2019_FL-FL'].displayname_err='UNFCCC FL-FL NGHGI uncertainty (2019)'
         master_datasets['UNFCCC2021_FL-FL'].displayname='UNFCCC FL-FL NGHGI (2021)'
-        master_datasets['UNFCCC2021_FL-FL'].displayname_err='UNFCCC FL-FL NGHGI uncertainty'
+        master_datasets['UNFCCC2021_FL-FL'].displayname_err='UNFCCC FL-FL NGHGI uncertainty (2021)'
         master_datasets['UNFCCC2019_GL-GL'].displayname='UNFCCC GL-GL NGHGI (2019)'
-        master_datasets['UNFCCC2019_GL-GL'].displayname_err='UNFCCC GL-GL NGHGI uncertainty'
+        master_datasets['UNFCCC2019_GL-GL'].displayname_err='UNFCCC GL-GL NGHGI uncertainty (2019)'
         master_datasets['UNFCCC2019_CL-CL'].displayname='UNFCCC CL-CL NGHGI (2019)'
-        master_datasets['UNFCCC2019_CL-CL'].displayname_err='UNFCCC CL-CL NGHGI uncertainty'
+        master_datasets['UNFCCC2019_CL-CL'].displayname_err='UNFCCC CL-CL NGHGI uncertainty (2019)'
         master_datasets['UNFCCC2021_CL-CL'].displayname='UNFCCC CL-CL NGHGI (2021)'
-        master_datasets['UNFCCC2021_CL-CL'].displayname_err='UNFCCC CL-CL NGHGI uncertainty'
+        master_datasets['UNFCCC2021_CL-CL'].displayname_err='UNFCCC CL-CL NGHGI uncertainty (2021)'
         master_datasets['UNFCCC2021_GL-GL'].displayname='UNFCCC GL-GL NGHGI (2021)'
-        master_datasets['UNFCCC2021_GL-GL'].displayname_err='UNFCCC GL-GL NGHGI uncertainty'
-        master_datasets['FAOSTAT2019_LULUCF'].displayname='FAOSTAT2019_LULUCF'
+        master_datasets['UNFCCC2021_GL-GL'].displayname_err='UNFCCC GL-GL NGHGI uncertainty (2021)'
+        master_datasets['FAOSTAT2019_LULUCF'].displayname='FAOSTAT_LULUCF'
+        master_datasets['FAOSTAT2021_LULUCF'].displayname='FAOSTATv2_LULUCF'
         master_datasets['CSR-COMBINED-2019'].displayname='Mean of CarboScopeReg'
         master_datasets['CSR-COMBINED-2019'].displayname_err='Min/Max of CarboScopeReg'
         master_datasets['CSR-COMBINED-2020'].displayname='Mean of CarboScopeReg V2'
@@ -1009,7 +1054,7 @@ class simulation_parameters():
                                   'MS-NRT', \
                                   'ORCHIDEE-MICT', \
                                   'ORCHIDEE_LUC', \
-                                  "ORCHIDEE-S3-V0", \
+                                  "ORCHIDEE-S3-V2019", \
                                   'ORCHIDEE_S2', \
                               ]   
             self.output_file_start="LUC_"
@@ -1020,12 +1065,12 @@ class simulation_parameters():
             master_datasets['BLUE2019'].facec='blue'
             master_datasets['H&N2019'].facec='green'
             master_datasets['ORCHIDEE-MICT'].facec='red'
-            master_datasets["ORCHIDEE-S3-V0"].facec='blue'
+            master_datasets["ORCHIDEE-S3-V2019"].facec='blue'
             
             master_datasets['BLUE2019'].plotmarker='^'
             master_datasets['H&N2019'].plotmarker='^'
             master_datasets['ORCHIDEE-MICT'].plotmarker='X'
-            master_datasets["ORCHIDEE-S3-V0"].plotmarker='X'
+            master_datasets["ORCHIDEE-S3-V2019"].plotmarker='X'
             
             # These simulations will be combined together.
             self.overwrite_simulations["UNFCCC_LUC"]=['UNFCCC2019_forest_convert', \
@@ -1043,7 +1088,7 @@ class simulation_parameters():
                                             1.0, \
                                             1.0, \
                                         ]
-            self.overwrite_simulations["ORCHIDEE_LUC"]=["ORCHIDEE-S3-V0", \
+            self.overwrite_simulations["ORCHIDEE_LUC"]=["ORCHIDEE-S3-V2019", \
                                                    'ORCHIDEE_S2', \
                                                ]
             self.overwrite_operations["ORCHIDEE_LUC"]="sum"
@@ -1059,7 +1104,7 @@ class simulation_parameters():
             master_datasets['UNFCCC2019_wetland_convert'].displaylegend=False
             master_datasets['UNFCCC2019_settlement_convert'].displaylegend=False
             master_datasets['UNFCCC2019_other_convert'].displaylegend=False
-            master_datasets["ORCHIDEE-S3-V0"].displaylegend=False
+            master_datasets["ORCHIDEE-S3-V2019"].displaylegend=False
             master_datasets['ORCHIDEE_S2'].displaylegend=False
             
             
@@ -1069,8 +1114,8 @@ class simulation_parameters():
             
         elif self.graphname == "all_orchidee":
             self.desired_simulations=[ \
-#                                  'ORCHIDEE-S3-V0', \
-#                                  'ORCHIDEE-S3-V1', \
+#                                  'ORCHIDEE-S3-V2019', \
+#                                  'ORCHIDEE-S3-V2020', \
 #                                  'ORCHIDEEv3-S3-V2', \
 #                                  "TrendyV7_ORCHIDEE",\
 #                                  "TrendyV9_ORCHIDEE",\
@@ -1084,10 +1129,10 @@ class simulation_parameters():
             self.titleending=r" : CO$_2$ emissions from all ORCHIDEE simulations"
             
             # Change some colors and symbols here
-            master_datasets['ORCHIDEE-S3-V0'].facec='blue'
-            master_datasets['ORCHIDEE-S3-V0'].plotmarker='o'
-            master_datasets['ORCHIDEE-S3-V1'].facec='red'
-            master_datasets['ORCHIDEE-S3-V1'].plotmarker='o'
+            master_datasets['ORCHIDEE-S3-V2019'].facec='blue'
+            master_datasets['ORCHIDEE-S3-V2019'].plotmarker='o'
+            master_datasets['ORCHIDEE-S3-V2020'].facec='red'
+            master_datasets['ORCHIDEE-S3-V2020'].plotmarker='o'
             master_datasets['ORCHIDEEv3-S3-V2'].plotmarker='o'
             master_datasets['ORCHIDEEv3-S3-V2'].facec='green'
             
@@ -1118,7 +1163,7 @@ class simulation_parameters():
                                   'H&N2019', \
                                   'MS-NRT', \
                                   'ORCHIDEE-MICT', \
-                                  "ORCHIDEE-S3-V0", \
+                                  "ORCHIDEE-S3-V2019", \
                               ]   
             self.output_file_start="LUCF_"
             self.output_file_end="_FCO2land_2019_v1.png" 
@@ -1128,12 +1173,12 @@ class simulation_parameters():
             master_datasets['BLUE2019'].facec='blue'
             master_datasets['H&N2019'].facec='green'
             master_datasets['ORCHIDEE-MICT'].facec='red'
-            master_datasets["ORCHIDEE-S3-V0"].facec='blue'
+            master_datasets["ORCHIDEE-S3-V2019"].facec='blue'
             
             master_datasets['BLUE2019'].plotmarker='^'
             master_datasets['H&N2019'].plotmarker='^'
             master_datasets['ORCHIDEE-MICT'].plotmarker='X'
-            master_datasets["ORCHIDEE-S3-V0"].plotmarker='X'
+            master_datasets["ORCHIDEE-S3-V2019"].plotmarker='X'
             
             # These simulations will be combined together.
             self.overwrite_simulations["UNFCCC_LUCF"]=['UNFCCC2019_forest_convert', \
@@ -1231,7 +1276,7 @@ class simulation_parameters():
                                   'H&N2019', \
                                   'MS-NRT', \
                                   'ORCHIDEE-MICT', \
-                                  "ORCHIDEE-S3-V0", \
+                                  "ORCHIDEE-S3-V2019", \
                                   'FAOSTAT2019_LULUCF', \
                                   'FAOSTAT2019_CRP', \
                                   'FAOSTAT2019_GRS', \
@@ -1258,8 +1303,8 @@ class simulation_parameters():
                                   'H&N2019', \
                                   'MS-NRT', \
                                   #'ORCHIDEE-MICT', \
-                                  #"ORCHIDEE-S3-V0", \
-                                  'ORCHIDEE-S3-V0', \
+                                  #"ORCHIDEE-S3-V2019", \
+                                  'ORCHIDEE-S3-V2019', \
                                   'FAOSTAT2019_LULUCF', \
                                   'FAOSTAT2019_CRP', \
                                   'FAOSTAT2019_GRS', \
@@ -1275,7 +1320,7 @@ class simulation_parameters():
                             master_datasets["BLUE2019"].displayname,\
                             master_datasets["H&N2019"].displayname,\
                             master_datasets["TrendyV7_ENSEMBLE"].displayname, master_datasets["TrendyV7_ENSEMBLE"].displayname_err, \
-                            master_datasets["ORCHIDEE-S3-V0"].displayname,\
+                            master_datasets["ORCHIDEE-S3-V2019"].displayname,\
                         ]
             self.output_file_start="LULUCFTrendy_"
             self.output_file_end="_FCO2land_2019_v1.png" 
@@ -1294,7 +1339,7 @@ class simulation_parameters():
             # Change some colors and symbols here
             master_datasets["FAOSTAT2019_LULUCF"].facec="yellow"
             master_datasets['FAOSTAT2019_LULUCF'].plotmarker='^'
-            master_datasets["ORCHIDEE-S3-V0"].facec="black"
+            master_datasets["ORCHIDEE-S3-V2019"].facec="black"
             master_datasets["TrendyV7_ORCHIDEE"].facec="none"
             master_datasets["TrendyV7_ORCHIDEE"].edgec="dimgrey"
             
@@ -1305,6 +1350,13 @@ class simulation_parameters():
             self.panel_ratios=[1.0,1.0/1.9]
             self.igrid_legend=1
 
+            self.lexternal_y=True
+            self.ymin_external=-540.0
+            self.ymax_external=390.0
+            if self.lexternal_y:
+                self.lharmonize_y=True
+            #endif
+
         elif self.graphname == "lulucftrendy_2021":
             self.desired_simulations=[ \
                                   # we read in data for LUC, but we replace it with the sectors below
@@ -1314,11 +1366,11 @@ class simulation_parameters():
                                   'H&N2021', \
 #                                  'MS-NRT', \
                                   #'ORCHIDEE-MICT', \
-                                  #"ORCHIDEE-S3-V0", \
-                                  'ORCHIDEE-S3-V1', \
+                                  #"ORCHIDEE-S3-V2019", \
+                                  'ORCHIDEE-S3-V2020', \
                                   'FAOSTAT2021_LULUCF', \
-                                  'FAOSTAT2021_CRP', \
-                                  'FAOSTAT2021_GRS', \
+                                  'FAOSTAT2021_CL-CL', \
+                                  'FAOSTAT2021_GL-GL', \
                                   'FAOSTAT2021_FOR_TOT', \
                                   "TrendyV10_ENSEMBLE", \
                               ]  
@@ -1333,7 +1385,7 @@ class simulation_parameters():
                             master_datasets["H&N2021"].displayname,\
                             master_datasets["TrendyV10_ENSEMBLE"].displayname, master_datasets["TrendyV10_ENSEMBLE"].displayname_err, \
 #                            master_datasets["TrendyV7_ENSEMBLE"].displayname, master_datasets["TrendyV7_ENSEMBLE"].displayname_err, \
-                            master_datasets["ORCHIDEE-S3-V1"].displayname,\
+                            master_datasets["ORCHIDEE-S3-V2020"].displayname,\
                             #master_datasets["ORCHIDEE-MICT"].displayname,\
                             #master_datasets["TrendyV7_ORCHIDEE"].displayname,\
                         ]
@@ -1346,10 +1398,10 @@ class simulation_parameters():
             self.titleending=r" : Net bottom-up CO$_2$land fluxes from land use, land use change, and forestry (LULUCF)"
             
             # These simulations will be combined together.
-            self.overwrite_simulations["FAOSTAT2021_LULUCF"]=['FAOSTAT2021_CRP','FAOSTAT2021_GRS','FAOSTAT2021_FOR_TOT']
+            self.overwrite_simulations["FAOSTAT2021_LULUCF"]=['FAOSTAT2021_CL-CL','FAOSTAT2021_GL-GL','FAOSTAT2021_FOR_TOT']
             # So I don't want to generally plot the components
-            master_datasets['FAOSTAT2021_CRP'].displaylegend=False
-            master_datasets['FAOSTAT2021_GRS'].displaylegend=False
+            master_datasets['FAOSTAT2021_CL-CL'].displaylegend=False
+            master_datasets['FAOSTAT2021_GL-GL'].displaylegend=False
             master_datasets['FAOSTAT2021_FOR_TOT'].displaylegend=False
             self.overwrite_operations["FAOSTAT2021_LULUCF"]="sum"
             self.overwrite_coeffs["FAOSTAT2021_LULUCF"]=[1.0,1.0,1.0]
@@ -1357,7 +1409,7 @@ class simulation_parameters():
             # Change some colors and symbols here
             master_datasets["FAOSTAT2021_LULUCF"].facec="yellow"
             master_datasets['FAOSTAT2021_LULUCF'].plotmarker='^'
-            master_datasets["ORCHIDEE-S3-V1"].facec="black"
+            master_datasets["ORCHIDEE-S3-V2020"].facec="black"
             
             # Plot these as bars
             master_datasets["TrendyV10_ENSEMBLE"].lplot_errorbar=True
@@ -1366,12 +1418,19 @@ class simulation_parameters():
             self.panel_ratios=[1.0,1.0/1.9]
             self.igrid_legend=1
 
+            self.lexternal_y=True
+            self.ymin_external=-540.0
+            self.ymax_external=390.0
+            if self.lexternal_y:
+                self.lharmonize_y=True
+            #endif
+
         elif self.graphname == "orc_trendy":
             self.desired_simulations=[ \
                                   # we read in data for LUC, but we replace it with the sectors below
                                   'UNFCCC2019_LULUCF', \
                                   'MS-NRT', \
-                                  "ORCHIDEE-S3-V0", \
+                                  "ORCHIDEE-S3-V2019", \
                                   'FAOSTAT2019_LULUCF', \
                                   'FAOSTAT2019_CRP', \
                                   'FAOSTAT2019_GRS', \
@@ -1380,7 +1439,7 @@ class simulation_parameters():
                                   "TrendyV7_ORCHIDEE",\
                               ]  
             
-            master_datasets["ORCHIDEE-S3-V0"]="ORCHIDEE-VERIFY"
+            master_datasets["ORCHIDEE-S3-V2019"]="ORCHIDEE-VERIFY"
             self.desired_legend=[\
                             master_datasets["FAOSTAT2019_LULUCF"].displayname,\
                             master_datasets["UNFCCC2019_LULUCF"].displayname,master_datasets["UNFCCC2019_LULUCF"].displayname_err,\
@@ -1388,7 +1447,7 @@ class simulation_parameters():
                             
                             master_datasets["TrendyV7_ENSEMBLE"].displayname, master_datasets["TrendyV7_ENSEMBLE"].displayname_err, \
                             master_datasets["TrendyV7_ORCHIDEE"].displayname,\
-                            master_datasets["ORCHIDEE-S3-V0"].displayname,\
+                            master_datasets["ORCHIDEE-S3-V2019"].displayname,\
                         ]
             self.output_file_start="LULUCFOrcTrendy_"
             self.output_file_end="_FCO2land_2019_v1.png" 
@@ -1406,7 +1465,7 @@ class simulation_parameters():
             # Change some colors and symbols here
             master_datasets["FAOSTAT2019_LULUCF"].facec="yellow"
             master_datasets['FAOSTAT2019_LULUCF'].plotmarker='^'
-            master_datasets["ORCHIDEE-S3-V0"].facec="black"
+            master_datasets["ORCHIDEE-S3-V2019"].facec="black"
             master_datasets["ORCHIDEE-MICT"].facec="none"
             master_datasets["TrendyV7_ORCHIDEE"].facec="none"
             master_datasets["TrendyV7_ORCHIDEE"].edgec="dimgrey"
@@ -1454,7 +1513,7 @@ class simulation_parameters():
             # Change some colors and symbols here
             master_datasets["FAOSTAT2019_LULUCF"].facec="yellow"
             master_datasets['FAOSTAT2019_LULUCF'].plotmarker='^'
-            master_datasets["ORCHIDEE-S3-V0"].facec="black"
+            master_datasets["ORCHIDEE-S3-V2019"].facec="black"
             master_datasets["ORCHIDEE-MICT"].facec="none"
             master_datasets["TrendyV7_ORCHIDEE"].facec="none"
             master_datasets["TrendyV7_ORCHIDEE"].edgec="dimgrey"
@@ -1498,7 +1557,7 @@ class simulation_parameters():
             # Change some colors and symbols here
             master_datasets["FAOSTAT2019_LULUCF"].facec="yellow"
             master_datasets['FAOSTAT2019_LULUCF'].plotmarker='^'
-            master_datasets["ORCHIDEE-S3-V0"].facec="black"
+            master_datasets["ORCHIDEE-S3-V2019"].facec="black"
             master_datasets["ORCHIDEE-MICT"].facec="none"
             master_datasets["TrendyV7_ORCHIDEE"].facec="none"
             master_datasets["TrendyV7_ORCHIDEE"].edgec="dimgrey"
@@ -1517,8 +1576,8 @@ class simulation_parameters():
                                   'FAOSTAT2019_GRS', \
                                   'FAOSTAT2019_FOR_TOT', \
                                   'FAOSTAT2021_LULUCF', \
-                                  'FAOSTAT2021_CRP', \
-                                  'FAOSTAT2021_GRS', \
+                                  'FAOSTAT2021_CL-CL', \
+                                  'FAOSTAT2021_GL-GL', \
                                   'FAOSTAT2021_FOR_TOT', \
                              ]  
             
@@ -1535,10 +1594,10 @@ class simulation_parameters():
             self.overwrite_operations["FAOSTAT2019_LULUCF"]="sum"
             self.overwrite_coeffs["FAOSTAT2019_LULUCF"]=[1.0,1.0,1.0]
             
-            self.overwrite_simulations["FAOSTAT2021_LULUCF"]=['FAOSTAT2021_CRP','FAOSTAT2021_GRS','FAOSTAT2021_FOR_TOT']
+            self.overwrite_simulations["FAOSTAT2021_LULUCF"]=['FAOSTAT2021_CL-CL','FAOSTAT2021_GL-GL','FAOSTAT2021_FOR_TOT']
             # So I don't want to generally plot the components
-            master_datasets['FAOSTAT2021_CRP'].displaylegend=False
-            master_datasets['FAOSTAT2021_GRS'].displaylegend=False
+            master_datasets['FAOSTAT2021_CL-CL'].displaylegend=False
+            master_datasets['FAOSTAT2021_GL-GL'].displaylegend=False
             master_datasets['FAOSTAT2021_FOR_TOT'].displaylegend=False
             self.overwrite_operations["FAOSTAT2021_LULUCF"]="sum"
             self.overwrite_coeffs["FAOSTAT2021_LULUCF"]=[1.0,1.0,1.0]
@@ -1602,8 +1661,8 @@ class simulation_parameters():
                                   'FAOSTAT2019_GRS', \
 #                                  'FAOSTAT2020_CRP', \
 #                                  'FAOSTAT2020_GRS', \
-                                  'FAOSTAT2021_CRP', \
-                                  'FAOSTAT2021_GRS', \
+                                  'FAOSTAT2021_CL-CL', \
+                                  'FAOSTAT2021_GL-GL', \
                              ]  
             
             self.output_file_start="FAOCrpGrsComparison_"
@@ -1619,10 +1678,10 @@ class simulation_parameters():
 #            master_datasets['FAOSTAT2020_CRP'].plotmarker='o'
 #            master_datasets["FAOSTAT2020_GRS"].facec="green"
 #            master_datasets['FAOSTAT2020_GRS'].plotmarker='o'
-            master_datasets["FAOSTAT2021_CRP"].facec="red"
-            master_datasets['FAOSTAT2021_CRP'].plotmarker='X'
-            master_datasets["FAOSTAT2021_GRS"].facec="green"
-            master_datasets['FAOSTAT2021_GRS'].plotmarker='X'
+            master_datasets["FAOSTAT2021_CL-CL"].facec="red"
+            master_datasets['FAOSTAT2021_CL-CL'].plotmarker='X'
+            master_datasets["FAOSTAT2021_GL-GL"].facec="green"
+            master_datasets['FAOSTAT2021_GL-GL'].plotmarker='X'
             
         elif self.graphname == "cbm":
             self.desired_simulations=[ \
@@ -1649,7 +1708,7 @@ class simulation_parameters():
 
         elif self.graphname == "sectorplot_full":
             self.desired_simulations=[ \
-                                  "ORCHIDEE-S3-V0", \
+                                  "ORCHIDEE-S3-V2019", \
                                   'ECOSSE_GL-GL', \
                                   'EFISCEN', \
                                   'UNFCCC2019_FL-FL', \
@@ -1664,7 +1723,7 @@ class simulation_parameters():
                             "UNFCCC2019_FL-FL","UNFCCC2019_GL-GL","UNFCCC2019_CL-CL",\
                             'Median of TRENDY v7 DGVMs', "Min/Max of TRENDY v7 DGVMs", \
                             "EFISCEN","ECOSSE_GL-GL","EPIC",\
-                            "EPIC/ECOSSE/EFISCEN","ORCHIDEE-S3-V0","FLUXCOM_rsonlyANN_os","FLUXCOM_rsonlyRF_os", \
+                            "EPIC/ECOSSE/EFISCEN","ORCHIDEE-S3-V2019","FLUXCOM_rsonlyANN_os","FLUXCOM_rsonlyRF_os", \
                         ]
             
             
@@ -1807,7 +1866,7 @@ class simulation_parameters():
             
         elif self.graphname in ("verifybu","verifybu_detrend"):
             self.desired_simulations=[ \
-                                  "ORCHIDEE-S3-V0", \
+                                  "ORCHIDEE-S3-V2019", \
                                   'ORCHIDEE-MICT', \
                                   'EFISCEN', \
                                   #                            'EFISCEN-unscaled', \
@@ -1834,7 +1893,7 @@ class simulation_parameters():
             #endif
                 
             # These simulations will be combined together.
-            #self.overwrite_simulations["VERIFYBU"]=['ORCHIDEE-MICT',"ORCHIDEE-S3-V0",'FLUXCOM_rsonlyANN_os','FLUXCOM_rsonlyRF_os','BLUE2019']
+            #self.overwrite_simulations["VERIFYBU"]=['ORCHIDEE-MICT',"ORCHIDEE-S3-V2019",'FLUXCOM_rsonlyANN_os','FLUXCOM_rsonlyRF_os','BLUE2019']
             #self.overwrite_operations["VERIFYBU"]="mean"
             #master_datasets["VERIFYBU"].displaylegend=False
             
@@ -2119,10 +2178,17 @@ class simulation_parameters():
             master_datasets["TrendyV9_ENSEMBLE"].facec="red"
             master_datasets["TrendyV9_ENSEMBLE"].uncert_color=master_datasets["TrendyV9_ENSEMBLE"].facec
 
-        elif self.graphname == "trendy_common":
+            self.lexternal_y=True
+            self.ymin_external=-625.0
+            self.ymax_external=410.0
+            if self.lexternal_y:
+                self.lharmonize_y=True
+            #endif
+
+        elif self.graphname == "trendycommon":
             self.desired_simulations=[ \
                                        "TrendyV7_COMMON", \
-#                                       "TrendyV9_COMMON", \
+                                       "TrendyV9_COMMON", \
                                        "TrendyV10_COMMON", \
                                    ]
             self.output_file_start="TRENDYCommon_"
@@ -2140,6 +2206,13 @@ class simulation_parameters():
 
             master_datasets["TrendyV9_COMMON"].facec="red"
             master_datasets["TrendyV9_COMMON"].uncert_color=master_datasets["TrendyV9_COMMON"].facec
+
+            self.lexternal_y=True
+            self.ymin_external=-625.0
+            self.ymax_external=410.0
+            if self.lexternal_y:
+                self.lharmonize_y=True
+            #endif
 
             ####
         elif self.graphname == "trendyv10_gcp2021_all":
@@ -2304,7 +2377,7 @@ class simulation_parameters():
             master_datasets['FLUXCOM_GL-GL_RF'].displaylegend=True
             master_datasets['FLUXCOM_CL-CL_RF'].displaylegend=True
             
-        elif self.graphname == "forestry_full_2019":
+        elif self.graphname == "forestremain_2019":
 
             # Changing this removes the forest areas being
             # plotted on the graph
@@ -2330,9 +2403,12 @@ class simulation_parameters():
             
             master_datasets['UNFCCC_FOREST'].displayname='UNFCCC_FL-FL area'
             master_datasets['LUH2v2_FOREST'].displayname='LUH2v2-ESACCI_FL-FL area (used in ORCHIDEE)'
-            
+            master_datasets['FAOSTAT2019_FL-FL'].displayname='FAOSTAT_FL-FL'
+            master_datasets['ORCHIDEE2019_FL-FL'].displayname='ORCHIDEE_FL-FL'
+            master_datasets['EFISCEN'].displayname='EFISCEN_FL-FL'
+            master_datasets['CBM2019'].displayname='CBM_FL-FL'
             self.desired_legend=[\
-                            master_datasets['UNFCCC2020_FL-FL'].displayname,master_datasets["UNFCCC2020_FL-FL"].displayname_err,\
+                            master_datasets['UNFCCC2019_FL-FL'].displayname,master_datasets["UNFCCC2019_FL-FL"].displayname_err,\
                             master_datasets['FAOSTAT2019_FL-FL'].displayname, \
                             master_datasets['ORCHIDEE2019_FL-FL'].displayname, \
                             master_datasets['EFISCEN'].displayname, \
@@ -2354,17 +2430,20 @@ class simulation_parameters():
             self.output_file_end="_FCO2land_2019_v2.png" 
             self.titleending=r" : Net bottom-up CO$_2$land fluxes from forest land remaining forest land (FL-FL)"
             
-            # This is a bigger legend, so the size will be closer to the
-            # size of the plot.
-#            self.npanels=2
-#            self.panel_ratios=[1.0,0.7]
-#            self.igrid_legend=1
-
-            #if lshow_productiondata:
-            #   productiondata_master['FLUXCOM_FL-FL']=False
+            self.lexternal_y=True
+            self.ymin_external=-260.0
+            self.ymax_external=125.0
+            if self.lexternal_y:
+                self.lharmonize_y=True
             #endif
 
-        elif self.graphname == "forestry_full_2021":
+            # The space for the legend needs to be a little bit bigger
+            # to make sure we fit in the text.
+            self.npanels=2
+            self.panel_ratios=[1.0,1.0/2.4]
+            self.igrid_legend=1
+
+        elif self.graphname == "forestremain_2021":
 
             # Changing this removes the forest areas being
             # plotted on the graph
@@ -2391,7 +2470,8 @@ class simulation_parameters():
             
             master_datasets['UNFCCC_FOREST'].displayname='UNFCCC_FL-FL area'
             master_datasets['LUH2v2_FOREST'].displayname='LUH2v2-ESACCI_FL-FL area (used in ORCHIDEE)'
-            
+            master_datasets['EFISCEN'].displayname='EFISCEN_FL-FL'
+  
             self.desired_legend=[\
                             master_datasets['UNFCCC2021_FL-FL'].displayname,master_datasets["UNFCCC2021_FL-FL"].displayname_err,\
                             master_datasets['FAOSTAT2021_FL-FL'].displayname, \
@@ -2412,12 +2492,19 @@ class simulation_parameters():
             self.npanels=2
             self.panel_ratios=[1.0,1.0/2.4]
             self.igrid_legend=1
+
+            self.lexternal_y=True
+            self.ymin_external=-260.0
+            self.ymax_external=125.0
+            if self.lexternal_y:
+                self.lharmonize_y=True
+            #endif
            
             #if lshow_productiondata:
             #   productiondata_master['FLUXCOM_FL-FL']=False
             #endif
             
-        elif self.graphname == "grassland_full_2019":
+        elif self.graphname == "grasslandremain_2019":
             self.desired_simulations=[ \
                                   'ORCHIDEE2019_GL-GL', \
                                   'ECOSSE2019_GL-GL-lim', \
@@ -2435,8 +2522,9 @@ class simulation_parameters():
             master_datasets['LUH2v2_GRASS'].displayname='LUH2v2-ESACCI_GL-GL area (used in ORCHIDEE)'
             self.lplot_areas=False
             
-            master_datasets['ECOSSE2019_GL-GL-lim'].displayname='ECOSSE (v2019) GL-GL'
-            
+            master_datasets['ECOSSE2019_GL-GL-lim'].displayname='ECOSSE_GL-GL'
+            master_datasets['ORCHIDEE2019_GL-GL'].displayname='ORCHIDEE_GL-GL'
+
             #if lshow_productiondata:
             #   productiondata_master['ECOSSE_GL-GL']=False
             #endif
@@ -2456,12 +2544,19 @@ class simulation_parameters():
                             master_datasets['UNFCCC_GRASS'].displayname, \
                         ]
 
-        elif self.graphname == "grassland_full_2021":
+            self.lexternal_y=True
+            self.ymin_external=-140.0
+            self.ymax_external=190.0
+            if self.lexternal_y:
+                self.lharmonize_y=True
+            #endif
+
+        elif self.graphname == "grasslandremain_2021":
             self.desired_simulations=[ \
                                   'ORCHIDEE2019_GL-GL', \
                                   'ECOSSE2019_GL-GL-lim', \
                                   'EPIC2021_NBP_GRS', \
-                                  'FAOSTAT2021_GRS', \
+                                  'FAOSTAT2021_GL-GL', \
                                   'UNFCCC2021_GL-GL', \
                                   'LUH2v2_GRASS', \
                                   'UNFCCC_GRASS', \
@@ -2475,14 +2570,16 @@ class simulation_parameters():
             master_datasets['LUH2v2_GRASS'].displayname='LUH2v2-ESACCI_GL-GL area (used in ORCHIDEE)'
             self.lplot_areas=False
             
-            master_datasets['ECOSSE2019_GL-GL-lim'].displayname='ECOSSE (2019) GL-GL'
-            
+            master_datasets['ECOSSE2019_GL-GL-lim'].displayname='ECOSSE_GL-GL'
+            master_datasets['ORCHIDEE2019_GL-GL'].displayname='ORCHIDEE_GL-GL'
+            master_datasets['FAOSTAT2021_GL-GL'].displayname='FAOSTATv2_GL-GL'
+     
             #if lshow_productiondata:
             #   productiondata_master['ECOSSE_GL-GL']=False
             #endif
             self.desired_legend=[\
-                            master_datasets['UNFCCC2019_GL-GL'].displayname,master_datasets["UNFCCC2019_GL-GL"].displayname_err,\
-                            master_datasets['FAOSTAT2021_GRS'].displayname, \
+                            master_datasets['UNFCCC2021_GL-GL'].displayname,master_datasets["UNFCCC2021_GL-GL"].displayname_err,\
+                            master_datasets['FAOSTAT2021_GL-GL'].displayname, \
                             master_datasets['ORCHIDEE2019_GL-GL'].displayname, \
                             master_datasets['ECOSSE2019_GL-GL-lim'].displayname, \
                             master_datasets['EPIC2021_NBP_GRS'].displayname, \
@@ -2495,6 +2592,13 @@ class simulation_parameters():
             self.npanels=2
             self.panel_ratios=[1.0,1.0/2.4]
             self.igrid_legend=1
+
+            self.lexternal_y=True
+            self.ymin_external=-140.0
+            self.ymax_external=190.0
+            if self.lexternal_y:
+                self.lharmonize_y=True
+            #endif
             
         elif self.graphname == "grassland_all":
             self.desired_simulations=[ \
@@ -2508,7 +2612,7 @@ class simulation_parameters():
                                 #  'ECOSSE_GL-GL-nolim', \
                                   #  'ECOSSE_GL-GL_us', \
                                   'UNFCCC2019_GL-GL', \
-                                  "FAOSTAT2021_GRS", \
+                                  "FAOSTAT2021_GL-GL", \
                                   "EPIC2021_NBP_GRS", \
                                   "EPIC2021_RH_GRS", \
             ]   
@@ -2560,7 +2664,7 @@ class simulation_parameters():
 
             #### 
 
-        elif self.graphname == "crops_full_2019":
+        elif self.graphname == "croplandremain_2019":
             self.desired_simulations=[ \
                                   'ORCHIDEE2019_CL-CL', \
                                   # 'ORCHIDEE_RH', \
@@ -2611,9 +2715,9 @@ class simulation_parameters():
             self.igrid_legend=1
 
 
-        elif self.graphname == "crops_full_2021":
+        elif self.graphname == "croplandremain_2021":
             self.desired_simulations=[ \
-                                  'FAOSTAT2021_CRP', \
+                                  'FAOSTAT2021_CL-CL', \
                                   'ORCHIDEE2019_CL-CL', \
                                   'ECOSSE2019_CL-CL', \
                                   'UNFCCC2021_CL-CL', \
@@ -2625,7 +2729,7 @@ class simulation_parameters():
             
             self.desired_legend=[\
                             master_datasets['UNFCCC2021_CL-CL'].displayname,master_datasets["UNFCCC2021_CL-CL"].displayname_err,\
-                            master_datasets['FAOSTAT2021_CRP'].displayname, \
+                            master_datasets['FAOSTAT2021_CL-CL'].displayname, \
                             master_datasets['ORCHIDEE2019_CL-CL'].displayname, \
                             master_datasets['ECOSSE2019_CL-CL'].displayname, \
                             master_datasets['EPIC2021_NBP_CRP'].displayname, \
@@ -2654,7 +2758,7 @@ class simulation_parameters():
                                   'EPIC2021_RH_CRP', \
                                        "FAOSTAT2019_CRP", \
                                        "FAOSTAT2020_CRP", \
-                                       "FAOSTAT2021_CRP", \
+                                       "FAOSTAT2021_CL-CL", \
 #                                       "UNFCCC2019_CL-CL", \
                               ]   
             
@@ -2754,35 +2858,65 @@ class simulation_parameters():
 
             ####   
 
-        elif self.graphname == "orchidee_test":
+        elif self.graphname == "orchidees3comparison":
             self.desired_simulations=[ \
-                                  'ORCHIDEE-S3-V2', \
-                                  'ORCHIDEE-S3-V1', \
-                                  'ORCHIDEE2019_FL-FL', \
-                                  'ORCHIDEE2020_FL-FL', \
+                                  'ORCHIDEEv2-S3-V2021v2', \
+                                  'ORCHIDEEv3-S3-V2021v2', \
+#                                  'ORCHIDEEv2-S3-V2021', \
+#                                  'ORCHIDEEv3-S3-V2021', \
+                                  'ORCHIDEE-S3-V2020', \
+                                  'ORCHIDEE-S3-V2019', \
                               ]   
             
+            master_datasets["ORCHIDEE-S3-V2019"].displayname="ORCHIDEE v2019"
+            master_datasets["ORCHIDEE-S3-V2020"].displayname="ORCHIDEE v2020"
+            master_datasets["ORCHIDEEv2-S3-V2021"].displayname="ORCHIDEE v2021"
+            master_datasets["ORCHIDEEv3-S3-V2021"].displayname="ORCHIDEE-N v2021"
+            master_datasets["ORCHIDEEv2-S3-V2021v2"].displayname="ORCHIDEE v2021"
+            master_datasets["ORCHIDEEv3-S3-V2021v2"].displayname="ORCHIDEE-N v2021"
+#            master_datasets["ORCHIDEEv2-S3-V2021v2"].displayname="ORCHIDEE v2021 (corrected)"
+#            master_datasets["ORCHIDEEv3-S3-V2021v2"].displayname="ORCHIDEE-N v2021 (corrected)"
+
             self.desired_legend=[\
-                            master_datasets["ORCHIDEE-S3-V0"].displayname, \
-                            master_datasets['ORCHIDEE-S3-V1'].displayname, \
-                            master_datasets['ORCHIDEE2019_FL-FL'].displayname, \
-                            master_datasets['ORCHIDEE2020_FL-FL'].displayname, \
+                            master_datasets["ORCHIDEE-S3-V2019"].displayname, \
+                            master_datasets['ORCHIDEE-S3-V2020'].displayname, \
+#                            master_datasets['ORCHIDEEv2-S3-V2021'].displayname, \
+#                            master_datasets['ORCHIDEEv3-S3-V2021'].displayname, \
+                            master_datasets['ORCHIDEEv2-S3-V2021v2'].displayname, \
+                            master_datasets['ORCHIDEEv3-S3-V2021v2'].displayname, \
                         ]
             
-            self.output_file_start="ORCHIDEETest_"
+            self.output_file_start="ORCHIDEES3Comparison_"
             self.output_file_end="_FCO2land_2021_v1.png" 
-            self.titleending=r" : Net bottom-up CO$_2$land fluxes from ORCHIDEE for two different dataset years"
+            self.titleending=r" : Net bottom-up CO$_2$land fluxes from ORCHIDEE for three different dataset years"
             
             # Change some colors and symbols
-            master_datasets["ORCHIDEE-S3-V0"].plotmarker="P"
-            master_datasets["ORCHIDEE-S3-V1"].plotmarker="X"
-            master_datasets["ORCHIDEE2019_FL-FL"].plotmarker="P"
-            master_datasets["ORCHIDEE2020_FL-FL"].plotmarker="X"
+            master_datasets["ORCHIDEE-S3-V2019"].plotmarker="P"
+            master_datasets["ORCHIDEE-S3-V2020"].plotmarker="P"
+            master_datasets["ORCHIDEEv2-S3-V2021"].plotmarker="P"
+            master_datasets["ORCHIDEEv3-S3-V2021"].plotmarker="D"
+            master_datasets["ORCHIDEEv2-S3-V2021v2"].plotmarker="P"
+            master_datasets["ORCHIDEEv3-S3-V2021v2"].plotmarker="D"
 
-            master_datasets["ORCHIDEE-S3-V0"].facec="blue"
-            master_datasets["ORCHIDEE-S3-V1"].facec="blue"
-            master_datasets["ORCHIDEE2019_FL-FL"].facec="red"
-            master_datasets["ORCHIDEE2020_FL-FL"].facec="red"
+            master_datasets["ORCHIDEE-S3-V2019"].facec="gray"
+            master_datasets["ORCHIDEE-S3-V2020"].facec="red"
+            master_datasets["ORCHIDEEv3-S3-V2021"].facec="skyblue"
+            master_datasets["ORCHIDEEv2-S3-V2021"].facec="skyblue"
+            master_datasets["ORCHIDEEv3-S3-V2021v2"].facec="blue"
+            master_datasets["ORCHIDEEv2-S3-V2021v2"].facec="blue"
+
+            master_datasets["ORCHIDEE-S3-V2019"].plot_lines=True
+            master_datasets["ORCHIDEE-S3-V2019"].linestyle="dashed"
+            master_datasets["ORCHIDEE-S3-V2020"].plot_lines=True
+            master_datasets["ORCHIDEE-S3-V2020"].linestyle="dashed"
+            master_datasets["ORCHIDEEv2-S3-V2021"].plot_lines=True
+            master_datasets["ORCHIDEEv2-S3-V2021"].linestyle="dashed"
+            master_datasets["ORCHIDEEv3-S3-V2021"].plot_lines=True
+            master_datasets["ORCHIDEEv3-S3-V2021"].linestyle="dashed"
+            master_datasets["ORCHIDEEv2-S3-V2021v2"].plot_lines=True
+            master_datasets["ORCHIDEEv2-S3-V2021v2"].linestyle="solid"
+            master_datasets["ORCHIDEEv3-S3-V2021v2"].plot_lines=True
+            master_datasets["ORCHIDEEv3-S3-V2021v2"].linestyle="solid"
 
 
             ####          
@@ -2813,7 +2947,7 @@ class simulation_parameters():
             self.lplot_areas=False
             
             
-        elif self.graphname == "eurocom_inversions":
+        elif self.graphname == "eurocominversions":
             self.desired_simulations=[ \
                                   'EUROCOM_ALL_2019', \
                                   'EUROCOM_Carboscope', \
@@ -2926,7 +3060,7 @@ class simulation_parameters():
             master_datasets["GCP2020_ALL"].facec="red"
             master_datasets["GCP2020_ALL"].uncert_color=master_datasets["GCP2020_ALL"].facec
 
-        elif self.graphname == "gcp2021_all":
+        elif self.graphname == "gcpinversion2021":
             self.desired_simulations=[ \
                                   'GCP2021_ALL', \
                                   'GCP2021_CAMS', \
@@ -2972,7 +3106,14 @@ class simulation_parameters():
             self.panel_ratios=[1.0,1.0/2.0]
             self.igrid_legend=1
 
-        elif self.graphname == "gcp_common":
+            self.lexternal_y=True
+            self.ymin_external=-1100.0
+            self.ymax_external=600.0
+            if self.lexternal_y:
+                self.lharmonize_y=True
+            #endif
+
+        elif self.graphname == "gcpcommon":
             self.desired_simulations=[ \
                                        "GCP2019_COMMON", \
                                        "GCP2020_COMMON", \
@@ -2994,6 +3135,12 @@ class simulation_parameters():
             master_datasets["GCP2020_COMMON"].facec="red"
             master_datasets["GCP2020_COMMON"].uncert_color=master_datasets["GCP2020_COMMON"].facec
 
+            self.lexternal_y=True
+            self.ymin_external=-1100.0
+            self.ymax_external=600.0
+            if self.lexternal_y:
+                self.lharmonize_y=True
+            #endif
 
         elif self.graphname == "gcp_trendy":
             self.desired_simulations=[ \
@@ -3043,10 +3190,10 @@ class simulation_parameters():
                                   'BLUE2021_GCP', \
                                   'BLUE2021_VERIFY', \
                                   'H&N2021', \
-                                  'ORCHIDEE-S3-V1', \
+                                  'ORCHIDEE-S3-V2020', \
                                   'FAOSTAT2021_LULUCF', \
-                                  'FAOSTAT2021_CRP', \
-                                  'FAOSTAT2021_GRS', \
+                                  'FAOSTAT2021_CL-CL', \
+                                  'FAOSTAT2021_GL-GL', \
                                   'FAOSTAT2021_FOR_TOT', \
                                   "TrendyV10_ENSEMBLE", \
                               ]        
@@ -3068,13 +3215,13 @@ class simulation_parameters():
                                  master_datasets['GCP2021_ALL'].displayname, master_datasets['GCP2021_ALL'].displayname_err, \
                                  master_datasets['CSR-COMBINED-2020'].displayname, \
                                  master_datasets["TrendyV10_ENSEMBLE"].displayname, master_datasets["TrendyV10_ENSEMBLE"].displayname_err, \
-                                 master_datasets['ORCHIDEE-S3-V1'].displayname, \
+                                 master_datasets['ORCHIDEE-S3-V2020'].displayname, \
                                  master_datasets['BLUE2021_VERIFY'].displayname, \
                                  master_datasets['BLUE2021_GCP'].displayname, \
                                  master_datasets['H&N2021'].displayname, \
                              ]
                 
-                master_datasets['ORCHIDEE-S3-V1'].displaylegend=True      
+                master_datasets['ORCHIDEE-S3-V2020'].displaylegend=True      
                 
             else:
                 self.output_file_start="TopDownLULUCFbar_"
@@ -3083,7 +3230,7 @@ class simulation_parameters():
                 self.desired_simulations.append("VERIFYBU")
                 
                 # These simulations will be combined together.
-                self.overwrite_simulations["VERIFYBU"]=['ORCHIDEE-S3-V1','BLUE2021_VERIFY']
+                self.overwrite_simulations["VERIFYBU"]=['ORCHIDEE-S3-V2020','BLUE2021_VERIFY']
                 self.overwrite_operations["VERIFYBU"]="mean"
                 master_datasets["VERIFYBU"].displaylegend=False
                 
@@ -3128,7 +3275,7 @@ class simulation_parameters():
                 # These simulations will be combined together.
                 
                 # So I don't want to generally plot the components
-                master_datasets['ORCHIDEE-S3-V1'].displaylegend=False
+                master_datasets['ORCHIDEE-S3-V2020'].displaylegend=False
                 master_datasets['BLUE2021_VERIFY'].displaylegend=False
 
 
@@ -3148,19 +3295,19 @@ class simulation_parameters():
             #endif
 
             # These simulations will be combined together.
-            self.overwrite_simulations["FAOSTAT2021_LULUCF"]=['FAOSTAT2021_CRP','FAOSTAT2021_GRS','FAOSTAT2021_FOR_TOT']
+            self.overwrite_simulations["FAOSTAT2021_LULUCF"]=['FAOSTAT2021_CL-CL','FAOSTAT2021_GL-GL','FAOSTAT2021_FOR_TOT']
             self.overwrite_operations["FAOSTAT2021_LULUCF"]="sum"
             self.overwrite_coeffs["FAOSTAT2021_LULUCF"]=[1.0,1.0,1.0]
             
             # So I don't want to generally plot the components
-            master_datasets['FAOSTAT2021_CRP'].displaylegend=False
-            master_datasets['FAOSTAT2021_GRS'].displaylegend=False
+            master_datasets['FAOSTAT2021_CL-CL'].displaylegend=False
+            master_datasets['FAOSTAT2021_GL-GL'].displaylegend=False
             master_datasets['FAOSTAT2021_FOR_TOT'].displaylegend=False
             
             # Change some colors and symbols here
             master_datasets["FAOSTAT2021_LULUCF"].facec="yellow"
             master_datasets['FAOSTAT2021_LULUCF'].plotmarker='^'
-            master_datasets["ORCHIDEE-S3-V1"].facec="black"
+            master_datasets["ORCHIDEE-S3-V2020"].facec="black"
 
             
             # A couple of these plots will be displayed as bars instead of symbols
@@ -3188,7 +3335,7 @@ class simulation_parameters():
                                   #   'FLUXCOM_rsonlyANN_os', \
                                   #   'FLUXCOM_rsonlyRF_os', \
                                   #   'ORCHIDEE-MICT', \
-                                  "ORCHIDEE-S3-V0", \
+                                  "ORCHIDEE-S3-V2019", \
                                   'FAOSTAT2019_LULUCF', \
                                   'FAOSTAT2019_CRP', \
                                   'FAOSTAT2019_GRS', \
@@ -3215,7 +3362,7 @@ class simulation_parameters():
                                  master_datasets['GCP2019_ALL'].displayname, master_datasets['GCP2019_ALL'].displayname_err, \
                                  master_datasets['CSR-COMBINED-2019'].displayname, \
                                  master_datasets["TrendyV7_ENSEMBLE"].displayname, master_datasets["TrendyV7_ENSEMBLE"].displayname_err, \
-                                 master_datasets["ORCHIDEE-S3-V0"].displayname, \
+                                 master_datasets["ORCHIDEE-S3-V2019"].displayname, \
                                  #    master_datasets["EPIC2019_NBP_CRP"].displayname, \
                                  #    master_datasets['EFISCEN'].displayname, \
                                  master_datasets['BLUE2019'].displayname, \
@@ -3227,13 +3374,13 @@ class simulation_parameters():
                              ]
                 
                 master_datasets['ORCHIDEE-MICT'].displaylegend=True
-                master_datasets["ORCHIDEE-S3-V0"].displaylegend=True      
+                master_datasets["ORCHIDEE-S3-V2019"].displaylegend=True      
                 master_datasets['TrendyV7_ORCHIDEE'].displaylegend=True
 
                 # This is a bigger legend, so the size will be closer to the
                 # size of the plot.
                 self.npanels=2
-                self.panel_ratios=[1.0,0.6]
+                self.panel_ratios=[1.0,0.7]
                 self.igrid_legend=1
                 
             else:
@@ -3243,9 +3390,9 @@ class simulation_parameters():
                 self.desired_simulations.append("VERIFYBU")
                 
                 # These simulations will be combined together.
-                #         self.overwrite_simulations["VERIFYBU"]=['ORCHIDEE-MICT',"ORCHIDEE-S3-V0",'FLUXCOM_rsonlyANN_os','FLUXCOM_rsonlyRF_os','BLUE2019']
-                #         self.overwrite_simulations["VERIFYBU"]=['ORCHIDEE-MICT',"ORCHIDEE-S3-V0",'BLUE2019']
-                self.overwrite_simulations["VERIFYBU"]=["ORCHIDEE-S3-V0",'BLUE2019']
+                #         self.overwrite_simulations["VERIFYBU"]=['ORCHIDEE-MICT',"ORCHIDEE-S3-V2019",'FLUXCOM_rsonlyANN_os','FLUXCOM_rsonlyRF_os','BLUE2019']
+                #         self.overwrite_simulations["VERIFYBU"]=['ORCHIDEE-MICT',"ORCHIDEE-S3-V2019",'BLUE2019']
+                self.overwrite_simulations["VERIFYBU"]=["ORCHIDEE-S3-V2019",'BLUE2019']
                 self.overwrite_operations["VERIFYBU"]="mean"
                 master_datasets["VERIFYBU"].displaylegend=False
                 
@@ -3268,7 +3415,7 @@ class simulation_parameters():
                                  master_datasets['H&N2019'].displayname, \
                                  master_datasets['VERIFYBU'].displayname, \
                                  master_datasets['VERIFYBU'].displayname_err, \
-                                 #        master_datasets["ORCHIDEE-S3-V0"].displayname, \
+                                 #        master_datasets["ORCHIDEE-S3-V2019"].displayname, \
                                  #        master_datasets['TrendyV7_ORCHIDEE'].displayname, \
                                  #        master_datasets['ORCHIDEE-MICT'].displayname, \
                              ]
@@ -3287,7 +3434,7 @@ class simulation_parameters():
                                  master_datasets['H&N2019'].displayname, \
                                  master_datasets['VERIFYBU'].displayname, \
                                  master_datasets['VERIFYBU'].displayname_err, \
-                                 #        master_datasets["ORCHIDEE-S3-V0"].displayname, \
+                                 #        master_datasets["ORCHIDEE-S3-V2019"].displayname, \
                                  #        master_datasets['TrendyV7_ORCHIDEE'].displayname, \
                                  #        master_datasets['ORCHIDEE-MICT'].displayname, \
                              ]
@@ -3295,13 +3442,13 @@ class simulation_parameters():
                 ##################################3
                 
                 # These simulations will be combined together.
-                #         self.overwrite_simulations["VERIFYBU"]=['ORCHIDEE-MICT',"ORCHIDEE-S3-V0",'BLUE2019','FLUXCOM_rsonlyANN_os','FLUXCOM_rsonlyRF_os']
-                #self.overwrite_simulations["VERIFYBU"]=['ORCHIDEE-MICT',"ORCHIDEE-S3-V0",'BLUE2019']
+                #         self.overwrite_simulations["VERIFYBU"]=['ORCHIDEE-MICT',"ORCHIDEE-S3-V2019",'BLUE2019','FLUXCOM_rsonlyANN_os','FLUXCOM_rsonlyRF_os']
+                #self.overwrite_simulations["VERIFYBU"]=['ORCHIDEE-MICT',"ORCHIDEE-S3-V2019",'BLUE2019']
                 #self.overwrite_operations["VERIFYBU"]="mean"
                 
                 # So I don't want to generally plot the components
                 master_datasets['ORCHIDEE-MICT'].displaylegend=False
-                master_datasets["ORCHIDEE-S3-V0"].displaylegend=False
+                master_datasets["ORCHIDEE-S3-V2019"].displaylegend=False
                 master_datasets['BLUE2019'].displaylegend=False
                 master_datasets['FLUXCOM_rsonlyANN_os'].displaylegend=False
                 master_datasets['FLUXCOM_rsonlyRF_os'].displaylegend=False
@@ -3311,7 +3458,7 @@ class simulation_parameters():
                 # This is a bigger legend, so the size will be closer to the
                 # size of the plot.
                 self.npanels=2
-                self.panel_ratios=[1.0,0.6]
+                self.panel_ratios=[1.0,0.7]
                 self.igrid_legend=1
 
             #endif
@@ -3329,7 +3476,7 @@ class simulation_parameters():
             # Change some colors and symbols here
             master_datasets["FAOSTAT2019_LULUCF"].facec="yellow"
             master_datasets['FAOSTAT2019_LULUCF'].plotmarker='^'
-            master_datasets["ORCHIDEE-S3-V0"].facec="black"
+            master_datasets["ORCHIDEE-S3-V2019"].facec="black"
             master_datasets["ORCHIDEE-MICT"].facec="none"
             master_datasets["TrendyV7_ORCHIDEE"].facec="none"
             master_datasets["TrendyV7_ORCHIDEE"].edgec="dimgrey"
@@ -3401,7 +3548,56 @@ class simulation_parameters():
             master_datasets['CSR-COMBINED-2020'].uncert_color='blue'
             master_datasets["CSR-COMBINED-2020"].facec="blue"
 
-        elif self.graphname == "eurocom_inversions_comparison":
+        elif self.graphname == "regionalinversions":
+            self.desired_simulations=[ \
+                                  'CSR-COMBINED-2019', \
+                                  'CSR-COMBINED-2020', \
+                                  'LUMIA-COMBINED-v2021', \
+                              ]   
+            self.output_file_start="regionalinversions_"
+            self.output_file_end="_2021_v1.png" 
+            self.titleending=r" : CO$_2$ inversions from regional models"
+
+            # Plot these as bars
+            master_datasets["CSR-COMBINED-2019"].lplot_errorbar=True
+            master_datasets["CSR-COMBINED-2020"].lplot_errorbar=True
+            master_datasets["LUMIA-COMBINED-v2021"].lplot_errorbar=True
+
+            # Change some colors
+            master_datasets['CSR-COMBINED-2019'].uncert_color='green'
+            master_datasets["CSR-COMBINED-2019"].facec="green"
+            master_datasets['CSR-COMBINED-2020'].uncert_color='blue'
+            master_datasets["CSR-COMBINED-2020"].facec="blue"
+
+        elif self.graphname == "lumiainversions":
+            self.desired_simulations=[ \
+                                       'LUMIA-COMBINED-v2021', \
+                                       "LUMIA-REF-v2021", \
+                                       "LUMIA-Cor200km-v2021", \
+                                       "LUMIA-CoreSites-v2021", \
+#                                       "LUMIA-AlterBG-v2021", \
+                                       'EUROCOM_Lumia', \
+                             ]   
+            self.output_file_start="LUMIAinversions_"
+            self.output_file_end="_2021_v1.png" 
+            self.titleending=r" : CO$_2$ inversions from the LUMIA model"
+
+            # Plot these as bars
+            master_datasets["LUMIA-COMBINED-v2021"].lplot_errorbar=True
+            
+            # Change some colors
+            master_datasets["EUROCOM_Lumia"].facec="blue"
+
+            master_datasets["LUMIA-REF-v2021"].plot_lines=True
+            master_datasets["LUMIA-REF-v2021"].linestyle="solid"
+            master_datasets["LUMIA-Cor200km-v2021"].plot_lines=True
+            master_datasets["LUMIA-Cor200km-v2021"].linestyle="solid"
+            master_datasets["LUMIA-CoreSites-v2021"].plot_lines=True
+            master_datasets["LUMIA-CoreSites-v2021"].linestyle="solid"
+            master_datasets["EUROCOM_Lumia"].plot_lines=True
+            master_datasets["EUROCOM_Lumia"].linestyle="dashed"
+
+        elif self.graphname == "eurocomcomparison":
             self.desired_simulations=[ \
                                   'EUROCOM_ALL_2019', \
                                   'EUROCOM_ALL_2020', \
@@ -3573,7 +3769,7 @@ class simulation_parameters():
             #   productiondata_master['FLUXCOM_FL-FL']=False
             #endif
 
-        elif self.graphname == "unfccc_lulucf_test":
+        elif self.graphname == "unfccclulucfcomparison":
 
             # Changing this removes the forest areas being
             # plotted on the graph
@@ -3592,9 +3788,9 @@ class simulation_parameters():
             master_datasets['UNFCCC2021_LULUCF'].displayname,master_datasets["UNFCCC2021_LULUCF"].displayname_err,\
             ]
             
-            self.output_file_start="UNFCCCLULUCFTest_"
+            self.output_file_start="UNFCCCLULUCFComparison_"
             self.output_file_end="_FCO2land_2021_v1.png" 
-            self.titleending=r" : Net bottom-up CO$_2$land fluxes from land use, land use change, and forestory (LULUCF)"
+            self.titleending=r" : Net bottom-up CO$_2$land fluxes from land use, land use change, and forestry (LULUCF)"
             
             master_datasets["UNFCCC2019_LULUCF"].facec="gray"
             master_datasets["UNFCCC2019_LULUCF"].uncert_color=master_datasets["UNFCCC2019_LULUCF"].facec
@@ -3608,6 +3804,100 @@ class simulation_parameters():
             #if lshow_productiondata:
             #   productiondata_master['FLUXCOM_FL-FL']=False
             #endif
+
+            self.npanels=2
+            self.panel_ratios=[1.0,1.0/2.1]
+            self.igrid_legend=1
+
+        elif self.graphname == "unfcccflcomparison":
+
+            # Changing this removes the forest areas being
+            # plotted on the graph
+            self.lplot_areas=False
+
+
+            self.desired_simulations=[ \
+                                  'UNFCCC2019_FL-FL', \
+#                                  'UNFCCC2020_FL-FL', \
+                                  'UNFCCC2021_FL-FL', \
+            ]   
+            
+            self.desired_legend=[\
+                                 master_datasets['UNFCCC2019_FL-FL'].displayname,master_datasets["UNFCCC2019_FL-FL"].displayname_err,\
+                                 master_datasets['UNFCCC2021_FL-FL'].displayname,master_datasets["UNFCCC2021_FL-FL"].displayname_err,\
+            ]
+            
+            self.output_file_start="UNFCCCFLComparison_"
+            self.output_file_end="_FCO2land_2021_v1.png" 
+            self.titleending=r" : Net bottom-up CO$_2$land fluxes from forest remaining forests"
+            
+            master_datasets["UNFCCC2019_FL-FL"].facec="gray"
+            master_datasets["UNFCCC2019_FL-FL"].uncert_color=master_datasets["UNFCCC2019_FL-FL"].facec
+
+            master_datasets["UNFCCC2021_FL-FL"].facec="blue"
+            master_datasets["UNFCCC2021_FL-FL"].uncert_color=master_datasets["UNFCCC2021_FL-FL"].facec
+
+            #if lshow_productiondata:
+            #   productiondata_master['FLUXCOM_FL-FL']=False
+            #endif
+
+            self.npanels=2
+            self.panel_ratios=[1.0,1.0/2.4]
+            self.igrid_legend=1
+
+        elif self.graphname == "unfcccclcomparison":
+
+            self.desired_simulations=[ \
+                                  'UNFCCC2019_CL-CL', \
+#                                  'UNFCCC2020_CL-CL', \
+                                  'UNFCCC2021_CL-CL', \
+            ]   
+            
+            self.desired_legend=[\
+                                 master_datasets['UNFCCC2019_CL-CL'].displayname,master_datasets["UNFCCC2019_CL-CL"].displayname_err,\
+                                 master_datasets['UNFCCC2021_CL-CL'].displayname,master_datasets["UNFCCC2021_CL-CL"].displayname_err,\
+            ]
+            
+            self.output_file_start="UNFCCCCLComparison_"
+            self.output_file_end="_FCO2land_2021_v1.png" 
+            self.titleending=r" : Net bottom-up CO$_2$land fluxes from croplands remaining croplands"
+            
+            master_datasets["UNFCCC2019_CL-CL"].facec="gray"
+            master_datasets["UNFCCC2019_CL-CL"].uncert_color=master_datasets["UNFCCC2019_CL-CL"].facec
+
+            master_datasets["UNFCCC2021_CL-CL"].facec="blue"
+            master_datasets["UNFCCC2021_CL-CL"].uncert_color=master_datasets["UNFCCC2021_CL-CL"].facec
+
+            self.npanels=2
+            self.panel_ratios=[1.0,1.0/2.4]
+            self.igrid_legend=1
+
+        elif self.graphname == "unfcccglcomparison":
+
+            self.desired_simulations=[ \
+                                  'UNFCCC2019_GL-GL', \
+#                                  'UNFCCC2020_GL-GL', \
+                                  'UNFCCC2021_GL-GL', \
+            ]   
+            
+            self.desired_legend=[\
+                                 master_datasets['UNFCCC2019_GL-GL'].displayname,master_datasets["UNFCCC2019_GL-GL"].displayname_err,\
+                                 master_datasets['UNFCCC2021_GL-GL'].displayname,master_datasets["UNFCCC2021_GL-GL"].displayname_err,\
+            ]
+            
+            self.output_file_start="UNFCCCGLComparison_"
+            self.output_file_end="_FCO2land_2021_v1.png" 
+            self.titleending=r" : Net bottom-up CO$_2$land fluxes from grasslands remaining grasslands"
+            
+            master_datasets["UNFCCC2019_GL-GL"].facec="gray"
+            master_datasets["UNFCCC2019_GL-GL"].uncert_color=master_datasets["UNFCCC2019_GL-GL"].facec
+
+            master_datasets["UNFCCC2021_GL-GL"].facec="blue"
+            master_datasets["UNFCCC2021_GL-GL"].uncert_color=master_datasets["UNFCCC2021_GL-GL"].facec
+
+            self.npanels=2
+            self.panel_ratios=[1.0,1.0/2.4]
+            self.igrid_legend=1
 
         elif self.graphname == "bookkeeping":
             self.desired_simulations=[ \
@@ -3647,6 +3937,290 @@ class simulation_parameters():
             master_datasets["H&N2021"].plot_lines=True
             master_datasets["H&N2021"].linestyle="solid"
 
+        elif self.graphname == "faostat2021":
+            
+                                  
+
+            self.desired_simulations=[ \
+                                       'FAOSTAT2021_LULUCF', \
+                                       'FAOSTAT2021_CL-CL', \
+                                       'FAOSTAT2021_GL-GL', \
+                                       'FAOSTAT2021_FOR_TOT', \
+                                       'FAOSTAT2021_FL-FL', \
+                                       "FAOSTAT2021_FOR_CON", \
+                                   ]        
+            
+            self.output_file_end="_FCO2land_2021_v1.png" 
+            
+            self.titleending=r" : Comparison of FAOSTAT LULUCF components for net land CO$_2$land fluxes"
+            self.output_file_start="FAOSTAT2021_"
+
+            
+            # Change some markers and colors and add lines for easier
+            # viewing
+            master_datasets["FAOSTAT2021_CL-CL"].facec="gold"
+            master_datasets['FAOSTAT2021_CL-CL'].plotmarker='s'
+            master_datasets["FAOSTAT2021_CL-CL"].plot_lines=True
+            master_datasets["FAOSTAT2021_CL-CL"].linestyle="solid"
+            master_datasets["FAOSTAT2021_GL-GL"].facec="brown"
+            master_datasets['FAOSTAT2021_GL-GL'].plotmarker='<'
+            master_datasets["FAOSTAT2021_GL-GL"].plot_lines=True
+            master_datasets["FAOSTAT2021_GL-GL"].linestyle="solid"
+            master_datasets["FAOSTAT2021_FOR_TOT"].facec="green"
+            master_datasets['FAOSTAT2021_FOR_TOT'].plotmarker='X'
+            master_datasets["FAOSTAT2021_FOR_TOT"].plot_lines=True
+            master_datasets["FAOSTAT2021_FOR_TOT"].linestyle="solid"
+            master_datasets["FAOSTAT2021_FL-FL"].facec="blue"
+            master_datasets['FAOSTAT2021_FL-FL'].plotmarker='X'
+            master_datasets["FAOSTAT2021_FL-FL"].plot_lines=True
+            master_datasets["FAOSTAT2021_FL-FL"].linestyle="solid"
+            master_datasets["FAOSTAT2021_FOR_CON"].facec="red"
+            master_datasets['FAOSTAT2021_FOR_CON'].plotmarker='X'
+            master_datasets["FAOSTAT2021_FOR_CON"].plot_lines=True
+            master_datasets["FAOSTAT2021_FOR_CON"].linestyle="solid"
+                
+            # This is a bigger legend, so the size will be closer to the
+            # size of the plot.
+            self.npanels=2
+            self.panel_ratios=[1.0,1/2.0]
+            self.igrid_legend=1
+
+            # These simulations will be combined together.
+            self.overwrite_simulations["FAOSTAT2021_LULUCF"]=['FAOSTAT2021_CL-CL','FAOSTAT2021_GL-GL','FAOSTAT2021_FOR_TOT']
+            self.overwrite_operations["FAOSTAT2021_LULUCF"]="sum"
+            self.overwrite_coeffs["FAOSTAT2021_LULUCF"]=[1.0,1.0,1.0]
+            
+            # Here I want to plot all the components
+            #master_datasets['FAOSTAT2021_CL-CL'].displaylegend=False
+            #master_datasets['FAOSTAT2021_GL-GL'].displaylegend=False
+            #master_datasets['FAOSTAT2021_FOR_TOT'].displaylegend=False
+            
+            # Change some colors and symbols here
+            master_datasets["FAOSTAT2021_LULUCF"].facec="yellow"
+            master_datasets['FAOSTAT2021_LULUCF'].plotmarker='^'
+
+        elif self.graphname == "roxanawater":
+            self.desired_simulations=[ \
+                                       "rivers_lakes_reservoirs_ULB", \
+                  ]  
+            
+            self.output_file_start="ROXANAWATER_"
+            self.output_file_end="_FCO2land_2021_v1.png" 
+
+            self.titleending=r" : Inland waters for Roxana for v2021"
+            
+        elif self.graphname == "roxana":
+            # This is just to create .csv files for all the datasets
+            # for Roxana for the year 2021.  All countries including
+            # EU-27+UK, Moldova, Ukraine and Belarus
+            self.desired_simulations=[ \
+                                  'UNFCCC2021_LULUCF', \
+                                  'BLUE2021_VERIFY', \
+                                  'BLUE2021_GCP', \
+                                  'H&N2021', \
+                                  'FAOSTAT2021_LULUCF', \
+                                  'FAOSTAT2021_CL-CL', \
+                                  'FAOSTAT2021_GL-GL', \
+                                  'FAOSTAT2021_FOR_TOT', \
+                                  "TrendyV10_ENSEMBLE", \
+                                   "GCP2021_ALL", \
+                                  'ECOSSE2019_GL-GL-lim', \
+                                  'ECOSSE2019_CL-CL', \
+                                  'EFISCEN', \
+                                       "CSR-COMBINED-2020", \
+                                       "EUROCOM_ALL_2020",\
+                                       "rivers_lakes_reservoirs_ULB", \
+                                       'EPIC2021_NBP_CRP', \
+                                       'EPIC2021_NBP_GRS', \
+                                       'CBM2021historical', \
+                                       'CBM2021simulated', \
+                                   'ORCHIDEEv2-S3-V2021v2', \
+                                  'ORCHIDEEv3-S3-V2021v2', \
+                     ]  
+            
+            self.output_file_start="ROXANA_"
+            self.output_file_end="_FCO2land_2021_v1.png" 
+
+            self.titleending=r" : Fluxes for Roxana for v2021"
+            
+            # These simulations will be combined together.
+            self.overwrite_simulations["FAOSTAT2021_LULUCF"]=['FAOSTAT2021_CL-CL','FAOSTAT2021_GL-GL','FAOSTAT2021_FOR_TOT']
+            # So I don't want to generally plot the components
+            master_datasets['FAOSTAT2021_CL-CL'].displaylegend=False
+            master_datasets['FAOSTAT2021_GL-GL'].displaylegend=False
+            master_datasets['FAOSTAT2021_FOR_TOT'].displaylegend=False
+            self.overwrite_operations["FAOSTAT2021_LULUCF"]="sum"
+            self.overwrite_coeffs["FAOSTAT2021_LULUCF"]=[1.0,1.0,1.0]
+            
+            self.npanels=2
+            self.panel_ratios=[1.0,1.0/1.9]
+            self.igrid_legend=1
+
+        elif self.graphname == "coco2":
+            # This creates CO2land plots for countries outside the EU-27+UK
+            # for a deliverable in CoCO2.  The data products are therefore
+            # a bit more limited.  Roxana also requested that we split
+            # out CAMS from GCP and plot it seperately (removing it from
+            # the ensemble)
+            self.desired_simulations=[ \
+                                  'UNFCCC2021_LULUCF', \
+                                  'BLUE2021_GCP', \
+                                  'H&N2021', \
+                                  'FAOSTAT2021_LULUCF', \
+                                  'FAOSTAT2021_CL-CL', \
+                                  'FAOSTAT2021_GL-GL', \
+                                  'FAOSTAT2021_FOR_TOT', \
+                                  "TrendyV10_ENSEMBLE", \
+                                   "GCP2021_ALL", \
+#                                   "GCP2021_NOCAMS", \
+#                                   "GCP2021_CAMS", \
+                     ]  
+            
+            self.output_file_start="COCO2D8.1_"
+            self.output_file_end="_FCO2land_2021_v1.png" 
+
+            self.titleending=r" : Comparison of top-down vs. bottom-up net land CO$_2$land fluxes"
+            
+            # These simulations will be combined together.
+            self.overwrite_simulations["FAOSTAT2021_LULUCF"]=['FAOSTAT2021_CL-CL','FAOSTAT2021_GL-GL','FAOSTAT2021_FOR_TOT']
+            # So I don't want to generally plot the components
+            master_datasets['FAOSTAT2021_CL-CL'].displaylegend=False
+            master_datasets['FAOSTAT2021_GL-GL'].displaylegend=False
+            master_datasets['FAOSTAT2021_FOR_TOT'].displaylegend=False
+            self.overwrite_operations["FAOSTAT2021_LULUCF"]="sum"
+            self.overwrite_coeffs["FAOSTAT2021_LULUCF"]=[1.0,1.0,1.0]
+            
+            master_datasets["GCP2021_NOCAMS"].lplot_errorbar=True
+            master_datasets["GCP2021_ALL"].lplot_errorbar=True
+            master_datasets["TrendyV10_ENSEMBLE"].lplot_errorbar=True
+
+            master_datasets["GCP2021_NOCAMS"].facec="red"
+            master_datasets["GCP2021_NOCAMS"].uncert_color=master_datasets["GCP2021_NOCAMS"].facec
+
+            master_datasets["GCP2021_ALL"].facec="red"
+            master_datasets["GCP2021_ALL"].uncert_color=master_datasets["GCP2021_ALL"].facec
+
+            master_datasets["TrendyV10_ENSEMBLE"].facec="gray"
+            master_datasets["TrendyV10_ENSEMBLE"].uncert_color=master_datasets["TrendyV10_ENSEMBLE"].facec
+
+            #self.lexternal_y=True
+            #self.ymin_external=-800.0
+            #self.ymax_external=700.0
+            #if self.lexternal_y:
+            #    self.lharmonize_y=True
+            #endif
+
+            self.npanels=2
+            self.panel_ratios=[1.0,1.0/1.9]
+            self.igrid_legend=1
+
+        elif self.graphname == "camseez":
+            # This creates CO2land plots for countries outside the EU-27+UK
+            # for a deliverable in CoCO2.  The data products are therefore
+            # a bit more limited.  Roxana also requested that we split
+            # out CAMS from GCP and plot it seperately (removing it from
+            # the ensemble)
+            self.desired_simulations=[ \
+                                   "GCP2021_ALL", \
+                                   "GCP2021_CAMS", \
+                                   "GCP2021_CAMSnoEEZ", \
+                     ]  
+            
+            self.output_file_start="CAMSEEZ_"
+            self.output_file_end="_FCO2land_2021_v1.png" 
+
+            self.titleending=r" : Comparison of including the Extended Economic Zone in the country mask"
+            
+            master_datasets["GCP2021_ALL"].lplot_errorbar=True
+            master_datasets["GCP2021_ALL"].facec="red"
+            master_datasets["GCP2021_ALL"].uncert_color=master_datasets["GCP2021_ALL"].facec
+
+            master_datasets["TrendyV10_ENSEMBLE"].facec="gray"
+            master_datasets["TrendyV10_ENSEMBLE"].uncert_color=master_datasets["TrendyV10_ENSEMBLE"].facec
+
+            #self.lexternal_y=True
+            #self.ymin_external=-800.0
+            #self.ymax_external=700.0
+            #if self.lexternal_y:
+            #    self.lharmonize_y=True
+            #endif
+
+            self.npanels=2
+            self.panel_ratios=[1.0,1.0/1.9]
+            self.igrid_legend=1
+
+        elif self.graphname == "unfcccuncert":
+            # Just want to look at some UNFCCC runs and get numbers
+            # for certain countries.
+            self.desired_simulations=[ \
+                                  'UNFCCC2021_LULUCF', \
+                                  'UNFCCC2021_FL-FL', \
+                                  'UNFCCC2021_CL-CL', \
+                                  'UNFCCC2021_GL-GL', \
+                     ]  
+            
+            self.output_file_start="UNFCCCuncert_"
+            self.output_file_end="_FCO2land_2021_v1.png" 
+
+            self.titleending=r" : UNFCCC fluxes for LULUCF"
+            
+            #self.lexternal_y=True
+            #self.ymin_external=-800.0
+            #self.ymax_external=700.0
+            #if self.lexternal_y:
+            #    self.lharmonize_y=True
+            #endif
+
+            self.npanels=2
+            self.panel_ratios=[1.0,1.0/1.9]
+            self.igrid_legend=1
+
+        elif self.graphname == "efiscencomparison":
+
+            self.desired_simulations=[ \
+                                       'EFISCEN', \
+                                       'EFISCEN-Spacev2019', \
+                                       'EFISCEN-Spacev2021', \
+            ]   
+            
+            master_datasets["EFISCEN"].displayname="EFISCEN_FL-FL"
+            master_datasets["EFISCEN-Spacev2019"].displayname="EFISCENSpacev2019_FL-FL"
+            master_datasets["EFISCEN-Spacev2021"].displayname="EFISCENSpacev2021_FL-FL"
+
+            self.output_file_start="EFISCENComparison_"
+            self.output_file_end="_FCO2land_2021_v1.png" 
+            self.titleending=r" : Net bottom-up CO$_2$land fluxes from forest land remaining forest land (FL-FL)"
+            
+
+            master_datasets["EFISCEN"].facec="tab:gray"
+            master_datasets["EFISCEN"].plotmarker="o"
+            master_datasets["EFISCEN"].plot_lines=True
+            master_datasets["EFISCEN"].linestyle="dashed"
+
+            master_datasets["EFISCEN-Spacev2019"].facec="gainsboro"
+            master_datasets["EFISCEN-Spacev2019"].plotmarker="o"
+            master_datasets["EFISCEN-Spacev2019"].plot_lines=True
+            master_datasets["EFISCEN-Spacev2019"].linestyle="dashed"
+
+            master_datasets["EFISCEN-Spacev2021"].facec="magenta"
+            master_datasets["EFISCEN-Spacev2021"].plotmarker="o"
+            master_datasets["EFISCEN-Spacev2021"].plot_lines=True
+            master_datasets["EFISCEN-Spacev2021"].linestyle="dashed"
+
+
+            # The space for the legend needs to be a little bit bigger
+            # to make sure we fit in the text.
+            self.npanels=2
+            self.panel_ratios=[1.0,1.0/2.4]
+            self.igrid_legend=1
+
+            self.lexternal_y=False
+            self.ymin_external=-260.0
+            self.ymax_external=125.0
+            if self.lexternal_y:
+                self.lharmonize_y=True
+            #endif
+           
         else:
             print("I do not understand which simulation this is:")
             print(self.graphname)

@@ -479,15 +479,24 @@ for item in [path] if path.endswith(".nc") else [os.path.join(path, filename) fo
                             #   print(timeseries_total)
                             #endif
 
+                            # We need to do something special in the case
+                            # of error variables: we need to propogate
+                            # them to the regions.  In other words, we
+                            # need to first convert them into aboslute
+                            # errors by multiplying by the non-error
+                            # variable of the same name.  In theory, I've
+                            # designed all of this so that VAR and VAR_ERR
+                            # should match up, and VAR_ERR should be a
+                            # percentage (e.g., 15.0 for 15%).
                             if var in means:
-#                               print("Adding component mean ",test_code)
+                               print("Adding component mean ",test_code,var)
                                # Need to find the area of this country.  
 
                                # Weight by the surface area of the region
                                timeseries_total=timeseries_total+timeseries_temp*country_region_areas[test_code]
                                total_surface_area=total_surface_area+country_region_areas[test_code]
                             else:
-#                               print("Adding component not mean ",test_code)
+                               print("Adding component not mean ",test_code,var)
                                timeseries_total=timeseries_total+timeseries_temp
                             #endif
                          #endif
