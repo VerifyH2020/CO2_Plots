@@ -80,7 +80,11 @@ class countrydata:
         else:
             self.possible_names.extend(possible_name)
             self.possible_names.extend("'{}'".format(possible_name))
-       #endif
+        #endif
+
+        # Clean them to make sure we don't have duplicates.
+        self.possible_names = list( dict.fromkeys(self.possible_names) )
+
     #enddef
 
 #enddef
@@ -124,7 +128,7 @@ def get_country_codes_for_netCDF_file(flag="eur"):
 
 
     # This is the total list
-    if flag.lower() == "eur":
+    if flag.lower() in ["eur","eu"]:
 
         return ["ALA", "ALB", "AND", "AUT", "BEL", "BGR", "BIH", "BLR", "CHE", "CYP", "CZE", "DEU", "DNK", "ESP", "EST", "FIN", "FRA", "FRO", "GBR", "GGY", "GEO", "GRC", "GRL", "HRV", "HUN", "IMN", "IRL", "ISL", "ITA", "JEY", "LIE", "LTU", "LUX", "LVA", "MDA", "MKD", "MLT", "MNE", "NLD", "NOR", "POL", "PRT", "ROU", "RUS", "SJM", "SMR", "SRB", "SVK", "SVN", "SWE", "TUR", "UKR", "BNL", "CSK", "SWL", "BLT", "NAC", "DSF", "UKI", "IBE", "WEE", "WEA", "CEE", "NOE", "SOE", "SOY", "SOZ", "SWN", "SEE", "SEA", "SEZ", "EAE", "EEA", "EER", "E12", "E15", "E27", "E28", "EUR"]
 
@@ -452,6 +456,7 @@ def get_country_region_data(country_region_plotting_order=["NONE"],loutput_codes
     country_region_data["PRT"].add_possible_names('por')
     country_region_data["LVA"].add_possible_names('lat')
     country_region_data["SVK"].add_possible_names('slr')
+    country_region_data["SVK"].add_possible_names('Slovak Republic')
     country_region_data["DNK"].add_possible_names('den')
     country_region_data["MDA"].add_possible_names('mol')
     country_region_data["NOR"].add_possible_names('nor')
@@ -506,10 +511,13 @@ def get_country_region_data(country_region_plotting_order=["NONE"],loutput_codes
     # Don't use the single quotes...they are added automatically above
     #country_region_data["E28"].add_possible_names("'EU-28'")
     #country_region_data["E28"].add_possible_names("'European Union (Convention)'")
-    country_region_data["E28"].add_possible_names("European Union (Convention)")
     country_region_data["E28"].add_possible_names("Tot EU")
     country_region_data["E28"].add_possible_names("EU27+UK")
     country_region_data["E28"].add_possible_names("European Union (28)")
+
+    # This changed! Now it's only the EU-27 reported by the UNFCCC.  Need
+    # to be careful about this.
+    country_region_data["E27"].add_possible_names("European Union (Convention)")
 
 
 
@@ -1114,6 +1122,42 @@ def print_regions_and_countries(country_region_plotting_order,country_region_dat
 
         f.close()
 
+    # Doesn't matter if it's codes or names here
+    elif print_code == 6:
+
+        print("Printing the countries/codes requested.")
+        
+        for icount,country in enumerate(country_region_plotting_order):
+            ccode=country
+            cr_data=None
+            try:
+                cr_data=country_region_data[ccode]
+            except:
+
+                for temp_code in country_region_data.keys():
+                    if country in country_region_data[temp_code].possible_names:
+                        ccode=temp_code
+                        cr_data=country_region_data[ccode]
+                    #endif
+                #endfor
+
+                if cr_data is None:
+                    print("Could not find country name or code: ",country)
+                    traceback.print_stack(file=sys.stdout)
+                    sys.exit(1)
+                #endif
+            #endtry
+            if loutput_codes:
+                print("{1} ({0}) : ".format(ccode,cr_data.long_name),cr_data.composant_countries)
+            else:
+                clist=[]
+                for tempc in cr_data.composant_countries:
+                    clist.append(country_region_data[tempc].long_name)
+                #endif
+                print("{1} ({0}) : ".format(ccode,cr_data.long_name),clist)
+            #endif            
+        #endfor
+
     else:
         print("I do not know this print code: ",print_code)
     #endif
@@ -1227,6 +1271,19 @@ if __name__ == '__main__':
     country_region_plotting_order=get_country_codes_for_netCDF_file('all_countries')
     country_region_data=get_country_region_data(country_region_plotting_order,False)
     print_regions_and_countries(country_region_plotting_order,country_region_data,3,False)
+
+    # Something I use from time to time: from country symbols/names, print
+    # out names.
+    #print("***********************************************")    
+    #print("***********************************************")
+    #temp_countries=['FRA','ESP','Belgium','Germany','HUN','Ireland','Italy','LUX','NLD','Poland','Romania','Slovakia','Sweden','CHE','CZE','Norway']
+    #print_regions_and_countries(temp_countries,country_region_data,6,False)
+    
+    country_region_plotting_order=get_country_codes_for_netCDF_file('all_countries_regions')
+    country_region_data=get_country_region_data(country_region_plotting_order,False)
+    for ccode in country_region_plotting_order:
+        print(country_region_data[ccode].long_name,end=', ')
+    #endfor
 
 #endif
 
@@ -1880,11 +1937,11 @@ def convert_names_and_codes(list_of_names,flag):
 #enddef
 
 # Takes the name of a country file along with a list of countries
-# and returns a mask from these countries: an array where a value
-# of True means that the values are to be masked of the shape nlats,nlons
-# If None is passed as the country_list, an array with all False values is 
-# returned
-def create_country_mask(filename,country_list):
+# and returns a mask from these countries: an array where the value
+# is False everywhere except for these countries, where it is True.
+# If lfrac=True, this includes fractional pixels.  If not, only pixels
+# only occupied by a single country are selected.
+def create_country_logical_mask(filename,country_list,lfrac=True):
 
     srcnc = NetCDFFile(filename,"r")
 
@@ -1897,6 +1954,7 @@ def create_country_mask(filename,country_list):
     country_mask=np.zeros((nlats,nlons))*np.nan
 
     if country_list is None:
+         print("--> No country list given.  Returning.")
          # want all the values to be False in this case
          country_mask=np.where(np.isnan(country_mask), False, True)
          srcnc.close()
@@ -1921,14 +1979,17 @@ def create_country_mask(filename,country_list):
         #endif
 
         cindex=ccodes.index(country)
-
-        country_mask=np.where(srcnc["country_mask"][cindex,:,:] >= 1.0, 1.0, country_mask)
-
+        print("Masking: ",country,cindex)
+        if lfrac:
+            country_mask=np.where(srcnc["country_mask"][cindex,:,:] > 0.0, 1.0, country_mask)
+        else:
+            country_mask=np.where(srcnc["country_mask"][cindex,:,:] >= 1.0, 1.0, country_mask)
+        #endif
     #endif
 
     srcnc.close()
 
-    country_mask=np.where(np.isnan(country_mask), True, False)
+    country_mask=np.where(np.isnan(country_mask), False, True)
 
     return country_mask
 

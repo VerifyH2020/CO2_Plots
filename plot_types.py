@@ -19,7 +19,7 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
     # Need to make this more generalized to deal with 2021 as well
     # as 2019
     #### Total LULUCF
-    possible_names=["UNFCCC2019_LULUCF","UNFCCC2021_LULUCF"]
+    possible_names=["UNFCCC2019_LULUCF","UNFCCC2020_LULUCF","UNFCCC2021_LULUCF"]
     temp_names=list(set(possible_names) & set(desired_simulations))
     if len(temp_names) != 1:
         print("Had problem finding total LULUCF name!")
@@ -30,7 +30,7 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
     #endif
     total_lulucf_name=temp_names[0]
     #### forest remaining forests
-    possible_names=["UNFCCC2019_FL-FL","UNFCCC2021_FL-FL"]
+    possible_names=["UNFCCC2019_FL-FL","UNFCCC2020_FL-FL","UNFCCC2021_FL-FL"]
     temp_names=list(set(possible_names) & set(desired_simulations))
     if len(temp_names) != 1:
         print("Had problem finding forest remaining forest name!")
@@ -41,7 +41,7 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
     #endif
     fl_fl_name=temp_names[0]
     #### grassland remaining grassland
-    possible_names=["UNFCCC2019_GL-GL","UNFCCC2021_GL-GL"]
+    possible_names=["UNFCCC2019_GL-GL","UNFCCC2020_GL-GL","UNFCCC2021_GL-GL"]
     temp_names=list(set(possible_names) & set(desired_simulations))
     if len(temp_names) != 1:
         print("Had problem finding grassland remaining grassland name!")
@@ -52,7 +52,7 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
     #endif
     gl_gl_name=temp_names[0]
     #### cropland remaining cropland
-    possible_names=["UNFCCC2019_CL-CL","UNFCCC2021_CL-CL"]
+    possible_names=["UNFCCC2019_CL-CL","UNFCCC2020_CL-CL","UNFCCC2021_CL-CL"]
     temp_names=list(set(possible_names) & set(desired_simulations))
     if len(temp_names) != 1:
         print("Had problem finding cropland remaining cropland name!")
@@ -63,7 +63,7 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
     #endif
     cl_cl_name=temp_names[0]
     #### forest convert
-    possible_names=["UNFCCC2019_forest_convert","UNFCCC2021_forest_convert"]
+    possible_names=["UNFCCC2019_forest_convert","UNFCCC2020_forest_convert","UNFCCC2021_forest_convert"]
     temp_names=list(set(possible_names) & set(desired_simulations))
     if len(temp_names) != 1:
         print("Had problem finding forest convert name!")
@@ -74,7 +74,7 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
     #endif
     fl_convert_name=temp_names[0]
     #### grassland convert
-    possible_names=["UNFCCC2019_grassland_convert","UNFCCC2021_grassland_convert"]
+    possible_names=["UNFCCC2019_grassland_convert","UNFCCC2020_grassland_convert","UNFCCC2021_grassland_convert"]
     temp_names=list(set(possible_names) & set(desired_simulations))
     if len(temp_names) != 1:
         print("Had problem finding grassland convert name!")
@@ -85,7 +85,7 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
     #endif
     gl_convert_name=temp_names[0]
     #### cropland convert
-    possible_names=["UNFCCC2019_cropland_convert","UNFCCC2021_cropland_convert"]
+    possible_names=["UNFCCC2019_cropland_convert","UNFCCC2020_cropland_convert","UNFCCC2021_cropland_convert"]
     temp_names=list(set(possible_names) & set(desired_simulations))
     if len(temp_names) != 1:
         print("Had problem finding cropland convert name!")
@@ -96,7 +96,7 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
     #endif
     cl_convert_name=temp_names[0]
     #### wetland convert
-    possible_names=["UNFCCC2019_wetland_convert","UNFCCC2021_wetland_convert"]
+    possible_names=["UNFCCC2019_wetland_convert","UNFCCC2020_wetland_convert","UNFCCC2021_wetland_convert"]
     temp_names=list(set(possible_names) & set(desired_simulations))
     if len(temp_names) != 1:
         print("Had problem finding wetland convert name!")
@@ -107,7 +107,7 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
     #endif
     wl_convert_name=temp_names[0]
     #### settlement convert
-    possible_names=["UNFCCC2019_settlement_convert","UNFCCC2021_settlement_convert"]
+    possible_names=["UNFCCC2019_settlement_convert","UNFCCC2020_settlement_convert","UNFCCC2021_settlement_convert"]
     temp_names=list(set(possible_names) & set(desired_simulations))
     if len(temp_names) != 1:
         print("Had problem finding settlement convert name!")
@@ -118,7 +118,7 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
     #endif
     sl_convert_name=temp_names[0]
     #### other convert
-    possible_names=["UNFCCC2019_other_convert","UNFCCC2021_other_convert"]
+    possible_names=["UNFCCC2019_other_convert","UNFCCC2020_other_convert","UNFCCC2021_other_convert"]
     temp_names=list(set(possible_names) & set(desired_simulations))
     if len(temp_names) != 1:
         print("Had problem finding other convert name!")
@@ -129,7 +129,7 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
     #endif
     ol_convert_name=temp_names[0]
     #### woodharvest
-    possible_names=["UNFCCC2019_woodharvest","UNFCCC2021_woodharvest"]
+    possible_names=["UNFCCC2019_woodharvest","UNFCCC2020_woodharvest","UNFCCC2021_woodharvest"]
     temp_names=list(set(possible_names) & set(desired_simulations))
     if len(temp_names) != 1:
         print("Had problem finding woodharvest name!")
@@ -299,6 +299,21 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
         #    print("Diff: ",new_sum_vals-simulation_data[tot_index,:,iplot])
         #    print("{}: ".format(csim),simulation_data[isim,:,iplot])
         #endfor
+    #endif
+
+    # Do we have all NaNs in the new_sum_vals?  If so, cannot make this plot.
+    testnans=np.isnan(new_sum_vals)
+    if testnans.all():
+        print("******************************")
+        print("Have NaN values for subsectors!  Cannot make this plot.")
+        for isim,csim in enumerate(required_simulations):
+            temp_index=desired_simulations.index(csim)
+            print("Subsectors: ",csim,temp_index,simulation_data[temp_index,:,iplot])
+        #endfor
+        print("******************************")
+        return True,ax1
+        traceback.print_stack(file=sys.stdout)
+        sys.exit(1)
     #endif
 
     # Print out each of the bars for the average.  
@@ -627,7 +642,6 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
             if np.isnan(plot_value):
                 plot_value=0.0
             #endif
-
             p1=gradient_bar(ax1,xval-barwidth/2.0, xval+barwidth/2.0, yval, plot_value+yval, color_value, "white")
             p1=ax1.bar(xval, plot_value, bottom=yval,color=color_value,width=barwidth,alpha=0.0)
             top_label(p1,diff_array[isim,iyear]/tot_change*tot_percent_change,text_objects)
@@ -887,6 +901,8 @@ def create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,naverages,s
 ############################################################
 # This plot is a plot showing the mean values of each simulation
 # It's done in addition to most plots
+######### SHOULD NO LONGER BE USED.  I created a seperate script to work
+######### from the .csv files.
 def create_mean_plot(legend_titles,displayname,simulation_data,simulation_min,simulation_max,iplot,pa_string,kp_string,facec,zorder_value,uncert_color,simulation_mean,lplot_countrytot,plot_titles,output_file_start,desired_plots,output_file_end,uncert_alpha,overlapping_years,exclude_simulation_means,desired_simulations):
 
     figmean=plt.figure(2,figsize=(13, 8))

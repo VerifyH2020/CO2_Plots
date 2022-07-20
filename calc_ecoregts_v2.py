@@ -37,11 +37,11 @@ from netcdf_subroutines import create_time_axis_from_netcdf
 #
 # Standard time/lat/lon variables are in files which end with _2D.nc.
 # The script also now processes _2Dmod.nc files, which are similar
-# to CountryTot files.
+# to CountryTot files.  These were renamed to TempCT.
 
 #############################################################
 # A subroutine to print missing information from regions to the
-# NetCDF file.  Only used for the2Dmod file.
+# NetCDF file.  Only used for the2Dmod TempCT file.
 # Takes as input a dictionary of lists of the same length as
 # the timeseries.  If the value is False, data is missing
 # for that timestep and that country in that region.
@@ -247,9 +247,9 @@ else:
 print("Country mask file: ",path_mask)
 
 # variable names to be processed as country means : CountryTot = sum(data * area * fraction) / sum(area * fraction)
-means = ["tas", "pr", "rsds", "mrso", "mrro", "evapotrans", "transpft", "landCoverFrac", "lai","FCO2_FL_REMAIN_ERR","FCO2_LULUCF_TOT_ERR","FCO2_FL_CONVERT_ERR","FCO2_CL_REMAIN_ERR","FCO2_CL_CONVERT_ERR","FCO2_GL_REMAIN_ERR","FCO2_GL_CONVERT_ERR","FCO2_WL_REMAIN_ERR","FCO2_WL_CONVERT_ERR","FCO2_SL_REMAIN_ERR","FCO2_SL_CONVERT_ERR","FCO2_OL_REMAIN_ERR","FCO2_OL_CONVERT_ERR","FCO2_HWP_ERR"]
+means = ["tas", "pr", "rsds", "mrso", "mrro", "evapotrans", "transpft", "landCoverFrac", "lai","FCO2_FL_REMAIN_ERR","FCO2_LULUCF_TOT_ERR","FCO2_FL_CONVERT_ERR","FCO2_CL_REMAIN_ERR","FCO2_CL_CONVERT_ERR","FCO2_GL_REMAIN_ERR","FCO2_GL_CONVERT_ERR","FCO2_WL_REMAIN_ERR","FCO2_WL_CONVERT_ERR","FCO2_SL_REMAIN_ERR","FCO2_SL_CONVERT_ERR","FCO2_OL_REMAIN_ERR","FCO2_OL_CONVERT_ERR","FCO2_HWP_ERR","FCH4_EMIS_CRP_RELERR","FN2O_EMIS_CRP_RELERR"]
 # variable names to be processed as country sums : CountryTot = sum(data)
-sums = ["CO2", "FOREST_AREA", "GRASSLAND_AREA", "CROPLAND_AREA", "AREA"]
+sums = ["CO2", "FOREST_AREA", "GRASSLAND_AREA", "CROPLAND_AREA", "AREA", "FCH4_EMIS_CRP","FCH4_EMIS_CRP_ABSERR","FN2O_EMIS_CRP","FN2O_EMIS_CRP_ABSERR"]
 # all other variables are proccessed as country totals : CountryTot = sum(data * area * fraction)
 
 #code_size=3
@@ -312,7 +312,15 @@ country_region_data=get_country_region_data()
 ##################################
 
 for item in [path] if path.endswith(".nc") else [os.path.join(path, filename) for filename in os.listdir(path)]:
-    if not item.endswith("2D.nc") and not item.endswith("2Dmod.nc"): 
+
+    possible_endings=["2D.nc","2Dmod.nc","TempCT.nc"]
+    current_ending=None
+    for ending in possible_endings:
+       if item.endswith(ending):
+          current_ending=ending
+       #endif
+    #endfor
+    if not current_ending:
        continue
     #endif
 
@@ -320,17 +328,18 @@ for item in [path] if path.endswith(".nc") else [os.path.join(path, filename) fo
     # This is a special case.  These files are created directly from
     # Excel spreadsheets or .csv file.  It wasn't possible to create
     # a normal 2D.nc file from these with reasonable size and accuracy,
-    # so we came up with this compromise.  The 2Dmod file is essentially
+    # so we came up with this compromise.  The 2Dmod/TempCT file is essentially
     # a CountryTot file, but only with countries.  This scripts just
     # puts the countries in the same order as we want for the CountryTot,
     # and also combines the countries into the regions we want.
-    if item.endswith("2Dmod.nc"):
-       print("On modified 2D file: ",item)
+    if item.endswith("2Dmod.nc") or item.endswith("TempCT.nc"):
+       print("On intermediate country total file file: ",item)
 
        # I still want to create an EEZ and non-EEZ file, but they
        # will be identical.
-       pathEEZ = os.path.join(path_out, os.path.split(item)[-1].replace("_2Dmod", "_CountryTotWithEEZ"+region_tag))
-       pathNoEEZ = os.path.join(path_out, os.path.split(item)[-1].replace("_2Dmod", "_CountryTotWithOutEEZ"+region_tag))
+       pathEEZ = os.path.join(path_out, os.path.split(item)[-1].replace(current_ending, "CountryTotWithEEZ"+region_tag+".nc"))
+       pathNoEEZ = os.path.join(path_out, os.path.split(item)[-1].replace(current_ending, "CountryTotWithOutEEZ"+region_tag+".nc"))
+
        if os.path.exists(pathEEZ) or os.path.exists(pathNoEEZ):
           print(pathEEZ, pathNoEEZ)
           print("File exists!  Not overwriting.")
@@ -414,6 +423,64 @@ for item in [path] if path.endswith(".nc") else [os.path.join(path, filename) fo
              #endif
              print("Copying over countries and regions for: ",var)
 
+             # We need to propagate uncertainties properly across
+             # regions, which means first converting to absolute
+             # uncertainties from relative uncertainties.
+             # Check to see:
+             #    1) Is this a relative uncertainty?
+             #    2) Do we have the variable needed to convert to aboslute?
+             
+             lpropagate=False
+             m=re.search(r"(.+)_ERR",var)
+             emission_variable_name=None
+             if m:
+
+                print("Found uncertainty: ",m[0])
+                if m[1] in srcnc.variables.keys():
+                   print("Found emission variable: ",m[1])
+                   emission_variable_name=m[1]
+                else:
+                   print("****************************************")
+                   print("Cannot find emission variable for this uncertainty.")
+                   print(srcnc.variables.keys())
+                   print("Stopping.")
+                   print("****************************************")
+                   traceback.print_stack(file=sys.stdout)
+                   sys.exit(1)
+                #endif
+
+                # Is it a relative uncertainty?
+                lfound=False
+                lrelative=False
+                try:
+                   srcnc.variables[var].units
+                   lfound=True
+                except:
+                   print("Did not find units for this variable.")
+                   print("Assuming relative uncertainty.")
+                   lfound=False
+                   lrelative=True
+                #endtry
+                
+                if lfound:
+                   if srcnc.variables[var].units in ["%"]:
+                      print("Found relative uncertainties.")
+                   else:
+                      print("Not sure about this uncertainty.")
+                      print("Please check this script.")
+                      print("Stopping early.")
+                      print("****************************************")
+                      traceback.print_stack(file=sys.stdout)
+                      sys.exit(1)
+                   #endif
+                #endif
+
+                # So now we know that we have a relative uncertainty and
+                # all the tools we need to propagate it.
+                lpropagate=True
+
+             #endif
+
              # Create the variable
              ncout.createVariable(var, srcnc.variables[var].dtype, srcnc.variables[var].dimensions)
              ncout.variables[var].setncatts(srcnc.variables[var].__dict__)
@@ -447,10 +514,11 @@ for item in [path] if path.endswith(".nc") else [os.path.join(path, filename) fo
                 print("Creating region: ",mcode)
                 timeseries_total=np.zeros((len(srcnc.variables[timevar][:])))
                 total_surface_area=0.0
+                total_emissions=np.zeros((len(srcnc.variables[timevar][:])))
 
                 # Loop over all the component countries in this region.
                 for icomp,ccomp in enumerate(country_region_data[mcode].composant_countries):
-#                   print('feklj ',ireg,mcode,ccomp,icomp)
+                   print('feklj ',ireg,mcode,ccomp,icomp)
                    if ncmask["component_countries"][ireg,icomp] is not np.ma.masked:
                       iindex=ncmask["component_countries"][ireg,icomp]
                       #comp_code=b"".join([letter for letter in ccode[iindex] if letter is not np.ma.masked])
@@ -488,15 +556,29 @@ for item in [path] if path.endswith(".nc") else [os.path.join(path, filename) fo
                             # designed all of this so that VAR and VAR_ERR
                             # should match up, and VAR_ERR should be a
                             # percentage (e.g., 15.0 for 15%).
-                            if var in means:
-                               print("Adding component mean ",test_code,var)
+                            if lpropagate:
+                               print("nkdsd ",emission_variable_name,jreg)
+                               emissions_timeseries_temp=np.isnan(srcnc[emission_variable_name][:,jreg])
+                               emissions_timeseries_temp=np.where(emissions_timeseries_temp,0.0,srcnc[emission_variable_name][:,jreg])
+
+                               lvalues=~np.isnan(emissions_timeseries_temp)
+                               timeseries_total=np.where(lvalues,timeseries_total+(timeseries_temp/100.0*emissions_timeseries_temp)**2,np.nan)
+                               total_emissions=np.where(lvalues,total_emissions+emissions_timeseries_temp,np.nan)
+                               print("Propogating uncertainty: ",test_code,var)
+#                               print('nvioewe COUNTRY ',jreg,srcnc["country_code"][jreg])
+#                               print("UNCERTAINTY ",timeseries_temp[-1])
+#                               print('EMISSIONS ',emissions_timeseries_temp[-1])
+
+
+                            elif var in means:
+                               print("Adding component mean: ",test_code,var)
                                # Need to find the area of this country.  
 
                                # Weight by the surface area of the region
                                timeseries_total=timeseries_total+timeseries_temp*country_region_areas[test_code]
                                total_surface_area=total_surface_area+country_region_areas[test_code]
                             else:
-                               print("Adding component not mean ",test_code,var)
+                               print("Adding component not mean: ",test_code,var)
                                timeseries_total=timeseries_total+timeseries_temp
                             #endif
                          #endif
@@ -507,7 +589,28 @@ for item in [path] if path.endswith(".nc") else [os.path.join(path, filename) fo
                 # For a variable that is a mean for a region, I weight
                 # it by the area of each country (i.e., temperature).  For
                 # other variables, I just sum up the totals from each country
-                if var in means:
+                if lpropagate:
+                   ncout[var][:,ireg]=np.sqrt(timeseries_total/total_emissions**2)*100.0
+                   #print("nvioew REGION ",ireg,ncout[var][:,ireg])
+                   #print("nvioew TIMESERIES ",timeseries_total[-1])
+                   #print("nvioew EMISSIONS ",total_emissions[-1])
+
+                   # I want all uncertainties to be a single value.
+                   # Taking the final value.
+                   lfound=False
+                   for iyear in range(len(ncout[var][:,ireg])-1,-1,-1):
+                      if lfound:
+                         continue
+                      else:
+                         if lvalues[iyear]:
+                            lfound=True
+                            ncout[var][:,ireg]=ncout[var][iyear,ireg]
+                         #endif
+                      #endif
+#                   if mcode == "WEE":
+#                      sys.exit(1)
+#                   #endif
+                elif var in means:
                    ncout[var][:,ireg]=timeseries_total/total_surface_area
                 else:
                    ncout[var][:,ireg]=timeseries_total

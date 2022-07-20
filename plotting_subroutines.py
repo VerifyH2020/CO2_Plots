@@ -25,7 +25,7 @@ def get_cumulated_array(data, **kwargs):
          d[1:] = cum[:-1]
          return d  
 
-def readfile(filename,variablename,ndesiredyears,lconvert_units,starting_year,ending_year,ncountries):
+def readfile(filename,variablename,ndesiredyears,lconvert_units,starting_year,ending_year,ncountries,output_units):
    # The goal of this routine is to read in a slice from starting_year
    # until ending_ear.
    # The time axes for all these files starts as days from 1900-01-01,
@@ -42,16 +42,70 @@ def readfile(filename,variablename,ndesiredyears,lconvert_units,starting_year,en
    ncfile=nc.Dataset(filename)
    FCO2_file=ncfile.variables[variablename][:].filled(fill_value=np.nan)  #kg C yr-1
 
+   # Grab the units
+   current_units=ncfile.variables[variablename].units
+   print("Current units are: {}, and we want: {}".format(current_units,output_units))
+
    # we only need to convert units if we are not dealing with uncertainties,
    # since uncertainties are given as a fraction
    if lconvert_units:
-      if ncfile.variables[variablename].units in ["kg C yr-1","kg C yr-1 [country]"]:
-         print("Converting units from {0} to Tg C yr-1".format(ncfile.variables[variablename].units))
-         FCO2_TOT=FCO2_file/1e+9   #kg CO2/yr -->  Tg C/ year
+      if current_units != output_units:
+         print("Converting units from {} to {}".format(current_units,output_units))
+         if output_units == "Tg C yr-1":
+            if current_units in ["kg C yr-1","kg C yr-1 [country]"]:
+               FCO2_TOT=FCO2_file/1e+9   #kg C/yr -->  Tg C/ year
+               
+            elif current_units in ["kg C"]:
+               FCO2_TOT=FCO2_file/1e+9   #kg C -->  Tg C
 
-      elif ncfile.variables[variablename].units in ["KgC h-1"]:
-         print("Converting units from {0} to Tg C yr-1".format(ncfile.variables[variablename].units))
-         FCO2_TOT=FCO2_file/1e+9*24.0*365.0   #KgC h-1 -->  Tg C yr-1
+            
+            elif current_units in ["KgC h-1"]:
+               FCO2_TOT=FCO2_file/1e+9*24.0*365.0   #KgC h-1 -->  Tg C yr-1
+            else:
+               print('***************************************')
+               print("DO NOT KNOW HOW TO CONVERT THESE UNITS")
+               print(current_units)
+               print(output_units)
+               print('***************************************')
+               traceback.print_stack(file=sys.stdout)
+               sys.exit(1)
+            #endif
+         elif output_units == "Tg N yr-1":
+            if current_units in ["kg N yr-1"]:
+               FCO2_TOT=FCO2_file/1e+9   #kg N/yr -->  Tg N/ year
+            else:
+               print('***************************************')
+               print("DO NOT KNOW HOW TO CONVERT THESE UNITS")
+               print(current_units)
+               print(output_units)
+               print('***************************************')
+               traceback.print_stack(file=sys.stdout)
+               sys.exit(1)
+            #endif
+         elif output_units == "%":
+            if current_units in ["%/100","%"]:
+               print("Nothing to convert here: ",output_units)
+               FCO2_TOT=FCO2_file*1.0
+            else:
+               print('***************************************')
+               print("DO NOT KNOW HOW TO CONVERT THESE UNITS")
+               print(current_units)
+               print(output_units)
+               print('***************************************')
+               traceback.print_stack(file=sys.stdout)
+               sys.exit(1)
+            #endif  
+
+
+         else:
+            print('***************************************')
+            print("DO NOT KNOW HOW TO CONVERT THESE UNITS")
+            print(current_units)
+            print(output_units)
+            print('***************************************')
+            traceback.print_stack(file=sys.stdout)
+            sys.exit(1)
+         #endif
       else:
          print("Not changing units from file: ",ncfile.variables[variablename].units)
          FCO2_TOT=FCO2_file*1.0
@@ -106,7 +160,7 @@ def readfile(filename,variablename,ndesiredyears,lconvert_units,starting_year,en
       #endfor
    #endfor
 
-   return FCO2
+   return FCO2,current_units
 
 
    #################################
