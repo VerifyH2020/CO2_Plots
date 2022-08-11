@@ -413,7 +413,7 @@ else:
 
 if sim_params.need_inversion_correction():
    correction_tag=" (removing rivers_lakes_reservoirs_ULB)"
-   correction_simulations=np.array(["rivers_lakes_reservoirs_ULB"],dtype=object)
+   correction_simulations=np.array(["rivers_lakes_reservoirs_ULB","lateral_fluxes_cropnet"],dtype=object)
    correction_data=np.zeros((sim_params.ndesiredyears,nplots))
    for isim,simname in enumerate(desired_simulations):  
       if simname in correction_simulations:
@@ -520,6 +520,24 @@ if sim_params.lplot_means:
    # any means.  What we want is to print means for the remaining
    # datasets.
    overlapping_years=[]
+
+   # If we have CBMhistorical and CBMsimulated, we combine the
+   # two for the mean, as JRC asked for this.
+   cbmsimulations=set(["CBM2021historicalv2_cbmarea",'CBM2021simulatedv2_cbmarea'])
+   testset=cbmsimulations.intersection(set(desired_simulations))
+   
+   if len(testset) == 2:
+       lcbm=True
+       # Temporarily add CBMsim to CBMhist
+       print("--> Combining CBM simulations for averaging.")
+       icbmhist=desired_simulations.index("CBM2021historicalv2_cbmarea")
+       icbmsim=desired_simulations.index("CBM2021simulatedv2_cbmarea")
+       simulation_data[icbmhist,:,:]=np.where(~np.isnan(simulation_data[icbmsim,:,:]),simulation_data[icbmsim,:,:],simulation_data[icbmhist,:,:])
+   else:
+       lcbm=False
+       print("--> CBM simulations not found.")
+   #endfor
+
    for iplot in range(nplots):
 
       remove_indices=[]
@@ -531,19 +549,8 @@ if sim_params.lplot_means:
           #endif
       #endfor
 
-      #for isim,csim in enumerate(exclude_simulation_means):
-          # This just checks to see if we explicitly remove this simulation,
-          # for example because it's a single point.
-      #    try:
-      #        remove_index=desired_simulations.index(csim)
-      #        remove_indices.append(remove_index)
-      #        print("Remove {} from our calculation of overlap years for the means.".format(csim))
-      #    except:
-      #        print("{} does not appear in our simulations.  Not removing from our calculation of overlap years for the means.".format(csim))
-          #endtry          
-      #endfor
-
       for isim,csim in enumerate(desired_simulations):
+
           # Check to see if this simulation is all NaNs for this country/region.
           nans=np.isnan(simulation_data[isim,:,iplot])
           if nans.all():
@@ -614,6 +621,15 @@ if sim_params.lplot_means:
           #endif
       #endfor
    #endfor
+
+   # Undo the CBM results.
+   if lcbm:
+       print("--> Undoing CBM simulations.")
+       icbmhist=desired_simulations.index("CBM2021historicalv2_cbmarea")
+       icbmsim=desired_simulations.index("CBM2021simulatedv2_cbmarea")
+       simulation_data[icbmhist,:,:]=np.where(~np.isnan(simulation_data[icbmsim,:,:]),np.nan,simulation_data[icbmhist,:,:])
+   #endif
+
    print("*******************************************************************")
 
    # for every plot, loop over all possible overlapping points

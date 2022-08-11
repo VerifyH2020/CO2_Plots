@@ -122,7 +122,7 @@ class dataset_parameters():
 class simulation_parameters():
     def __init__(self, parser):
 
-        self.possible_graphs=["forest_2021","lulucfinvbook_2021","lulucfinv_2021","lulucfinvbooktrendy_2021","test", "luc_full", "sectorplot_full", "forestremain_2019", "forestremain_2020",  "forestremain_2021", "forest_2021", "forestremaintest_2021", "grasslandremain_2019", "grasslandremain_2020", "grasslandremain_2021", "croplandremain_2019", "croplandremain_2020", "croplandremain_2021", "topdownandinventories_2019","topdownandinventories_2020","topdownandinventories_2021","topdownandinventoriessimple_2021","biofuels","inversions_verify","lulucf","lulucf_full","topdownlulucf_2019","topdownlulucfbar_2019","topdownlulucf_2020","topdownlulucfbar_2020","topdownlulucf_2021","topdownlulucfbar_2021","verifybu","verifybu_detrend","fluxcom","lucf_full","lulucftrendy_2019","lulucftrendy_2020","lulucftrendy_2021","unfccclulucfbar_2019","unfccclulucfbar_2020","unfccclulucfbar_2021","unfccclulucfall_2021","all_orchidee","gcp_inversions_corrected","eurocominversionsv1","eurocominversionsv2","eurocomcsrinversionsv2","eurocomcomparison","epic_comparison","lulucf_msnrt","trendyorc","faostat2021","faostatnorom2021","faolulucfcomparison","fao_crp_grs","fao_for","unfccc_fao","unfccc_fao_trendy","emission_factors","unfccc_woodharvest","d6.2","unfccc_forest_test","unfccclulucfcomparison","unfcccflcomparison","unfcccclcomparison","unfcccglcomparison","orchidees3comparison","trendyv9_all","trendyv9_removed","csrinversions","csrinversionssymbols","csrinversions2021","trendyv9_gcp","trendy_gcp","trendyv7_all","trendyv7_removed","trendyv10_all","trendyv10_removed","trendycomparison","gcp2019_all","gcp2020_all","gcpinversion2021","gcpcomparison","gcp_trendy","trendyv10_gcp2021_all","trendyv10_gcp2021","crops_fao_epic","grassland_all","bookkeeping","bookkeeping_2021","epicgrasslandstest","epic_test_rh","epic_test_npp","epic_test_fharvest","epic_test_leech","trendyv7_common","trendyv9_common","trendyv10_common","trendycommon","cbm","gcpcommon","cams","ctracker","jena_global","roxana","roxanawater","efiscencomparison","efiscenspace","regionalinversions","lumiainversions","coco2","unfcccuncert","camseez","gcp2021meanmedian",'inversioncorrections',"chimerecomparison","gfedtest","neepapereurocom",'gpptest','empach4','orcv2drivers','orcv3driverstotlucco2nitclim','orcv3driverstotlucco2nit','orcv3driverstotlucco2','orcv3driverstotluc','orcv3driverstot','bluedriverstotpastcropabanharv','bluedriverstotpastcropaban','bluedriverstotpastcrop','bluedriverstotpast','bluedriverstot','forestremain_2021_donotuse','forestremainfluxcom_2021',"faostat2021noromania",'orchideenpp','orchideesoc','orchideelts','croplandnpp','dbcleanoriginal','dbcleantest','dbcleantest2','ecossen2otest','trendyv10cableorchidee','unfcccfl_2021','alldatasets_2019','alldatasets_2021','meanplotsv1_2021','meanplotsv2_2021']
+        self.possible_graphs=["forest_2021","lulucfinvbook_2021","lulucfinv_2021","lulucfinvbooktrendy_2021","test", "luc_full", "sectorplot_full", "forestremain_2019", "forestremain_2020",  "forestremain_2021", "forest_2021", "forestremaintest_2021", "grasslandremain_2019", "grasslandremain_2020", "grasslandremain_2021", "croplandremain_2019", "croplandremain_2020", "croplandremain_2021", "topdownandinventories_2019","topdownandinventories_2020","topdownandinventories_2021","topdownandinventoriessimple_2021","biofuels","inversions_verify","lulucf","lulucf_full","topdownlulucf_2019","topdownlulucfbar_2019","topdownlulucf_2020","topdownlulucfbar_2020","topdownlulucf_2021","topdownlulucfbar_2021","verifybu","verifybu_detrend","fluxcom","lucf_full","lulucftrendy_2019","lulucftrendy_2020","lulucftrendy_2021","unfccclulucfbar_2019","unfccclulucfbar_2020","unfccclulucfbar_2021","unfccclulucfall_2021","all_orchidee","gcp_inversions_corrected","eurocominversionsv1","eurocominversionsv2","eurocomcsrinversionsv2","eurocomcomparison","epic_comparison","lulucf_msnrt","trendyorc","faostat2021","faostatnorom2021","faolulucfcomparison","fao_crp_grs","fao_for","unfccc_fao","unfccc_fao_trendy","emission_factors","unfccc_woodharvest","d6.2","unfccc_forest_test","unfccclulucfcomparison","unfcccflcomparison","unfcccclcomparison","unfcccglcomparison","orchidees3comparison","trendyv9_all","trendyv9_removed","csrinversions","csrinversionssymbols","csrinversions2021","trendyv9_gcp","trendy_gcp","trendyv7_all","trendyv7_removed","trendyv10_all","trendyv10_removed","trendycomparison","gcp2019_all","gcp2020_all","gcpinversion2021","gcpcomparison","gcp_trendy","trendyv10_gcp2021_all","trendyv10_gcp2021","crops_fao_epic","grassland_all","bookkeeping","bookkeeping_2021","epicgrasslandstest","epic_test_rh","epic_test_npp","epic_test_fharvest","epic_test_leech","trendyv7_common","trendyv9_common","trendyv10_common","trendycommon","cbm","gcpcommon","cams","ctracker","jena_global","roxana","roxanawater","efiscencomparison","efiscenspace","regionalinversions","lumiainversions","coco2","unfcccuncert","camseez","gcp2021meanmedian",'inversioncorrections',"chimerecomparison","gfedtest","neepapereurocom",'gpptest','empach4','orcv2drivers','orcv3driverstotlucco2nitclim','orcv3driverstotlucco2nit','orcv3driverstotlucco2','orcv3driverstotluc','orcv3driverstot','bluedriverstotpastcropabanharv','bluedriverstotpastcropaban','bluedriverstotpastcrop','bluedriverstotpast','bluedriverstot','forestremain_2021_donotuse','forestremainfluxcom_2021',"faostat2021noromania",'orchideenpp','orchideesoc','orchideelts','croplandnpp','dbcleanoriginal','dbcleantest','dbcleantest2','ecossen2otest','trendyv10cableorchidee','unfcccfl_2021','alldatasets_2019','alldatasets_2021','meanplotsv1_2021','meanplotsv2_2021','peatlands_2021']
         self.possible_true_values=["true","t","yes","y"]
 
         parser.add_argument('--graphname', dest='graphname', action='store',required=True, choices=self.possible_graphs, help='the type of graph that you wish to plot')
@@ -310,7 +310,7 @@ class simulation_parameters():
             elif self.country_scope in ["Master","AllCountriesRegions"]:
 #                self.desired_plots=["E28", "FRA", "USA", 'AFR','WLD']
 #                self.desired_plots=["E28", "FRA", "DEU", 'NLD','Ireland']
-                self.desired_plots=["E28", "DEU", 'FRA',"PRT"]
+                self.desired_plots=["E28", "DEU", 'FRA',"PRT",'WLD']
                 #self.desired_plots=["E28", "DEU", 'FRA',"PRT","Greece","Sweden","Austria","Romania"]
 #                self.desired_plots=['COD','AFR','GAB','ZAA']
 #                self.desired_plots=["E28", "E27", 'E15',"EUR"]
@@ -326,7 +326,7 @@ class simulation_parameters():
 
                 # This is for Roxana
                 #self.desired_plots=["E28","Austria","Belgium","Bulgaria","Croatia","Cyprus","Czech Republic","Denmark","Estonia","Finland","France","Germany","Greece","Hungary","Ireland","Italy","Latvia","Lithuania","Luxembourg","Malta","Netherlands","Poland","Portugal","Romania","Slovakia","Slovenia","Spain","Sweden","United Kingdom","MDA","UKR","BLR","CHE","NOR","WEE","CEE","NOE","SOZ","EAE"]
-                self.desired_plots=["E28","Austria","Belgium","Bulgaria","Croatia","Czech Republic","Denmark","Estonia","Finland","France","Germany","Greece","Hungary","Ireland","Italy","Latvia","Lithuania","Luxembourg","Malta","Netherlands","Poland","Portugal","Romania","Slovakia","Slovenia","Spain","Sweden","United Kingdom","MDA","UKR","BLR"]
+                #self.desired_plots=["E28","Austria","Belgium","Bulgaria","Croatia","Czech Republic","Denmark","Estonia","Finland","France","Germany","Greece","Hungary","Ireland","Italy","Latvia","Lithuania","Luxembourg","Malta","Netherlands","Poland","Portugal","Romania","Slovakia","Slovenia","Spain","Sweden","United Kingdom","MDA","UKR","BLR"]
 
 #                self.desired_plots=["Cyprus"]
 
@@ -934,6 +934,11 @@ class simulation_parameters():
         master_datasets["EMPA_CH4_V2020"]=dataset_parameters( "EMPA_CH4_V2020", database_dir + "VERIFY_OUTPUT/FCH4/Tier3TD_CH4_Fluxes_FLExKF_EMPA_ALL_EU_1M_V2_20201214_BRUNNER_WP4_CountryTotWithEEZ{}.nc".format(self.country_scope), "REGIONAL_TD", "FCH4_POST", "D", "gold")
         master_datasets["EMPA_CH4_V2021"]=dataset_parameters( "EMPA_CH4_V2021", database_dir + "VERIFY_OUTPUT/FCH4/InvCH4-VERIFY/Tier3TD_CH4_LandFlux_FLExKF-CH4-EMPA2021_ec_LAND_Global_1M_Period-2005-2019_INVCH4-VERIFY_BERGAMASCHI_Grid-eurocom_CountryTotWithEEZ{}.nc".format(self.country_scope), "REGIONAL_TD", "FCH4_TOT", "s", "gold")
 
+        # Peatlands CH4 fluxes
+        master_datasets["JSBACH-HIMMELI-Peatlands-v2019"]=dataset_parameters( "JSBACH-HIMMELI-Peatlands-v2019", database_dir + "/VERIFY_OUTPUT/FCH4/Tier3BUPB_CH4_PeatlandWetFlux_JSBACH-HIMMELI-SX_FMI_PEAT_EU_1M_V1_20190819_MARKKANEN_WP4_CountryTotWithEEZ{}.nc".format(self.country_scope), "VERIFY_BU", "FCH4_WETLAND", "s", "gray")
+        master_datasets["JSBACH-HIMMELI-Peatlands-v2020"]=dataset_parameters( "JSBACH-HIMMELI-Peatlands-v2020", database_dir + "/VERIFY_OUTPUT/FCH4/Tier3BUPB_CH4_PeatlandWetFlux_JSBACH-HIMMELI_FMI_PEAT_EU_1M_V2_20200605_MARKKANEN_WP4_CountryTotWithEEZ{}.nc".format(self.country_scope), "VERIFY_BU", "FCH4_WETLAND", "s", "red")
+        master_datasets["JSBACH-HIMMELI-Peatlands-v2021"]=dataset_parameters( "JSBACH-HIMMELI-Peatlands-v2021", database_dir + "/VERIFY_OUTPUT/FCH4/Tier3BUPB_CH4_NaturalFlux_JSBACH-HIMMELI_FMI_LAND_EU_1M_V3_20210805_MARKKANEN_WP4_CountryTotWithEEZ{}.nc".format(self.country_scope), "VERIFY_BU", "FCH4_PEAT", "s", "blue")
+
         ##
         master_datasets["BLUE2019"]=dataset_parameters( "BLUE2019", input_filename["BLUE2019"], "VERIFY_BU", "CD_A", "^", "tan",lcheck_for_mean_overlap=True,displayname="BLUE")
         master_datasets["BLUE2021_VERIFY"]=dataset_parameters( "BLUE2021_VERIFY", input_filename["BLUE2021_VERIFY"], "VERIFY_BU", "FCO2_LUTOT_FOR", "^", "tan",lcheck_for_mean_overlap=True,displayname="BLUEvVERIFY-V2021")
@@ -1211,12 +1216,18 @@ class simulation_parameters():
         master_datasets["GFEDv4.1s"]=dataset_parameters( "GFEDv4.1s", input_filename["GFEDv4.1s"], "VERIFY_BU", "FCO2_FIRE", "P", "orange")
 
         ## Lateral fluxes
+        # This will be overwritten
+        master_datasets["Lateralfluxes_all_v2"]=dataset_parameters( "Lateralfluxes_all_v2", input_filename["lateral_fluxes_cropsource"], "VERIFY_BU", "CROPSOURCE", "X", "black")
+        ##
         master_datasets["lateral_fluxes_cropsource"]=dataset_parameters( "lateral_fluxes_cropsource", input_filename["lateral_fluxes_cropsource"], "VERIFY_BU", "CROPSOURCE", "o", "red")
         master_datasets["lateral_fluxes_cropsink"]=dataset_parameters( "lateral_fluxes_cropsink", input_filename["lateral_fluxes_cropsink"], "VERIFY_BU", "CROPSINK", "o", "green")
+        master_datasets["lateral_fluxes_cropnet"]=dataset_parameters( "lateral_fluxes_cropnet", input_filename["lateral_fluxes_cropsource"], "VERIFY_BU", "CROPSINK", "o", "black")
         master_datasets["lateral_fluxes_woodsource"]=dataset_parameters( "lateral_fluxes_woodsource", input_filename["lateral_fluxes_woodsource"], "VERIFY_BU", "WOODSOURCE", "s", "red")
         master_datasets["lateral_fluxes_woodsink"]=dataset_parameters( "lateral_fluxes_woodsink", input_filename["lateral_fluxes_woodsink"], "VERIFY_BU", "WOODSINK", "s", "green")
+        master_datasets["lateral_fluxes_woodnet"]=dataset_parameters( "lateral_fluxes_woodnet", input_filename["lateral_fluxes_woodsink"], "VERIFY_BU", "WOODSINK", "s", "black")
         master_datasets["lateral_fluxes_lakeriversource"]=dataset_parameters( "lateral_fluxes_lakeriversource", input_filename["lateral_fluxes_lakeriversource"], "VERIFY_BU", "LAKERIVEREMIS", "^", "red")
         master_datasets["lateral_fluxes_riversink"]=dataset_parameters( "lateral_fluxes_riversink", input_filename["lateral_fluxes_riversink"], "VERIFY_BU", "RIVERSINK", "^", "green")
+        master_datasets["lateral_fluxes_rivernet"]=dataset_parameters( "lateral_fluxes_rivernet", input_filename["lateral_fluxes_riversink"], "VERIFY_BU", "RIVERSINK", "^", "black")
 
         ## Some test datasets with N2O.  Not sure these will have any sense.
         master_datasets["FLEXINVERT-N2O-V2019-Original"]=dataset_parameters( "FLEXINVERT-N2O-V2019-Original","/home/dods/verify/VERIFY_OUTPUT/FN2O/Tier3TD_N2O_Flux_FLEXINVERT-SX_NILU_LAND_EU_1M_V0_20191008_THOMPSON_WP4_CountryTotWithEEZ{}.nc".format(self.country_scope), "REGIONAL_TD", "FN2O_TOT", "^", "green")
@@ -3315,7 +3326,7 @@ class simulation_parameters():
             master_datasets['LUH2v2_FOREST'].displayname='LUH2v2-ESACCI_FL-FL area (used in ORCHIDEE)'
 #            master_datasets['EFISCEN'].displayname='EFISCEN-V2019-FL-FL'
             master_datasets['EFISCEN-Spacev2021'].displayname='EFISCENSpace-V2021-FL-FL'
-            master_datasets['ORCHIDEEv2-S3-V2021v2-FL_FL'].displayname='ORCHIDEEv2-S3-V2021-FL'
+            master_datasets['ORCHIDEEv2-S3-V2021v2-FL_FL'].displayname='ORCHIDEE-V2021-FL'
             master_datasets['CBM2021historicalv2_cbmarea'].displayname='CBM-V2021-FL-FL'
             master_datasets['CBM2021simulatedv2_cbmarea'].displayname='CBMsim-V2021-FL-FL'
             master_datasets['FAOSTAT2021norom_FL'].displayname='FAOSTAT-V2021-FL'
@@ -3352,7 +3363,7 @@ class simulation_parameters():
             self.panel_ratios=[1.0,1.0/2.1]
             self.igrid_legend=1
 
-            self.lexternal_y=False
+            self.lexternal_y=True
             self.ymin_external=-160.0
             self.ymax_external=10.0
             if self.lexternal_y:
@@ -3394,7 +3405,7 @@ class simulation_parameters():
             
             master_datasets['UNFCCC_FOREST'].displayname='UNFCCC_FL-FL area'
             master_datasets['LUH2v2_FOREST'].displayname='LUH2v2-ESACCI_FL-FL area (used in ORCHIDEE)'
-            master_datasets['ORCHIDEEv3-S3-V2021v2-FL_FL'].displayname='ORCHIDEEv3-S3-V2021-FL'
+            master_datasets['ORCHIDEEv3-S3-V2021v2-FL_FL'].displayname='ORCHIDEE-V2021-FL'
             master_datasets['FAOSTAT2021norom_FL'].displayname='FAOSTAT-V2021-FL'
 
             self.desired_legend=[\
@@ -3422,7 +3433,7 @@ class simulation_parameters():
             self.panel_ratios=[1.0,1.0/2.1]
             self.igrid_legend=1
 
-            self.lexternal_y=False
+            self.lexternal_y=True
             self.ymin_external=-160.0
             self.ymax_external=10.0
             if self.lexternal_y:
@@ -6244,13 +6255,17 @@ class simulation_parameters():
             self.desired_simulations=[ \
                                        "GCP2021_ALL", \
                                        "rivers_lakes_reservoirs_ULB", \
-                                       "GFEDv4.1s", \
+#                                       "GFEDv4.1s", \
+                                       "Lateralfluxes_all_v2", \
                                        "lateral_fluxes_cropsource", \
                                        "lateral_fluxes_cropsink", \
+                                       "lateral_fluxes_cropnet", \
                                        "lateral_fluxes_woodsource", \
                                        "lateral_fluxes_woodsink", \
+                                       "lateral_fluxes_woodnet", \
                                        "lateral_fluxes_lakeriversource", \
                                        "lateral_fluxes_riversink", \
+                                       "lateral_fluxes_rivernet", \
                                    ]  
             
             self.output_file_start="InversionCorrections_"
@@ -6263,6 +6278,30 @@ class simulation_parameters():
             master_datasets["GCP2021_ALL"].uncert_color=master_datasets["GCP2021_ALL"].facec
 
             master_datasets['rivers_lakes_reservoirs_ULB'].plotmarker='^'
+
+            # These simulations will be combined together.
+            self.overwrite_simulations["Lateralfluxes_all_v2"]=["lateral_fluxes_cropsource","lateral_fluxes_cropsink","lateral_fluxes_woodsource","lateral_fluxes_woodsink","lateral_fluxes_lakeriversource","lateral_fluxes_riversink"]
+            # So I don't want to generally plot the components
+            master_datasets["lateral_fluxes_cropsource"].displaylegend=False
+            master_datasets["lateral_fluxes_cropsink"].displaylegend=False
+            master_datasets["lateral_fluxes_woodsource"].displaylegend=False
+            master_datasets["lateral_fluxes_woodsink"].displaylegend=False
+            master_datasets["lateral_fluxes_lakeriversource"].displaylegend=False
+            master_datasets["lateral_fluxes_riversink"].displaylegend=False
+            self.overwrite_operations["Lateralfluxes_all_v2"]="sum"
+            self.overwrite_coeffs["Lateralfluxes_all_v2"]=[1.0,1.0,1.0,1.0,1.0,1.0]
+
+            self.overwrite_simulations["lateral_fluxes_cropnet"]=["lateral_fluxes_cropsource","lateral_fluxes_cropsink"]
+            self.overwrite_coeffs["lateral_fluxes_cropnet"]=[1.0,1.0]
+            self.overwrite_operations["lateral_fluxes_cropnet"]="sum"
+
+            self.overwrite_simulations["lateral_fluxes_woodnet"]=["lateral_fluxes_woodsource","lateral_fluxes_woodsink"]
+            self.overwrite_coeffs["lateral_fluxes_woodnet"]=[1.0,1.0]
+            self.overwrite_operations["lateral_fluxes_woodnet"]="sum"
+
+            self.overwrite_simulations["lateral_fluxes_rivernet"]=["lateral_fluxes_lakeriversource","lateral_fluxes_riversink"]
+            self.overwrite_coeffs["lateral_fluxes_rivernet"]=[1.0,1.0]
+            self.overwrite_operations["lateral_fluxes_rivernet"]="sum"
 
             # The space for the legend needs to be a little bit bigger
             # to make sure we fit in the text.
@@ -7770,6 +7809,21 @@ class simulation_parameters():
             master_datasets["UNFCCC2021_FL"].lplot_errorbar=True
 
 
+        elif self.graphname == "peatlands_2021":
+
+            # Getting the overlap years for the mean plot and
+            # 2021 data for all the datasets that Roxana wants.
+
+            self.desired_simulations=[ \
+                                       'JSBACH-HIMMELI-Peatlands-v2019', \
+                                       'JSBACH-HIMMELI-Peatlands-v2020', \
+                                       'JSBACH-HIMMELI-Peatlands-v2021', \
+                             ]  
+
+            self.output_file_start="PEATLANDS_"
+            self.output_file_end="_FCH4_2021_v1.png" 
+            self.titleending=r" : CH$_4$ emissions from peatlands"
+            
         else:
             print("I do not understand which simulation this is:")
             print(self.graphname)
