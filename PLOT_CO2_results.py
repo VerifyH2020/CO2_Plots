@@ -522,21 +522,32 @@ if sim_params.lplot_means:
    overlapping_years=[]
 
    # If we have CBMhistorical and CBMsimulated, we combine the
-   # two for the mean, as JRC asked for this.
-   cbmsimulations=set(["CBM2021historicalv2_cbmarea",'CBM2021simulatedv2_cbmarea'])
-   testset=cbmsimulations.intersection(set(desired_simulations))
-   
-   if len(testset) == 2:
-       lcbm=True
+   # two for the mean, as JRC asked for this.  We then take the mean 
+   # from 2005--2019.
+   if sim_params.graphname == "forestremain_2021":
+       cbmsimulations=set(["CBM2021historicalv2_cbmarea",'CBM2021simulatedv2_cbmarea'])
+       testset=cbmsimulations.intersection(set(desired_simulations))
+       if len(testset) == 2:
+           lcbm=True
+       else:
+           print("********************************")
+           print("Do not have CBM simulations in forestremain_2021?")
+           print(desired_simulations)
+           print("********************************")
+           traceback.print_stack(file=sys.stdout)
+           sys.exit(1)
+       #endif
+   else:
+       lcbm=False
+       print("--> Not modifying CBM simulations for the mean.")
+   #endfor
+   if lcbm:
        # Temporarily add CBMsim to CBMhist
        print("--> Combining CBM simulations for averaging.")
        icbmhist=desired_simulations.index("CBM2021historicalv2_cbmarea")
        icbmsim=desired_simulations.index("CBM2021simulatedv2_cbmarea")
        simulation_data[icbmhist,:,:]=np.where(~np.isnan(simulation_data[icbmsim,:,:]),simulation_data[icbmsim,:,:],simulation_data[icbmhist,:,:])
-   else:
-       lcbm=False
-       print("--> CBM simulations not found.")
-   #endfor
+   #endif
 
    for iplot in range(nplots):
 
@@ -590,7 +601,19 @@ if sim_params.lplot_means:
           if not ds.lcalculate_mean:
               continue
           else:
-              mean_years=overlapping_years[iplot]
+
+              if lcbm:
+                  mean_years=[]
+                  for iyear,year in enumerate(sim_params.allyears):
+                      if year >= 2005 and year <= 2019:
+                          mean_years.append(True)
+                      else:
+                          mean_years.append(False)
+                      #endif
+                  #endfor
+              else:
+                  mean_years=overlapping_years[iplot]
+              #endif
               #         else:
               #            mean_years=np.asarray(simulation_data[isim,:,iplot])
               #            mean_years= np.invert(np.isnan(mean_years))
