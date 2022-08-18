@@ -92,13 +92,13 @@ numsims=len(desired_simulations)
 
 # Now read in the data into one large array.  Based on the simulation
 # type, we may have to modify how we process the data.
-simulation_data=np.zeros((numsims,sim_params.ndesiredyears,nplots))*np.nan
+simulation_data=np.zeros((numsims,sim_params.ntimesteps,nplots))*np.nan
 # Some of the files, like the inventories, have an error that we can read in
-simulation_err=np.zeros((numsims,sim_params.ndesiredyears,nplots))*np.nan
+simulation_err=np.zeros((numsims,sim_params.ntimesteps,nplots))*np.nan
 # and occasionally we want the min and the max values, in particular for
 # combinations of other simulations.  I use this for uncertainty as well.
-simulation_min=np.zeros((numsims,sim_params.ndesiredyears,nplots))*np.nan
-simulation_max=np.zeros((numsims,sim_params.ndesiredyears,nplots))*np.nan
+simulation_min=np.zeros((numsims,sim_params.ntimesteps,nplots))*np.nan
+simulation_max=np.zeros((numsims,sim_params.ntimesteps,nplots))*np.nan
 
 
 if sim_params.luse_fake_data:
@@ -106,7 +106,7 @@ if sim_params.luse_fake_data:
    print("All plots will have the same data.")
    for isim,simname in enumerate(desired_simulations):  
       for iplot in range(nplots):
-         simulation_data[isim,:,iplot],simulation_err[isim,:,iplot],simulation_min[isim,:,iplot],simulation_max[isim,:,iplot]=read_fake_data(sim_params.ndesiredyears,simname)
+         simulation_data[isim,:,iplot],simulation_err[isim,:,iplot],simulation_min[isim,:,iplot],simulation_max[isim,:,iplot]=read_fake_data(sim_params.ntimesteps,simname)
       #endfor
    #endfor
 
@@ -132,13 +132,25 @@ else:
          # This reads in the associated error.  It assumes that the file
          # has another variable of the same name, with _ERR added.
          inv_fCO2_err,sim_params.dataset_parameters[isim].current_units=readfile(fname,ds.variable + "_ERR",sim_params.ndesiredyears,ds.lconvert_units,1990,2018,sim_params.ncountries,'%')  #monthly
-         annfCO2=np.nanmean(inv_fCO2,axis=1)   #convert from monthly to yearly
-         annfCO2_err=np.nanmean(inv_fCO2_err,axis=1)   #convert from monthly to yearly
+
+         if sim_params.plot_monthly_data:
+             # We need to reshape the array because we have an extra axis.
+             annfCO2=np.reshape(inv_fCO2, (-1,inv_fCO2.shape[2]))
+             annfCO2_err=np.reshape(inv_fCO2, (-1,inv_fCO2.shape[2]))
          
-         annfCO2_min=annfCO2.copy()*np.nan # these values are not used here
-         annfCO2_max=annfCO2.copy()*np.nan
-   
-         simulation_data[isim,:,:],simulation_err[isim,:,:],simulation_min[isim,:,:],simulation_max[isim,:,:]=group_input(annfCO2,annfCO2_err,annfCO2_min,annfCO2_max,sim_params.desired_plots,True,sim_params.ndesiredyears,nplots,sim_params.all_regions_countries,desired_simulations[isim])
+             annfCO2_min=annfCO2.copy()*np.nan # these values are not used here
+             annfCO2_max=annfCO2.copy()*np.nan
+
+         else:
+             annfCO2=np.nanmean(inv_fCO2,axis=1)   #convert from monthly to yearly
+             annfCO2_err=np.nanmean(inv_fCO2_err,axis=1)   #convert from monthly to yearly
+         
+             annfCO2_min=annfCO2.copy()*np.nan # these values are not used here
+             annfCO2_max=annfCO2.copy()*np.nan
+             
+         #endif
+
+         simulation_data[isim,:,:],simulation_err[isim,:,:],simulation_min[isim,:,:],simulation_max[isim,:,:]=group_input(annfCO2,annfCO2_err,annfCO2_min,annfCO2_max,sim_params.desired_plots,True,sim_params.ndesiredyears,nplots,sim_params.all_regions_countries,desired_simulations[isim],sim_params.ntimesteps)
          
 
          # I want to convert the percentage error values into min and max.  I do that below in 
@@ -153,9 +165,17 @@ else:
          inv_fCO2_min,sim_params.dataset_parameters[isim].current_units=readfile(fname,ds.variable + "_MIN",sim_params.ndesiredyears,ds.lconvert_units,1990,2018,sim_params.ncountries,sim_params.output_units)  #monthly
          inv_fCO2_max,sim_params.dataset_parameters[isim].current_units=readfile(fname,ds.variable + "_MAX",sim_params.ndesiredyears,ds.lconvert_units,1990,2018,sim_params.ncountries,sim_params.output_units)  #monthly
          
-         annfCO2=np.nanmean(inv_fCO2,axis=1)   #convert from monthly to yearly
-         annfCO2_min=np.nanmean(inv_fCO2_min,axis=1)   #convert from monthly to yearly
-         annfCO2_max=np.nanmean(inv_fCO2_max,axis=1)   #convert from monthly to yearly
+         if sim_params.plot_monthly_data:
+             # We need to reshape the array because we have an extra axis.
+             annfCO2=np.reshape(inv_fCO2, (-1,inv_fCO2.shape[2]))
+             annfCO2_min=np.reshape(inv_fCO2_min, (-1,inv_fCO2.shape[2]))
+             annfCO2_max=np.reshape(inv_fCO2_min, (-1,inv_fCO2.shape[2]))
+
+         else:
+             annfCO2=np.nanmean(inv_fCO2,axis=1)   #convert from monthly to yearly
+             annfCO2_min=np.nanmean(inv_fCO2_min,axis=1)   #convert from monthly to yearly
+             annfCO2_max=np.nanmean(inv_fCO2_max,axis=1)   #convert from monthly to yearly
+         #endif
 
          print("Values: ",desired_simulations[isim],annfCO2[:,sim_params.debug_country_index])
          print("Min: ",desired_simulations[isim],annfCO2_min[:,sim_params.debug_country_index])
@@ -224,15 +244,23 @@ else:
             #endfor
          #endif
 
-         simulation_data[isim,:,:],simulation_err[isim,:,:],simulation_min[isim,:,:],simulation_max[isim,:,:]=group_input(annfCO2,annfCO2,annfCO2_min,annfCO2_max,sim_params.desired_plots,False,sim_params.ndesiredyears,nplots,sim_params.all_regions_countries,desired_simulations[isim])
+         simulation_data[isim,:,:],simulation_err[isim,:,:],simulation_min[isim,:,:],simulation_max[isim,:,:]=group_input(annfCO2,annfCO2,annfCO2_min,annfCO2_max,sim_params.desired_plots,False,sim_params.ndesiredyears,nplots,sim_params.all_regions_countries,desired_simulations[isim],sim_params.ntimesteps)
 
       elif ds.simtype in ("TRENDY","VERIFY_BU","NONVERIFY_BU","INVENTORY_NOERR","VERIFY_TD","GLOBAL_TD","REGIONAL_TD","OTHER"):
          inv_fCO2,sim_params.dataset_parameters[isim].current_units=readfile(fname,ds.variable,sim_params.ndesiredyears,ds.lconvert_units,sim_params.allyears[0],sim_params.allyears[-1],sim_params.ncountries,sim_params.output_units)  #monthly
-         annfCO2=np.nanmean(inv_fCO2,axis=1)   #convert from monthly to yearly
+         if sim_params.plot_monthly_data:
+             # We need to reshape the array because we have an extra axis.
+             annfCO2=np.reshape(inv_fCO2, (-1,inv_fCO2.shape[2]))
+             annfCO2_min=annfCO2.copy()*np.nan # these values are not used here
+             annfCO2_max=annfCO2.copy()*np.nan # these values are not used here
+
+         else:
+             annfCO2=np.nanmean(inv_fCO2,axis=1)   #convert from monthly to yearly
          
-         annfCO2_min=annfCO2.copy()*np.nan # these values are not used here
-         annfCO2_max=annfCO2.copy()*np.nan
-         
+             annfCO2_min=annfCO2.copy()*np.nan # these values are not used here
+             annfCO2_max=annfCO2.copy()*np.nan
+         #endif
+
          # Some minor corrections have to be made to some of the files
          # The fluxes for ORCHIDEE seemed inverted with regards to the TRENDY
          # sign convention.  Flip that for the chart.  Same for CBM and the
@@ -288,7 +316,7 @@ else:
 #            sys.exit(1)
          #endif
 
-         simulation_data[isim,:,:],simulation_err[isim,:,:],simulation_min[isim,:,:],simulation_max[isim,:,:]=group_input(annfCO2,annfCO2,annfCO2_min,annfCO2_max,sim_params.desired_plots,False,sim_params.ndesiredyears,nplots,sim_params.all_regions_countries,desired_simulations[isim])
+         simulation_data[isim,:,:],simulation_err[isim,:,:],simulation_min[isim,:,:],simulation_max[isim,:,:]=group_input(annfCO2,annfCO2,annfCO2_min,annfCO2_max,sim_params.desired_plots,False,sim_params.ndesiredyears,nplots,sim_params.all_regions_countries,desired_simulations[isim],sim_params.ntimesteps)
       else:
          print("Do not know how to process data for simulation type: {0}".format(ds.simtype))
          sys.exit()
@@ -325,10 +353,10 @@ if not test_min_max.all():
    print("Seem to have minimum values and not maximum values (or vice versa)!")
    for isim,simname in enumerate(desired_simulations):  
       print("Simulation {}: {}".format(isim,simname))
-      for iyear in range(sim_params.ndesiredyears):
+      for itime in range(sim_params.ntimesteps):
          for iplot in range(nplots):
-            if (have_min[isim,iyear,iplot] and not have_max[isim,iyear,iplot]) or (have_max[isim,iyear,iplot] and not have_min[isim,iyear,iplot]):
-                print("iyear,iplot,plot_name,min,max: {} {} {} {} {}".format(iyear,iplot,sim_params.desired_plots[iplot],simulation_min[isim,iyear,iplot],simulation_max[isim,iyear,iplot]))
+            if (have_min[isim,itime,iplot] and not have_max[isim,itime,iplot]) or (have_max[isim,itime,iplot] and not have_min[isim,itime,iplot]):
+                print("itime,iplot,plot_name,min,max: {} {} {} {} {}".format(itime,iplot,sim_params.desired_plots[iplot],simulation_min[isim,itime,iplot],simulation_max[isim,itime,iplot]))
             #endif
          #endfor
       #endfor
@@ -346,9 +374,9 @@ if test_min_err.any():
    print("Next we will convert the err into min/max and the min/max into err values.")
    for isim,simname in enumerate(desired_simulations):  
       print("Simulation: ",simname)
-      for iyear in range(sim_params.ndesiredyears):
+      for itime in range(sim_params.ntimesteps):
          for iplot in range(nplots):
-            print("iyear,iplot,min,max: {} {} {} {}".format(iyear,iplot,simulation_data[isim,iyear,iplot],simulation_err[isim,iyear,iplot],simulation_min[isim,iyear,iplot],simulation_max[isim,iyear,iplot]))
+            print("itime,iplot,min,max: {} {} {} {}".format(itime,iplot,simulation_data[isim,itime,iplot],simulation_err[isim,itime,iplot],simulation_min[isim,itime,iplot],simulation_max[isim,itime,iplot]))
          #endfor
       #endfor
    #endfor
@@ -374,13 +402,13 @@ if "UNFCCC2021_LULUCF" in desired_simulations:
         iplot=sim_params.desired_plots.index("USA")
         print("Correcting UNFCCC2021 LULUCF error bars for the USA.")
         print("Using a lower bound of 35% and an upper bound of 19%.")
-        for iyear in range(simulation_data.shape[1]):
-            if not np.isnan(simulation_data[isim,iyear,iplot]):
-                simulation_max[isim,iyear,iplot]=simulation_data[isim,iyear,iplot]+abs(simulation_data[isim,iyear,iplot])*0.19
-                simulation_min[isim,iyear,iplot]=simulation_data[isim,iyear,iplot]-abs(simulation_data[isim,iyear,iplot])*0.35
+        for itime in range(simulation_data.shape[1]):
+            if not np.isnan(simulation_data[isim,itime,iplot]):
+                simulation_max[isim,itime,iplot]=simulation_data[isim,itime,iplot]+abs(simulation_data[isim,itime,iplot])*0.19
+                simulation_min[isim,itime,iplot]=simulation_data[isim,itime,iplot]-abs(simulation_data[isim,itime,iplot])*0.35
             else:
-                simulation_max[isim,iyear,iplot]=np.nan
-                simulation_min[isim,iyear,iplot]=np.nan
+                simulation_max[isim,itime,iplot]=np.nan
+                simulation_min[isim,itime,iplot]=np.nan
             #endif
         #endfor
     #endif
@@ -440,7 +468,7 @@ if sim_params.need_inversion_correction():
     #endif
 
    correction_simulations=np.array(sim_params.correction_list,dtype=object)
-   correction_data=np.zeros((sim_params.ndesiredyears,nplots))
+   correction_data=np.zeros((sim_params.ntimesteps,nplots))
    for isim,simname in enumerate(desired_simulations):  
       if simname in correction_simulations:
          correction_data[:,:]=correction_data[:,:]+simulation_data[isim,:,:]
@@ -608,15 +636,15 @@ if sim_params.lplot_means:
       #endif
 
       overlapping_years_plot=[]
-      for iyear in range(sim_params.ndesiredyears):
-         nans=np.isnan(test_data[:,iyear,iplot])
+      for itime in range(sim_params.ntimesteps):
+         nans=np.isnan(test_data[:,itime,iplot])
          # want True if there are no NaNs for this year
          overlapping_years_plot.append(not any(nans))
       #endfor
       overlapping_years.append(overlapping_years_plot)
-      #print("fjeioze ",iyear,simulation_data[:,iyear,iplot])
+      #print("fjeioze ",itime,simulation_data[:,itime,iplot])
       #print("jfieoze ",nans)
-      #print("jfieoze ",overlapping_years[iyear],iyear)
+      #print("jfieoze ",overlapping_years[itime],itime)
    #endfor
    #print("jifez 0 ",overlapping_years[0])
    #print("jifez 1 ",overlapping_years[1])
@@ -634,7 +662,7 @@ if sim_params.lplot_means:
 
               if lcbm:
                   mean_years=[]
-                  for iyear,year in enumerate(sim_params.allyears):
+                  for itime,year in enumerate(sim_params.allyears):
                       if year >= 2005 and year <= 2019:
                           mean_years.append(True)
                       else:
@@ -1000,19 +1028,19 @@ for iplot,cplot in enumerate(sim_params.desired_plots):
          lowerrange=simulation_min[isim,:,iplot]
          if not ds.lwhiskerbars:
             # This prints rectangles
-            for iyear in range(sim_params.ndesiredyears):
-               if np.isnan(simulation_data[isim,iyear,iplot]):
+            for itime in range(sim_params.ntimesteps):
+               if np.isnan(simulation_data[isim,itime,iplot]):
                   continue
                #endif
                ldata=True
-               p1=mpl.patches.Rectangle((sim_params.allyears[iyear]-0.5,lowerrange[iyear]),1,upperrange[iyear]-lowerrange[iyear], color=ds.uncert_color, alpha=sim_params.uncert_alpha,zorder=1)
-               p2=ax1.hlines(y=simulation_data[isim,iyear,iplot],xmin=sim_params.allyears[iyear]-0.5,xmax=sim_params.allyears[iyear]+0.5,color=ds.facec,linestyle='--',zorder=2)
+               p1=mpl.patches.Rectangle((sim_params.allyears[itime]-0.5,lowerrange[itime]),1,upperrange[itime]-lowerrange[itime], color=ds.uncert_color, alpha=sim_params.uncert_alpha,zorder=1)
+               p2=ax1.hlines(y=simulation_data[isim,itime,iplot],xmin=sim_params.allyears[itime]-0.5,xmax=sim_params.allyears[itime]+0.5,color=ds.facec,linestyle='--',zorder=2)
                ax1.add_patch(p1)
             #endfor
          else:
             # This prints a symbol with whisker error bars.  Philippe thought
             # that ms=10 and capsize=10 was a little too big.
-            whiskerbars=np.array((simulation_data[isim,:,iplot]-lowerrange[:],upperrange[:]-simulation_data[isim,:,iplot])).reshape(2,sim_params.ndesiredyears)
+            whiskerbars=np.array((simulation_data[isim,:,iplot]-lowerrange[:],upperrange[:]-simulation_data[isim,:,iplot])).reshape(2,sim_params.ntimesteps)
             p2=ax1.errorbar(sim_params.allyears,simulation_data[isim,:,iplot],yerr=whiskerbars,marker=ds.plotmarker,mfc=ds.facec,mec='black',ms=7,capsize=7,capthick=2,ecolor="black",linestyle='None',zorder=5)
             nandata=np.isnan(simulation_data[isim,:,iplot])
             if not nandata.all():
@@ -1041,9 +1069,9 @@ for iplot,cplot in enumerate(sim_params.desired_plots):
    if "VERIFYBU" in desired_simulations:
       idata=desired_simulations.index("VERIFYBU")
       ds=sim_params.dataset_parameters[idata]
-      for iyear in range(sim_params.ndesiredyears):
-         p2=ax1.hlines(y=simulation_data[idata,iyear,iplot],xmin=sim_params.allyears[iyear]-0.5,xmax=sim_params.allyears[iyear]+0.5,color=ds.facec,linestyle='--')
-         p1=mpl.patches.Rectangle((sim_params.allyears[iyear]-0.5,simulation_min[idata,iyear,iplot]),1,simulation_max[idata,iyear,iplot]-simulation_min[idata,iyear,iplot], color=ds.uncert_color, alpha=sim_params.uncert_alpha)
+      for itime in range(sim_params.ntimesteps):
+         p2=ax1.hlines(y=simulation_data[idata,itime,iplot],xmin=sim_params.allyears[itime]-0.5,xmax=sim_params.allyears[itime]+0.5,color=ds.facec,linestyle='--')
+         p1=mpl.patches.Rectangle((sim_params.allyears[itime]-0.5,simulation_min[idata,itime,iplot]),1,simulation_max[idata,itime,iplot]-simulation_min[idata,itime,iplot], color=ds.uncert_color, alpha=sim_params.uncert_alpha)
          ax1.add_patch(p1)
       #endfor
       legend_axes.append(p2)
@@ -1067,7 +1095,7 @@ for iplot,cplot in enumerate(sim_params.desired_plots):
       if sim_params.graphname == "sectorplot_full":
 
          temp_desired_sims=("UNFCCC_FL-FL","UNFCCC_GL-GL","UNFCCC_CL-CL")
-         temp_data=np.zeros((len(temp_desired_sims),sim_params.ndesiredyears))
+         temp_data=np.zeros((len(temp_desired_sims),sim_params.ntimesteps))
          for isim,csim in enumerate(temp_desired_sims):
             temp_data[isim,:]=simulation_data[desired_simulations.index(csim),:,iplot]
          #endfor
@@ -1154,15 +1182,15 @@ for iplot,cplot in enumerate(sim_params.desired_plots):
             #endif
 
             lshow_uncert=False
-            for iyear in range(sim_params.ndesiredyears):
+            for itime in range(sim_params.ntimesteps):
 
                # If we have no uncertainty, then I don't want to show it.
-               if not np.isnan(lowerrange[iyear]) and not np.isnan(lowerrange[iyear]):
-                  p1=mpl.patches.Rectangle((sim_params.allyears[iyear]-0.5,lowerrange[iyear]),1,upperrange[iyear]-lowerrange[iyear], color=ds.uncert_color, alpha=sim_params.uncert_alpha,zorder=zorder_value-2)
+               if not np.isnan(lowerrange[itime]) and not np.isnan(lowerrange[itime]):
+                  p1=mpl.patches.Rectangle((sim_params.allyears[itime]-0.5,lowerrange[itime]),1,upperrange[itime]-lowerrange[itime], color=ds.uncert_color, alpha=sim_params.uncert_alpha,zorder=zorder_value-2)
                   ax1.add_patch(p1)
                   lshow_uncert=True
                #endif
-               #ax1.fill_between(np.array([sim_params.allyears[iyear]-0.5,sim_params.allyears[iyear]+0.5]),lowerrange[iyear],upperrange[iyear],color=uncert_color[isim],alpha=sim_params.uncert_alpha,zorder=zorder_value-1)
+               #ax1.fill_between(np.array([sim_params.allyears[itime]-0.5,sim_params.allyears[itime]+0.5]),lowerrange[itime],upperrange[itime],color=uncert_color[isim],alpha=sim_params.uncert_alpha,zorder=zorder_value-1)
             #endfor
 
             if lshow_uncert:
@@ -1174,11 +1202,11 @@ for iplot,cplot in enumerate(sim_params.desired_plots):
 
             # I want to make sure the symbol shows up on top of the error bars.
             # If this is not real data, make it lighter.
-            for iyear in range(sim_params.ndesiredyears):
+            for itime in range(sim_params.ntimesteps):
                if ds.productiondata:
-                  p1=ax1.hlines(y=simulation_data[isim,iyear,iplot],xmin=sim_params.allyears[iyear]-0.5,xmax=sim_params.allyears[iyear]+0.5,color=ds.facec,linestyle='-',alpha=sim_params.production_alpha,zorder=zorder_value-1)
+                  p1=ax1.hlines(y=simulation_data[isim,itime,iplot],xmin=sim_params.allyears[itime]-0.5,xmax=sim_params.allyears[itime]+0.5,color=ds.facec,linestyle='-',alpha=sim_params.production_alpha,zorder=zorder_value-1)
                else:
-                  p1=ax1.hlines(y=simulation_data[isim,iyear,iplot],xmin=sim_params.allyears[iyear]-0.5,xmax=sim_params.allyears[iyear]+0.5,color=ds.facec,linestyle='-',alpha=sim_params.nonproduction_alpha,zorder=zorder_value-1)
+                  p1=ax1.hlines(y=simulation_data[isim,itime,iplot],xmin=sim_params.allyears[itime]-0.5,xmax=sim_params.allyears[itime]+0.5,color=ds.facec,linestyle='-',alpha=sim_params.nonproduction_alpha,zorder=zorder_value-1)
                #endif
             #endif
 
@@ -1239,8 +1267,10 @@ for iplot,cplot in enumerate(sim_params.desired_plots):
          # For the lines
          if ds.productiondata:
             if ds.plot_lines:
-                p1=ax1.plot(xvalues,simulation_data[isim,:,iplot],color=ds.linecolor,alpha=sim_params.production_alpha,zorder=zorder_value,linestyle=ds.linestyle)               
-                p1=ax1.scatter(xvalues,simulation_data[isim,:,iplot],marker=ds.plotmarker,label=desired_simulations[isim],facecolors=ds.facec, edgecolors=ds.edgec,s=ds.markersize,alpha=sim_params.production_alpha,zorder=zorder_value)
+                p1,=ax1.plot(xvalues,simulation_data[isim,:,iplot],color=ds.linecolor,alpha=sim_params.production_alpha,zorder=zorder_value,linestyle=ds.linestyle)           
+                if ds.plotmarker is not None:
+                    p1=ax1.scatter(xvalues,simulation_data[isim,:,iplot],marker=ds.plotmarker,label=desired_simulations[isim],facecolors=ds.facec, edgecolors=ds.edgec,s=ds.markersize,alpha=sim_params.production_alpha,zorder=zorder_value)
+                #endif
 
             else:
                 p1=ax1.scatter(xvalues,simulation_data[isim,:,iplot],marker=ds.plotmarker,label=desired_simulations[isim],facecolors=ds.facec, edgecolors=ds.edgec,s=ds.markersize,alpha=sim_params.production_alpha,zorder=zorder_value)
@@ -1336,7 +1366,7 @@ for iplot,cplot in enumerate(sim_params.desired_plots):
 #   if sim_params.need_inversion_correction():
    if False: # Don't need this at the moment.  Not sure it even works anymore.
 
-      temp_data=np.zeros((len(correction_simulations),sim_params.ndesiredyears))
+      temp_data=np.zeros((len(correction_simulations),sim_params.ntimesteps))
       for isim,csim in enumerate(correction_simulations):
          temp_data[isim,:]=simulation_data[desired_simulations.index(csim),:,iplot]
       #endfor
@@ -1401,7 +1431,7 @@ for iplot,cplot in enumerate(sim_params.desired_plots):
          facec_temp.append(sim_params.dataset_parameters[isim].facec)
       #endfor
 
-      lskip,ax1=create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,sim_params.naverages,sim_params.syear_average,sim_params.eyear_average,sim_params.xplot_min,sim_params.xplot_max,sim_params.ndesiredyears,sim_params.allyears,ax1,facec_temp,sim_params.production_alpha,legend_axes,legend_titles,displayname,canvas,sim_params.output_file_end)
+      lskip,ax1=create_unfccc_bar_plot(desired_simulations,simulation_data,iplot,sim_params.naverages,sim_params.syear_average,sim_params.eyear_average,sim_params.xplot_min,sim_params.xplot_max,sim_params.ntimesteps,sim_params.allyears,ax1,facec_temp,sim_params.production_alpha,legend_axes,legend_titles,displayname,canvas,sim_params.output_file_end)
       if lskip:
          continue
       #endif
@@ -1600,6 +1630,14 @@ for iplot,cplot in enumerate(sim_params.desired_plots):
       ax1.xaxis.labelpad=-27 # Needed if we make the mean label multi-line, since
       # that pushes down the Year label too far from the axis
 
+   else:
+      # Set the labels by hand, since they should always be the same
+      locs=sim_params.locs
+      labels=sim_params.labels
+      ax1.set_xticks(locs)
+      ax1.set_xticklabels(labels)
+      #ax1.xaxis.labelpad=-27 # Needed if we make the mean label multi-line, since
+      # that pushes down the Year label
    #endif
 
    #plt.tight_layout(rect=[0, 0.05,1 , 1])

@@ -122,7 +122,7 @@ class dataset_parameters():
 class simulation_parameters():
     def __init__(self, parser):
 
-        self.possible_graphs=["forest_2021","lulucfinvbook_2021","lulucfinv_2021","lulucfinvbooktrendy_2021","test", "luc_full", "sectorplot_full", "forestremain_2019", "forestremain_2020",  "forestremain_2021", "forest_2021", "forestremaintest_2021", "grasslandremain_2019", "grasslandremain_2020", "grasslandremain_2021", "croplandremain_2019", "croplandremain_2020", "croplandremain_2021", "topdownandinventories_2019","topdownandinventories_2020","topdownandinventories_2021","topdownandinventoriessimple_2021","biofuels","inversions_verify","lulucf","lulucf_full","topdownlulucf_2019","topdownlulucfbar_2019","topdownlulucf_2020","topdownlulucfbar_2020","topdownlulucf_2021","topdownlulucfbar_2021","verifybu","verifybu_detrend","fluxcom","lucf_full","lulucftrendy_2019","lulucftrendy_2020","lulucftrendy_2021","unfccclulucfbar_2019","unfccclulucfbar_2020","unfccclulucfbar_2021","unfccclulucfall_2021","all_orchidee","eurocominversionsv1","eurocominversionsv2","eurocomcsrinversionsv2","eurocomcomparison","epic_comparison","lulucf_msnrt","trendyorc","faostat2021","faostatnorom2021","faolulucfcomparison","fao_crp_grs","fao_for","unfccc_fao","unfccc_fao_trendy","emission_factors","unfccc_woodharvest","d6.2","unfccc_forest_test","unfccclulucfcomparison","unfcccflcomparison","unfcccclcomparison","unfcccglcomparison","orchidees3comparison","trendyv9_all","trendyv9_removed","csrinversions","csrinversionssymbols","csrinversions2021","trendyv9_gcp","trendy_gcp","trendyv7_all","trendyv7_removed","trendyv10_all","trendyv10_removed","trendycomparison","gcp2019_all","gcp2020_all","gcpinversion2021","gcpcomparison","gcp_trendy","trendyv10_gcp2021_all","trendyv10_gcp2021","crops_fao_epic","grassland_all","bookkeeping","bookkeeping_2021","epicgrasslandstest","epic_test_rh","epic_test_npp","epic_test_fharvest","epic_test_leech","trendyv7_common","trendyv9_common","trendyv10_common","trendycommon","cbm","gcpcommon","cams","ctracker","jena_global","roxana","roxanawater","efiscencomparison","efiscenspace","regionalinversions","lumiainversions","coco2","unfcccuncert","camseez","gcp2021meanmedian",'inversioncorrections',"chimerecomparison","gfedtest","neepapereurocom",'gpptest','empach4','orcv2drivers','orcv3driverstotlucco2nitclim','orcv3driverstotlucco2nit','orcv3driverstotlucco2','orcv3driverstotluc','orcv3driverstot','bluedriverstotpastcropabanharv','bluedriverstotpastcropaban','bluedriverstotpastcrop','bluedriverstotpast','bluedriverstot','forestremain_2021_donotuse','forestremainfluxcom_2021',"faostat2021noromania",'orchideenpp','orchideesoc','orchideelts','croplandnpp','dbcleanoriginal','dbcleantest','dbcleantest2','ecossen2otest','trendyv10cableorchidee','unfcccfl_2021','alldatasets_2019','alldatasets_2021','meanplotsv1_2021','meanplotsv2_2021','peatlands_2021','gcpall2021']
+        self.possible_graphs=["forest_2021","lulucfinvbook_2021","lulucfinv_2021","lulucfinvbooktrendy_2021","test", "luc_full", "sectorplot_full", "forestremain_2019", "forestremain_2020",  "forestremain_2021", "forest_2021", "forestremaintest_2021", "grasslandremain_2019", "grasslandremain_2020", "grasslandremain_2021", "croplandremain_2019", "croplandremain_2020", "croplandremain_2021", "topdownandinventories_2019","topdownandinventories_2020","topdownandinventories_2021","topdownandinventoriessimple_2021","biofuels","inversions_verify","lulucf","lulucf_full","topdownlulucf_2019","topdownlulucfbar_2019","topdownlulucf_2020","topdownlulucfbar_2020","topdownlulucf_2021","topdownlulucfbar_2021","verifybu","verifybu_detrend","fluxcom","lucf_full","lulucftrendy_2019","lulucftrendy_2020","lulucftrendy_2021","unfccclulucfbar_2019","unfccclulucfbar_2020","unfccclulucfbar_2021","unfccclulucfall_2021","all_orchidee","eurocominversionsv1","eurocominversionsv2","eurocominversionsv2monthly","eurocomcsrinversionsv2","eurocomcomparison","epic_comparison","lulucf_msnrt","trendyorc","faostat2021","faostatnorom2021","faolulucfcomparison","fao_crp_grs","fao_for","unfccc_fao","unfccc_fao_trendy","emission_factors","unfccc_woodharvest","d6.2","unfccc_forest_test","unfccclulucfcomparison","unfcccflcomparison","unfcccclcomparison","unfcccglcomparison","orchidees3comparison","trendyv9_all","trendyv9_removed","csrinversions","csrinversionssymbols","csrinversions2021","trendyv9_gcp","trendy_gcp","trendyv7_all","trendyv7_removed","trendyv10_all","trendyv10_removed","trendycomparison","gcp2019_all","gcp2020_all","gcpinversion2021","gcpcomparison","gcp_trendy","trendyv10_gcp2021_all","trendyv10_gcp2021","crops_fao_epic","grassland_all","bookkeeping","bookkeeping_2021","epicgrasslandstest","epic_test_rh","epic_test_npp","epic_test_fharvest","epic_test_leech","trendyv7_common","trendyv9_common","trendyv10_common","trendycommon","cbm","gcpcommon","cams","ctracker","jena_global","roxana","roxanawater","efiscencomparison","efiscenspace","regionalinversions","lumiainversions","coco2","unfcccuncert","camseez","gcp2021meanmedian",'inversioncorrections',"chimerecomparison","gfedtest","neepapereurocom",'gpptest','empach4','orcv2drivers','orcv3driverstotlucco2nitclim','orcv3driverstotlucco2nit','orcv3driverstotlucco2','orcv3driverstotluc','orcv3driverstot','bluedriverstotpastcropabanharv','bluedriverstotpastcropaban','bluedriverstotpastcrop','bluedriverstotpast','bluedriverstot','forestremain_2021_donotuse','forestremainfluxcom_2021',"faostat2021noromania",'orchideenpp','orchideesoc','orchideelts','croplandnpp','dbcleanoriginal','dbcleantest','dbcleantest2','ecossen2otest','trendyv10cableorchidee','unfcccfl_2021','alldatasets_2019','alldatasets_2021','meanplotsv1_2021','meanplotsv2_2021','peatlands_2021','gcpall2021']
         self.possible_true_values=["true","t","yes","y"]
 
         parser.add_argument('--graphname', dest='graphname', action='store',required=True, choices=self.possible_graphs, help='the type of graph that you wish to plot')
@@ -132,6 +132,8 @@ class simulation_parameters():
         parser.add_argument('--plot_meangraph', dest='lplot_meangraph', action='store',default=False,help='if TRUE, we will create additional plots of the timeseries means for every country and region that we can.  The filename is the same, except preceded by MeanBar.')
 
         parser.add_argument('--use_lateral_fluxes', dest='use_lateral_fluxes', action='store',default=False,help='if TRUE, we will correct inversions on some graphs by lateral fluxes.')
+
+        parser.add_argument('--plot_monthly_data', dest='plot_monthly_data', action='store',default="False",help='if TRUE, we plot monthly data instead of annual (used for some testing)')
 
         parser.add_argument('--country_scope', dest='country_scope', action='store',default="Master",choices=["EU","Global","Africa","Master","AllCountriesRegions"],help='gives the country axis in the input files.  EU covers Europe, Global covers Europe with some other, and Africa covers Africa.  Master is a collection of everything made with a different script from the previous files.')
 
@@ -155,6 +157,20 @@ class simulation_parameters():
             print("Creating plots for ALL countries and regions.")
         else:
             print("Only creating plots for a hard-coded set of countries and regions.")
+        #endif
+
+        ## Monthly data
+        self.plot_monthly_data=args.plot_monthly_data
+        if self.plot_monthly_data.lower() in self.possible_true_values:
+            self.plot_monthly_data=True
+        else:
+            self.plot_monthly_data=False
+        #endif
+            
+        if self.plot_monthly_data:
+            print("Plotting monthly data.")
+        else:
+            print("Plotting annual data.")
         #endif
 
         self.use_lateral_fluxes=args.use_lateral_fluxes
@@ -268,14 +284,24 @@ class simulation_parameters():
             # that and the means, the plot is now too full.  So try 33 years.
             #self.ndesiredyears=32 # use a couple extra years for padding on the right hand side
             self.ndesiredyears=34 # use a couple extra years for padding on the right hand side
-            self.allyears=1990+np.arange(self.ndesiredyears)  ###1990-2023,ndesiredyears years. 
+            self.start_year=1990
         else:
             # Sometimes we want something a bit different.  This works fine for
             # plotting the Trendy models, but might crash elsewhere where dates are
             # still hardcoded.
             self.ndesiredyears=14 # use a couple extra years for padding on the right hand side
-            self.allyears=2008+np.arange(self.ndesiredyears)  ###1990-2022,ndesiredyears years. 
+            self.start_year=2008
 
+        #endif
+
+        # If we are using months instead of years, we have fractional
+        # years
+        if self.plot_monthly_data:
+            self.ntimesteps=self.ndesiredyears*12
+            self.allyears=self.start_year+np.linspace(1.0/24.0,self.ndesiredyears+1.0/24.0,self.ntimesteps,endpoint=False)  
+        else:
+            self.ntimesteps=self.ndesiredyears
+            self.allyears=self.start_year+np.arange(self.ntimesteps) 
         #endif
 
         print("Extracting data from {} to {}.".format(self.allyears[0],self.allyears[-1]))
@@ -434,6 +460,13 @@ class simulation_parameters():
         # webportal and only plots with 2019 in the name show up.
         use_hack_year=False
         hack_year=2021
+
+        ## Sets of colors I may use, created by ColorBrewer.
+        cb_1=(27/256.0,158/256.0,119/256.0)
+        cb_2=(217/256.0,95/256.0,2/256.0)
+        cb_3=(117/256.0,112/256.0,179/256.0)
+        cb_4=(231/256.0,41/256.0,138/256.0)
+        cb_5=(102/256.0,166/256.0,30/256.0)
         
         master_datasets={}
 
@@ -4870,8 +4903,7 @@ class simulation_parameters():
 
             self.lexternal_y=True
             self.ymin_external=-800.0
-            # 800 with lateral fluxes, 700 without
-            self.ymax_external=800.0
+            self.ymax_external=500.0
             if self.lexternal_y:
                 self.lharmonize_y=True
             #endif
@@ -5080,9 +5112,7 @@ class simulation_parameters():
 
             self.lexternal_y=True
             self.ymin_external=-800.0
-            # 700 for no lat fluxes in the 2021 version, 800 for lat fluxes
-            #self.ymax_external=700.0
-            self.ymax_external=800.0
+            self.ymax_external=500.0
             if self.lexternal_y:
                 self.lharmonize_y=True
             #endif
@@ -5485,20 +5515,87 @@ class simulation_parameters():
             # Plot these as bars
             master_datasets["EUROCOMv2_ALL_2020"].lplot_errorbar=True
             
+            master_datasets['EUROCOMv2_ALL_2020'].uncert_color='gray'
+            master_datasets["EUROCOMv2_ALL_2020"].facec="gray"
+
+            master_datasets['CSR-COMBINED-2020'].plotmarker="s"
+            master_datasets['EUROCOMv2_Flexinvert'].plotmarker="P"
+            master_datasets['EUROCOMv2_Lumia'].plotmarker="x"
+
+            master_datasets['CSR-COMBINED-2020'].facec=cb_1
+            master_datasets['EUROCOMv2_Flexinvert'].facec=cb_2
+            master_datasets['EUROCOMv2_Lumia'].facec=cb_3
+            master_datasets['EUROCOMv2_PYVAR'].facec=cb_4
+
+            self.npanels=2
+            self.panel_ratios=[1.0,1.0/2.2]
+            self.igrid_legend=1
+
+        elif self.graphname == "eurocominversionsv2monthly":
+            # Be careful here.  The CSR run has been replaced in some
+            # versions of EUROCOMv2_ALL_2020.  Be sure you are plotting
+            # the correct file (it should be listed in the .nc information).
+            self.desired_simulations=[ \
+#                                  'EUROCOMv2_ALL_2020', \
+                                  'EUROCOMv2_Flexinvert', \
+                                  'EUROCOMv2_Lumia', \
+                                  'EUROCOMv2_PYVAR', \
+                                  'CSR-COMBINED-2020', \
+                                   ]
+            self.output_file_start="EUROCOMInversionsv2Monthly_"
+            self.output_file_end="_2020_v2.png" 
+            self.titleending=r" : CO$_2$ inversion from EUROCOM ensemble"
+
+            self.desired_legend=[\
+#                            master_datasets['EUROCOMv2_ALL_2020'].displayname, master_datasets['EUROCOMv2_ALL_2020'].displayname_err, \
+                            master_datasets['EUROCOMv2_Flexinvert'].displayname, \
+                            master_datasets['EUROCOMv2_Lumia'].displayname, \
+                            master_datasets['EUROCOMv2_PYVAR'].displayname, \
+                            master_datasets['CSR-COMBINED-2020'].displayname, \
+                        ]
+            # Plot these as bars
+            master_datasets["EUROCOMv2_ALL_2020"].lplot_errorbar=True
+            
             master_datasets['EUROCOMv2_ALL_2020'].uncert_color='red'
             master_datasets["EUROCOMv2_ALL_2020"].facec="red"
 
-            master_datasets['CSR-COMBINED-2020'].facec="red"
-            master_datasets['CSR-COMBINED-2020'].plotmarker="s"
-            master_datasets['EUROCOMv2_Flexinvert'].facec="orange"
-            master_datasets['EUROCOMv2_Flexinvert'].plotmarker="P"
-            master_datasets['EUROCOMv2_Lumia'].facec="darkorange"
-            master_datasets['EUROCOMv2_Lumia'].plotmarker="x"
+            # These are a set of five colors recommended by ColorBrewer
+            cb_1=(27/256.0,158/256.0,119/256.0)
+            cb_2=(217/256.0,95/256.0,2/256.0)
+            cb_3=(117/256.0,112/256.0,179/256.0)
+            cb_4=(231/256.0,41/256.0,138/256.0)
+            cb_5=(102/256.0,166/256.0,30/256.0)
+
+            master_datasets['CSR-COMBINED-2020'].facec=cb_1
+            master_datasets['CSR-COMBINED-2020'].plotmarker=None
+            master_datasets['EUROCOMv2_Flexinvert'].facec=cb_2
+            master_datasets['EUROCOMv2_Flexinvert'].plotmarker=None
+            master_datasets['EUROCOMv2_Lumia'].facec=cb_3
+            master_datasets['EUROCOMv2_Lumia'].plotmarker=None
+            master_datasets['EUROCOMv2_PYVAR'].facec=cb_4
+            master_datasets['EUROCOMv2_PYVAR'].plotmarker=None
+
+            master_datasets['EUROCOMv2_PYVAR'].plot_lines=True
+            master_datasets['EUROCOMv2_Lumia'].plot_lines=True
+            master_datasets['EUROCOMv2_Flexinvert'].plot_lines=True
+            master_datasets['CSR-COMBINED-2020'].plot_lines=True
+            
+            master_datasets['EUROCOMv2_PYVAR'].linecolor=master_datasets['EUROCOMv2_PYVAR'].facec
+            master_datasets['EUROCOMv2_Lumia'].linecolor=master_datasets['EUROCOMv2_Lumia'].facec
+            master_datasets['EUROCOMv2_Flexinvert'].linecolor=master_datasets['EUROCOMv2_Flexinvert'].facec
+            master_datasets['CSR-COMBINED-2020'].linecolor=master_datasets['CSR-COMBINED-2020'].facec
 
             self.npanels=2
-            self.panel_ratios=[1.0,1.0/2.4]
+            self.panel_ratios=[1.0,1.0/2.2]
             self.igrid_legend=1
 
+            self.xplot_min=2008
+            self.xplot_max=2019
+
+            self.lplot_means=False
+
+            self.locs=[2009.0, 2011.0, 2013.0, 2015.0, 2017.0, 2019.0]
+            self.labels=["01-2009", "01-2011", "01-2013", "01-2015", "01-2017", "01-2019"]
 
         elif self.graphname == "eurocomcsrinversionsv2":
             # Be careful here.  The CSR run has been replaced in some
@@ -5639,7 +5736,7 @@ class simulation_parameters():
                 self.panel_ratios=[1.0,1.0/1.4]
                 self.igrid_legend=1
 
-                self.ymax_external=800.0
+                self.ymax_external=500.0
 
             else:
 
@@ -5647,7 +5744,7 @@ class simulation_parameters():
                 self.panel_ratios=[1.0,1.0/1.7]
                 self.igrid_legend=1
 
-                self.ymax_external=700.0
+                self.ymax_external=500.0
             #endif
 
             self.lexternal_y=True
@@ -5781,7 +5878,7 @@ class simulation_parameters():
                 self.panel_ratios=[1.0,1.0/1.4]
                 self.igrid_legend=1
 
-                self.ymax_external=800.0
+                self.ymax_external=500.0
 
             else:
 
@@ -5791,7 +5888,7 @@ class simulation_parameters():
                 self.panel_ratios=[1.0,1.0/1.7]
                 self.igrid_legend=1
 
-                self.ymax_external=700.0
+                self.ymax_external=500.0
 
             #endif
 

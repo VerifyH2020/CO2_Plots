@@ -124,14 +124,18 @@ def readfile(filename,variablename,ndesiredyears,lconvert_units,starting_year,en
    print("Timeseries starts at: {0}/{1}".format(endmonth,endyear))
    
    # This is something I added to distinguish more clearly between the two sets of dates we have.
-   desired_startdate=date(starting_year,1,15)-date(1900,1,1)
-   desired_enddate=date(ending_year,12,15)-date(1900,1,1)
+   # If we have monthly data, our starting and ending year in the plot
+   # are not integers.  But if we floor them, they will be.
+   syear=math.floor(starting_year)
+   eyear=math.floor(ending_year)
+   desired_startdate=date(syear,1,15)-date(1900,1,1)
+   desired_enddate=date(eyear,12,15)-date(1900,1,1)
    data_startdate=date(startyear,startmonth,15)-date(1900,1,1)
    data_enddate=date(endyear,endmonth,15)-date(1900,1,1)
 
    # this is a slow way to do it, but it works.
    mm=1
-   yy=starting_year
+   yy=syear
    for iyear in range(ndesiredyears):
       for imonth in range(12):
          # does a member of our data exist in this month?
@@ -244,15 +248,15 @@ def readfile(filename,variablename,ndesiredyears,lconvert_units,starting_year,en
 # If there is no min/max or error values, no worries.
 # This is a bit tricky.  We can only propogate error if we have a symmetric distribution, which
 # we may not have for min/max values.  So I calculate min/max values after this routine.
-def group_input(inputvar,inputerr,inputmin,inputmax,desired_plots,luncert,ndesiredyears,nplots,all_regions_countries,desired_simulation):
+def group_input(inputvar,inputerr,inputmin,inputmax,desired_plots,luncert,ndesiredyears,nplots,all_regions_countries,desired_simulation,ntimesteps):
    
    # Notice that the inputvar will be the size of the number of regions
    # in the .nc file, while outputvar will be the size of a number
    # of plots.  Our job here is to make the two correspond.
-   outputvar=np.zeros((ndesiredyears,nplots))*np.nan
-   outputerr=np.zeros((ndesiredyears,nplots))*np.nan
-   outputmin=np.zeros((ndesiredyears,nplots))*np.nan
-   outputmax=np.zeros((ndesiredyears,nplots))*np.nan
+   outputvar=np.zeros((ntimesteps,nplots))*np.nan
+   outputerr=np.zeros((ntimesteps,nplots))*np.nan
+   outputmin=np.zeros((ntimesteps,nplots))*np.nan
+   outputmax=np.zeros((ntimesteps,nplots))*np.nan
 
    for igroup in range(nplots):
       indices=[]
