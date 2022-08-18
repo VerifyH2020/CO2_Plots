@@ -122,7 +122,7 @@ class dataset_parameters():
 class simulation_parameters():
     def __init__(self, parser):
 
-        self.possible_graphs=["forest_2021","lulucfinvbook_2021","lulucfinv_2021","lulucfinvbooktrendy_2021","test", "luc_full", "sectorplot_full", "forestremain_2019", "forestremain_2020",  "forestremain_2021", "forest_2021", "forestremaintest_2021", "grasslandremain_2019", "grasslandremain_2020", "grasslandremain_2021", "croplandremain_2019", "croplandremain_2020", "croplandremain_2021", "topdownandinventories_2019","topdownandinventories_2020","topdownandinventories_2021","topdownandinventoriessimple_2021","biofuels","inversions_verify","lulucf","lulucf_full","topdownlulucf_2019","topdownlulucfbar_2019","topdownlulucf_2020","topdownlulucfbar_2020","topdownlulucf_2021","topdownlulucfbar_2021","verifybu","verifybu_detrend","fluxcom","lucf_full","lulucftrendy_2019","lulucftrendy_2020","lulucftrendy_2021","unfccclulucfbar_2019","unfccclulucfbar_2020","unfccclulucfbar_2021","unfccclulucfall_2021","all_orchidee","gcp_inversions_corrected","eurocominversionsv1","eurocominversionsv2","eurocomcsrinversionsv2","eurocomcomparison","epic_comparison","lulucf_msnrt","trendyorc","faostat2021","faostatnorom2021","faolulucfcomparison","fao_crp_grs","fao_for","unfccc_fao","unfccc_fao_trendy","emission_factors","unfccc_woodharvest","d6.2","unfccc_forest_test","unfccclulucfcomparison","unfcccflcomparison","unfcccclcomparison","unfcccglcomparison","orchidees3comparison","trendyv9_all","trendyv9_removed","csrinversions","csrinversionssymbols","csrinversions2021","trendyv9_gcp","trendy_gcp","trendyv7_all","trendyv7_removed","trendyv10_all","trendyv10_removed","trendycomparison","gcp2019_all","gcp2020_all","gcpinversion2021","gcpcomparison","gcp_trendy","trendyv10_gcp2021_all","trendyv10_gcp2021","crops_fao_epic","grassland_all","bookkeeping","bookkeeping_2021","epicgrasslandstest","epic_test_rh","epic_test_npp","epic_test_fharvest","epic_test_leech","trendyv7_common","trendyv9_common","trendyv10_common","trendycommon","cbm","gcpcommon","cams","ctracker","jena_global","roxana","roxanawater","efiscencomparison","efiscenspace","regionalinversions","lumiainversions","coco2","unfcccuncert","camseez","gcp2021meanmedian",'inversioncorrections',"chimerecomparison","gfedtest","neepapereurocom",'gpptest','empach4','orcv2drivers','orcv3driverstotlucco2nitclim','orcv3driverstotlucco2nit','orcv3driverstotlucco2','orcv3driverstotluc','orcv3driverstot','bluedriverstotpastcropabanharv','bluedriverstotpastcropaban','bluedriverstotpastcrop','bluedriverstotpast','bluedriverstot','forestremain_2021_donotuse','forestremainfluxcom_2021',"faostat2021noromania",'orchideenpp','orchideesoc','orchideelts','croplandnpp','dbcleanoriginal','dbcleantest','dbcleantest2','ecossen2otest','trendyv10cableorchidee','unfcccfl_2021','alldatasets_2019','alldatasets_2021','meanplotsv1_2021','meanplotsv2_2021','peatlands_2021']
+        self.possible_graphs=["forest_2021","lulucfinvbook_2021","lulucfinv_2021","lulucfinvbooktrendy_2021","test", "luc_full", "sectorplot_full", "forestremain_2019", "forestremain_2020",  "forestremain_2021", "forest_2021", "forestremaintest_2021", "grasslandremain_2019", "grasslandremain_2020", "grasslandremain_2021", "croplandremain_2019", "croplandremain_2020", "croplandremain_2021", "topdownandinventories_2019","topdownandinventories_2020","topdownandinventories_2021","topdownandinventoriessimple_2021","biofuels","inversions_verify","lulucf","lulucf_full","topdownlulucf_2019","topdownlulucfbar_2019","topdownlulucf_2020","topdownlulucfbar_2020","topdownlulucf_2021","topdownlulucfbar_2021","verifybu","verifybu_detrend","fluxcom","lucf_full","lulucftrendy_2019","lulucftrendy_2020","lulucftrendy_2021","unfccclulucfbar_2019","unfccclulucfbar_2020","unfccclulucfbar_2021","unfccclulucfall_2021","all_orchidee","eurocominversionsv1","eurocominversionsv2","eurocomcsrinversionsv2","eurocomcomparison","epic_comparison","lulucf_msnrt","trendyorc","faostat2021","faostatnorom2021","faolulucfcomparison","fao_crp_grs","fao_for","unfccc_fao","unfccc_fao_trendy","emission_factors","unfccc_woodharvest","d6.2","unfccc_forest_test","unfccclulucfcomparison","unfcccflcomparison","unfcccclcomparison","unfcccglcomparison","orchidees3comparison","trendyv9_all","trendyv9_removed","csrinversions","csrinversionssymbols","csrinversions2021","trendyv9_gcp","trendy_gcp","trendyv7_all","trendyv7_removed","trendyv10_all","trendyv10_removed","trendycomparison","gcp2019_all","gcp2020_all","gcpinversion2021","gcpcomparison","gcp_trendy","trendyv10_gcp2021_all","trendyv10_gcp2021","crops_fao_epic","grassland_all","bookkeeping","bookkeeping_2021","epicgrasslandstest","epic_test_rh","epic_test_npp","epic_test_fharvest","epic_test_leech","trendyv7_common","trendyv9_common","trendyv10_common","trendycommon","cbm","gcpcommon","cams","ctracker","jena_global","roxana","roxanawater","efiscencomparison","efiscenspace","regionalinversions","lumiainversions","coco2","unfcccuncert","camseez","gcp2021meanmedian",'inversioncorrections',"chimerecomparison","gfedtest","neepapereurocom",'gpptest','empach4','orcv2drivers','orcv3driverstotlucco2nitclim','orcv3driverstotlucco2nit','orcv3driverstotlucco2','orcv3driverstotluc','orcv3driverstot','bluedriverstotpastcropabanharv','bluedriverstotpastcropaban','bluedriverstotpastcrop','bluedriverstotpast','bluedriverstot','forestremain_2021_donotuse','forestremainfluxcom_2021',"faostat2021noromania",'orchideenpp','orchideesoc','orchideelts','croplandnpp','dbcleanoriginal','dbcleantest','dbcleantest2','ecossen2otest','trendyv10cableorchidee','unfcccfl_2021','alldatasets_2019','alldatasets_2021','meanplotsv1_2021','meanplotsv2_2021','peatlands_2021','gcpall2021']
         self.possible_true_values=["true","t","yes","y"]
 
         parser.add_argument('--graphname', dest='graphname', action='store',required=True, choices=self.possible_graphs, help='the type of graph that you wish to plot')
@@ -130,6 +130,8 @@ class simulation_parameters():
         parser.add_argument('--plot_all_countries', dest='plot_all_countries', action='store',default="False",help='if TRUE, we will create plots for every country and region that we can.  Otherwise, we only plot for what is hard-coded.')
 
         parser.add_argument('--plot_meangraph', dest='lplot_meangraph', action='store',default=False,help='if TRUE, we will create additional plots of the timeseries means for every country and region that we can.  The filename is the same, except preceded by MeanBar.')
+
+        parser.add_argument('--use_lateral_fluxes', dest='use_lateral_fluxes', action='store',default=False,help='if TRUE, we will correct inversions on some graphs by lateral fluxes.')
 
         parser.add_argument('--country_scope', dest='country_scope', action='store',default="Master",choices=["EU","Global","Africa","Master","AllCountriesRegions"],help='gives the country axis in the input files.  EU covers Europe, Global covers Europe with some other, and Africa covers Africa.  Master is a collection of everything made with a different script from the previous files.')
 
@@ -153,6 +155,15 @@ class simulation_parameters():
             print("Creating plots for ALL countries and regions.")
         else:
             print("Only creating plots for a hard-coded set of countries and regions.")
+        #endif
+
+        self.use_lateral_fluxes=args.use_lateral_fluxes
+        if self.use_lateral_fluxes.lower() in self.possible_true_values:
+            self.use_lateral_fluxes=True
+            print("Possibly correcting inverions by lateral fluxes.")
+        else:
+            self.use_lateral_fluxes=False
+            print("Ignoring lateral fluxes.")
         #endif
 
         self.lplot_meangraph=args.lplot_meangraph
@@ -214,13 +225,13 @@ class simulation_parameters():
         # purposes.  Notice that the itest_sim is for the dataset, and
         # itest_plot is for the country/region being printed.
         self.ltest_data=True
-        self.itest_sim=0
+        self.ctest_sim="CIF-CHIMERE-v2021"
+#        self.itest_sim=0
         # With a country name, figure out the index, setting it to zero
         # if the country doesn't exist in the desired countries.
         #self.itest_plot=2
         #
-        self.itest_plot_country="FRA"
-        self.itest_plot_country="ZAA"
+        self.itest_plot_country="E28"
         
         # Creates a horizontal line across the graph at zero.
         self.lprintzero=True
@@ -311,6 +322,7 @@ class simulation_parameters():
 #                self.desired_plots=["E28", "FRA", "USA", 'AFR','WLD']
 #                self.desired_plots=["E28", "FRA", "DEU", 'NLD','Ireland']
                 self.desired_plots=["E28", "DEU", 'FRA',"PRT",'WLD']
+                self.desired_plots=["E28"]
                 #self.desired_plots=["E28", "DEU", 'FRA',"PRT","Greece","Sweden","Austria","Romania"]
 #                self.desired_plots=['COD','AFR','GAB','ZAA']
 #                self.desired_plots=["E28", "E27", 'E15',"EUR"]
@@ -540,7 +552,7 @@ class simulation_parameters():
         input_filename["TrendyV9_JSBACH"]=database_dir + "OTHER_PROJECTS/FCO2/TrendyLand-V9/Tier3BUPB_CO2_LandFlux_JSBACH-S3_exeter_LAND_GL_1M_V1_20201020_Sitch_Grid-mask05_CountryTotWithOutEEZ{}.nc".format(self.country_scope)
 
         #### TRENDYv10
-        input_filename["TrendyV10_ENSEMBLE"]=database_dir + "OTHER_PROJECTS/FCO2/TrendyLand-V10/Tier3BUPB_CO2_LandFlux_AllTrendyv10FromCountryTot-S3_exeter_LAND_GL_1M_V2_20211019_McGrath_Grid-mask05_CountryTotWithOutEEZ{}.nc".format(self.country_scope)
+        input_filename["TrendyV10_ENSEMBLE"]=database_dir + "OTHER_PROJECTS/FCO2/TrendyLand-V10/Tier3BUPB_CO2_LandFlux_TV10-AllModels-S3_EXETER_LAND_GL_1M_V3_20211019_MCGRATH_WPX_CountryTotWithEEZ{}.nc".format(self.country_scope)
         input_filename["TrendyV10_COMMON"]=database_dir + "OTHER_PROJECTS/FCO2/TrendyLand-V10/Tier3BUPB_CO2_LandFlux_CommonTrendyv10FromCountryTot-S3_exeter_LAND_GL_1M_V2_20211019_McGrath_Grid-mask05_CountryTotWithOutEEZ{}.nc".format(self.country_scope)
         input_filename["TrendyV10_ORCHIDEE"]=database_dir + "OTHER_PROJECTS/FCO2/TrendyLand-V10/Tier3BUPB_CO2_LandFlux_ORCHIDEE-S3_exeter_LAND_GL_1M_V1_20201020_Sitch_Grid-mask05_CountryTotWithOutEEZ{}.nc".format(self.country_scope)
         input_filename["TrendyV10_ORCHIDEEv3"]=database_dir + "OTHER_PROJECTS/FCO2/TrendyLand-V10/Tier3BUPB_CO2_LandFlux_ORCHIDEEv3-S3_exeter_LAND_GL_1M_V1_20201020_Sitch_Grid-mask05_CountryTotWithOutEEZ{}.nc".format(self.country_scope)
@@ -583,7 +595,7 @@ class simulation_parameters():
         input_filename["GCP2021_COMMON"]=database_dir + "OTHER_PROJECTS/FCO2/Inversions-GCP2021/Tier3TD_CO2_LandFlux_CommonGCP2021Inversions_XXX_LAND_GL_1M_V3_20211026_McGrath_WP3_CountryTotWithEEZ{}.nc".format(self.country_scope)
         input_filename["GCP2021_CAMS"]=database_dir + "OTHER_PROJECTS/FCO2/Inversions-GCP2021/Tier3TD_CO2_LandFlux_CAMS-V20-2-2021_lsce_LAND_GL_1M_V1_20201020_Chevallier_Grid-mask11_CountryTotWithEEZ{}.nc".format(self.country_scope)
         input_filename["GCP2021_CAMSnoEEZ"]=database_dir + "OTHER_PROJECTS/FCO2/Inversions-GCP2021/Tier3TD_CO2_LandFlux_CAMS-V20-2-2021_lsce_LAND_GL_1M_V1_20201020_Chevallier_Grid-mask11_CountryTotWithOutEEZ{}.nc".format(self.country_scope)
-#        input_filename["GCP2021_CMS"]=database_dir + "OTHER_PROJECTS/FCO2/Inversions-GCP2021/_CountryTotWithEEZ{}.nc".format(self.country_scope)
+        input_filename["GCP2021_CMS"]=database_dir + "OTHER_PROJECTS/FCO2/Inversions-GCP2021/Tier3TD_CO2_LandFlux_CMS-LIU-v2021_jpl_LAND_GL_1M_Period-2010-2020_INVERSION-GCP2021_LIU_Grid-mask11_CountryTotWithEEZ{}.nc".format(self.country_scope)
         input_filename["GCP2021_CTRACKER"]=database_dir + "OTHER_PROJECTS/FCO2/Inversions-GCP2021/Tier3TD_CO2_LandFlux_CTRACKER-EU-v2021_wur_LAND_GL_1M_V1_20201020_Wouter_Grid-mask11_CountryTotWithEEZ{}.nc".format(self.country_scope)
         input_filename["GCP2021_JENA-s99"]=database_dir + "OTHER_PROJECTS/FCO2/Inversions-GCP2021/Tier3TD_CO2_LandFlux_JENA-s99-2021_bgc-jena_LAND_GL_1M_V1_20201020_Christian_Grid-mask11_CountryTotWithEEZ{}.nc".format(self.country_scope)
         input_filename["GCP2021_JENA-sEXT"]=database_dir + "OTHER_PROJECTS/FCO2/Inversions-GCP2021/Tier3TD_CO2_LandFlux_JENA-sEXT-2021_bgc-jena_LAND_GL_1M_V1_20201020_Christian_Grid-mask11_CountryTotWithEEZ{}.nc".format(self.country_scope)
@@ -679,13 +691,12 @@ class simulation_parameters():
         ####### CIF-CHIMERE
         input_filename["CIF-CHIMERE-v2021"]=database_dir + "VERIFY_OUTPUT/FCO2/Tier3TD_CO2_LandFlux_CIF-CHIMERE-SX_LSCE_LAND_EU_1M_V3_20220411_FORTEMS_WP3_CountryTotWithEEZ{}.nc".format(self.country_scope)
 
-        ### Latural fluxes
-        input_filename["lateral_fluxes_cropsource"]=database_dir + "OTHER_PROJECTS/FCO2/VARIOUS-C/Tier3BUPB_CO2_LandFlux_Lateralfluxes-C_lsce_LAND_Global_1M_Period-1970-2019_VARIOUS-C_CHEVALLIER_Grid-mask05_CountryTotWithEEZ{}.nc".format(self.country_scope)
-        input_filename["lateral_fluxes_cropsink"]=database_dir + "OTHER_PROJECTS/FCO2/VARIOUS-C/Tier3BUPB_CO2_LandFlux_Lateralfluxes-C_lsce_LAND_Global_1M_Period-1970-2019_VARIOUS-C_CHEVALLIER_Grid-mask05_CountryTotWithEEZ{}.nc".format(self.country_scope)
-        input_filename["lateral_fluxes_woodsource"]=database_dir + "OTHER_PROJECTS/FCO2/VARIOUS-C/Tier3BUPB_CO2_LandFlux_Lateralfluxes-C_lsce_LAND_Global_1M_Period-1970-2019_VARIOUS-C_CHEVALLIER_Grid-mask05_CountryTotWithEEZ{}.nc".format(self.country_scope)
-        input_filename["lateral_fluxes_woodsink"]=database_dir + "OTHER_PROJECTS/FCO2/VARIOUS-C/Tier3BUPB_CO2_LandFlux_Lateralfluxes-C_lsce_LAND_Global_1M_Period-1970-2019_VARIOUS-C_CHEVALLIER_Grid-mask05_CountryTotWithEEZ{}.nc".format(self.country_scope)
-        input_filename["lateral_fluxes_lakeriversource"]=database_dir + "OTHER_PROJECTS/FCO2/VARIOUS-C/Tier3BUPB_CO2_LandFlux_Lateralfluxes-C_lsce_LAND_Global_1M_Period-1970-2019_VARIOUS-C_CHEVALLIER_Grid-mask05_CountryTotWithEEZ{}.nc".format(self.country_scope)
-        input_filename["lateral_fluxes_riversink"]=database_dir + "OTHER_PROJECTS/FCO2/VARIOUS-C/Tier3BUPB_CO2_LandFlux_Lateralfluxes-C_lsce_LAND_Global_1M_Period-1970-2019_VARIOUS-C_CHEVALLIER_Grid-mask05_CountryTotWithEEZ{}.nc".format(self.country_scope)
+        ### Latural fluxes - v1, until 2019
+        input_filename["lateral_fluxes_v1"]=database_dir + "OTHER_PROJECTS/FCO2/VARIOUS-C/Tier3BUPB_CO2_LandFlux_Lateralfluxes-C_lsce_LAND_Global_1M_Period-1970-2019_VARIOUS-C_CHEVALLIER_Grid-mask05_CountryTotWithEEZ{}.nc".format(self.country_scope)
+
+        ### Latural fluxes - v2, until 2020
+        input_filename["lateral_fluxes_v2"]=database_dir + "OTHER_PROJECTS/FCO2/VARIOUS-C/Tier3BUPB_CO2_LandFlux_Lateralfluxes-C-v2_lsce_LAND_Global_1M_Period-1961-2020_VARIOUS-C_CHEVALLIER_Grid-mask05_CountryTotWithEEZ{}.nc".format(self.country_scope)
+        input_filename["lateral_fluxes_v2_mjm"]="/home/surface5/mmcgrath/ORIGINAL_VERIFY_DATA_FILES/WP3/LATERAL_FLUXES/lat_fluxes_2017-2019_0.5_CountryTotWithOutEEZ{}.nc".format(self.country_scope)
 
         ### Fire emissions from GFED
         input_filename["GFEDv4.1s"]=database_dir + "OTHER_PROJECTS/FCO2/GFED/Tier3BUPB_CO2_FireFlux_GFEDv41s_XXXX_XXXX_LAND_GL_1M_V3_20220215_MCGRATH_WP3_CountryTotWithOutEEZ{}.nc".format(self.country_scope)
@@ -922,7 +933,7 @@ class simulation_parameters():
         master_datasets["CSR-REG-200km"]=dataset_parameters( "CSR-REG-200km", database_dir + "VERIFY_OUTPUT/FCO2/Tier3TD_CO2_LandFlux_JENA-REG-200km_bgc-jena_LAND_GL_1M_V1_20191020_Gerbig_WP3_CountryTotWithEEZ.nc", "REGIONAL_TD", "FCO2_NBP", "P", "orange")
         master_datasets["CSR-REG-Core100km"]=dataset_parameters( "CSR-REG-Core100km", database_dir + "VERIFY_OUTPUT/FCO2/Tier3TD_CO2_LandFlux_JENA-REG-Core100km_bgc-jena_LAND_GL_1M_V1_20191020_Gerbig_WP3_CountryTotWithEEZ{}.nc".format(self.country_scope), "REGIONAL_TD", "FCO2_NBP", "P", "darkorange")
         master_datasets["CSR-REG-Valid100km"]=dataset_parameters( "CSR-REG-Valid100km", database_dir + "VERIFY_OUTPUT/FCO2/Tier3TD_CO2_LandFlux_JENA-REG-Valid100km_bgc-jena_LAND_GL_1M_V1_20191020_Gerbig_WP3_CountryTotWithEEZ.nc", "REGIONAL_TD", "FCO2_NBP", "P", "gold")
-        master_datasets["CSR-COMBINED-2020"]=dataset_parameters( "CSR-COMBINED-2020", input_filename["CSR-COMBINED-2020"], "MINMAX", "FCO2_NBP", "s", "mediumblue",displayname="Mean of CarboScopeReg V2020",displayname_err="Min/Max of CarboScopeReg V2020")
+        master_datasets["CSR-COMBINED-2020"]=dataset_parameters( "CSR-COMBINED-2020", input_filename["CSR-COMBINED-2020"], "MINMAX", "FCO2_NBP", "s", "mediumblue",displayname="Mean of CarboScopeReg-V2020",displayname_err="Min/Max of CarboScopeReg V2020")
 
         master_datasets["CSR-FluxcomCore-V2"]=dataset_parameters( "CSR-FluxcomCore-V2", database_dir + "VERIFY_OUTPUT/FCO2/Tier3TD_CO2_LandFlux_JENA-REG-FluxcomCore100km_bgc-jena_LAND_GL_1M_V2_20201215_Gerbig_WP3_CountryTotWithEEZ{}.nc".format(self.country_scope), "REGIONAL_TD", "FCO2_NBP", "P", "khaki")
         master_datasets["CSR-FluxcomValid-V2"]=dataset_parameters( "CSR-FluxcomValid-V2", database_dir + "VERIFY_OUTPUT/FCO2/Tier3TD_CO2_LandFlux_JENA-REG-FluxcomValid100km_bgc-jena_LAND_GL_1M_V2_20201215_Gerbig_WP3_CountryTotWithEEZ{}.nc".format(self.country_scope), "REGIONAL_TD", "FCO2_NBP", "P", "orange")
@@ -996,7 +1007,7 @@ class simulation_parameters():
         master_datasets["EUROCOMv2_CSR_ALL"]=dataset_parameters( "EUROCOMv2_CSR_ALL", database_dir + "OTHER_PROJECTS/FCO2/EUROCOM_UPDATE/Tier3TD_CO2_LandFlux_CarboScopeRegional-all_bgc-jena_LAND_EU_1M_V1_20201020_Gerbig_Grid-eurocom_CountryTotWithEEZ{}.nc".format(self.country_scope), "REGIONAL_TD", "FCO2_NBP", "D", "mediumblue",flipdatasign=False)
 
         ## CSR for year 2021
-        master_datasets["CSR-COMBINED-2021"]=dataset_parameters( "CSR-COMBINED-2021", input_filename["CSR-COMBINED-2021"], "MINMAX", "FCO2_NBP", "s", "mediumblue",displayname="Mean of CarboScopeReg V2021",displayname_err="Min/Max of CarboScopeReg V2021")
+        master_datasets["CSR-COMBINED-2021"]=dataset_parameters( "CSR-COMBINED-2021", input_filename["CSR-COMBINED-2021"], "MINMAX", "FCO2_NBP", "s", "mediumblue",displayname="Mean of CarboScopeReg-V2021",displayname_err="Min/Max of CarboScopeReg-V2021")
         master_datasets["CSR-REG-ORCHIDEE-V2021"]=dataset_parameters( "CSR-REG-ORCHIDEE-V2021", database_dir + "VERIFY_OUTPUT/FCO2/InvCO2-VERIFY-V2021-Update/Tier3TD_CO2_LandFlux_JENA-REG-orchidee_bgc-jena_LAND_Europe_1M_Period-2006-2020_INVCO2-VERIFY-V2021-Update_GERBIG_Grid-eurocom_CountryTotWithEEZ{}.nc".format(self.country_scope), "REGIONAL_TD", "FCO2_NBP", "D", "mediumblue",flipdatasign=False)
         master_datasets["CSR-REG-REF-V2021"]=dataset_parameters( "CSR-REG-REF-V2021", database_dir + "VERIFY_OUTPUT/FCO2/InvCO2-VERIFY-V2021-Update/Tier3TD_CO2_LandFlux_JENA-REG-Ref_bgc-jena_LAND_Europe_1M_Period-2006-2020_INVCO2-VERIFY-V2021-Update_GERBIG_Grid-eurocom_CountryTotWithEEZ{}.nc".format(self.country_scope), "REGIONAL_TD", "FCO2_NBP", "s", "mediumblue",flipdatasign=False)
         master_datasets["CSR-REG-FLUXCOM-V2021"]=dataset_parameters( "CSR-REG-FLUXCOM-V2021", database_dir + "VERIFY_OUTPUT/FCO2/InvCO2-VERIFY-V2021-Update/Tier3TD_CO2_LandFlux_JENA-REG-fluxcom_bgc-jena_LAND_Europe_1M_Period-2006-2020_INVCO2-VERIFY-V2021-Update_GERBIG_Grid-eurocom_CountryTotWithEEZ{}.nc".format(self.country_scope), "REGIONAL_TD", "FCO2_NBP", "X", "mediumblue",flipdatasign=False)
@@ -1007,7 +1018,7 @@ class simulation_parameters():
         master_datasets["CIF-CHIMERE-v2021"]=dataset_parameters( "CIF-CHIMERE-v2021", input_filename["CIF-CHIMERE-v2021"], "REGIONAL_TD", "FCO2_NBP", "s", "magenta",flipdatasign=False,displayname="CIF-CHIMERE-V2021")
 
         # LUMIA inversions
-        master_datasets["LUMIA-COMBINED-v2021"]=dataset_parameters( "LUMIA-COMBINED-v2021", input_filename["LUMIA-COMBINED-v2021"], "MINMAX", "FCO2_NBP", "s", "red",flipdatasign=False,displayname="Mean of LUMIA V2021",displayname_err="Min/Max of LUMIA V2021")
+        master_datasets["LUMIA-COMBINED-v2021"]=dataset_parameters( "LUMIA-COMBINED-v2021", input_filename["LUMIA-COMBINED-v2021"], "MINMAX", "FCO2_NBP", "s", "red",flipdatasign=False,displayname="Mean of LUMIA-V2021",displayname_err="Min/Max of LUMIA-V2021")
         master_datasets["LUMIA-REF-v2021"]=dataset_parameters( "LUMIA-REF-v2021", input_filename["LUMIA-REF-v2021"], "REGIONAL_TD", "FCO2_NBP", "P", "orange",flipdatasign=False)
         master_datasets["LUMIA-Cor200km-v2021"]=dataset_parameters( "LUMIA-Cor200km-v2021", input_filename["LUMIA-Cor200km-v2021"], "REGIONAL_TD", "FCO2_NBP", "x", "darkorange",flipdatasign=False)
         master_datasets["LUMIA-CoreSites-v2021"]=dataset_parameters( "LUMIA-CoreSites-v2021", input_filename["LUMIA-CoreSites-v2021"], "REGIONAL_TD", "FCO2_NBP", "o", "gold",flipdatasign=False)
@@ -1171,18 +1182,29 @@ class simulation_parameters():
 
 
         #### GCP 2021
+        # These are a set of five colors recommended by ColorBrewer
+        cb_red1=(215/256.0,48/256.0,39/256.0)
+        cb_red2=(252/256.0,141/256.0,89/256.0)
+        cb_red3=(254/256.0,224/256.0,144/256.0)
+        cb_paleyellow=(255/256.0,255/256.0,191/256.0)
+        cb_blue3=(224/256.0,243/256.0,248/256.0)
+        cb_blue2=(145/256.0,191/256.0,219/256.0)
+        cb_blue1=(69/256.0,117/256.0,180/256.0)
+
         master_datasets["GCP2021_ALL"]=dataset_parameters( "GCP2021_ALL", input_filename["GCP2021_ALL"], "MINMAX", "FCO2_NBP", "s", "red")
+        # a duplicate, to plot the impact of removing the lateral fluxes
+        master_datasets["GCP2021_ALL_2"]=dataset_parameters( "GCP2021_ALL", input_filename["GCP2021_ALL"], "MINMAX", "FCO2_NBP", "s", "red")
         master_datasets["GCP2021_ALL_MEDIAN"]=dataset_parameters( "GCP2021_ALL_MEDIAN", input_filename["GCP2021_ALL_MEDIAN"], "MINMAX", "FCO2_NBP", "s", "red")
         master_datasets["GCP2021_COMMON"]=dataset_parameters( "GCP2021_COMMON", input_filename["GCP2021_COMMON"], "MINMAX", "FCO2_NBP", "s", "red")
         master_datasets["GCP2021_NOCAMS"]=dataset_parameters( "GCP2021_NOCAMS", input_filename["GCP2021_NOCAMS"], "MINMAX", "FCO2_NBP", "s", "red")
-        master_datasets["GCP2021_CAMS"]=dataset_parameters( "GCP2021_CAMS", input_filename["GCP2021_CAMS"], "GLOBAL_TD", "FCO2_NBP", "h", "black")
+        master_datasets["GCP2021_CAMS"]=dataset_parameters( "GCP2021_CAMS", input_filename["GCP2021_CAMS"], "GLOBAL_TD", "FCO2_NBP", "h", cb_red1)
         master_datasets["GCP2021_CAMSnoEEZ"]=dataset_parameters( "GCP2021_CAMSnoEEZ", input_filename["GCP2021_CAMSnoEEZ"], "GLOBAL_TD", "FCO2_NBP", "h", "blue")
-        #master_datasets["GCP2021_CMS"]=dataset_parameters( "GCP2021_CMS", input_filename["GCP2021_CMS"], "GLOBAL_TD", "FCO2_NBP", "D", cb_orange)
-        master_datasets["GCP2021_CTRACKER"]=dataset_parameters( "GCP2021_CTRACKER", input_filename["GCP2021_CTRACKER"], "GLOBAL_TD", "FCO2_NBP", "P", "black")
-        master_datasets["GCP2021_JENA-s99"]=dataset_parameters( "GCP2021_JENA-s99", input_filename["GCP2021_JENA-s99"], "GLOBAL_TD", "FCO2_NBP", "o", "black")
-        master_datasets["GCP2021_JENA-sEXT"]=dataset_parameters( "GCP2021_JENA-sEXT", input_filename["GCP2021_JENA-sEXT"], "GLOBAL_TD", "FCO2_NBP", "^", "black")
-        master_datasets["GCP2021_NIES"]=dataset_parameters( "GCP2021_NIES", input_filename["GCP2021_NIES"], "GLOBAL_TD", "FCO2_NBP", "X", "black")
-        master_datasets["GCP2021_UoE"]=dataset_parameters( "GCP2021_UoE", input_filename["GCP2021_UoE"], "GLOBAL_TD", "FCO2_NBP", ".", "black")
+        master_datasets["GCP2021_CMS"]=dataset_parameters( "GCP2021_CMS", input_filename["GCP2021_CMS"], "GLOBAL_TD", "FCO2_NBP", "D", cb_red2)
+        master_datasets["GCP2021_CTRACKER"]=dataset_parameters( "GCP2021_CTRACKER", input_filename["GCP2021_CTRACKER"], "GLOBAL_TD", "FCO2_NBP", "P", cb_red3)
+        master_datasets["GCP2021_JENA-s99"]=dataset_parameters( "GCP2021_JENA-s99", input_filename["GCP2021_JENA-s99"], "GLOBAL_TD", "FCO2_NBP", "o", cb_paleyellow)
+        master_datasets["GCP2021_JENA-sEXT"]=dataset_parameters( "GCP2021_JENA-sEXT", input_filename["GCP2021_JENA-sEXT"], "GLOBAL_TD", "FCO2_NBP", "o", cb_blue3)
+        master_datasets["GCP2021_NIES"]=dataset_parameters( "GCP2021_NIES", input_filename["GCP2021_NIES"], "GLOBAL_TD", "FCO2_NBP", "X", cb_blue2)
+        master_datasets["GCP2021_UoE"]=dataset_parameters( "GCP2021_UoE", input_filename["GCP2021_UoE"], "GLOBAL_TD", "FCO2_NBP", "^", cb_blue1)
 
 
 
@@ -1216,18 +1238,44 @@ class simulation_parameters():
         master_datasets["GFEDv4.1s"]=dataset_parameters( "GFEDv4.1s", input_filename["GFEDv4.1s"], "VERIFY_BU", "FCO2_FIRE", "P", "orange")
 
         ## Lateral fluxes
-        # This will be overwritten
-        master_datasets["Lateralfluxes_all_v2"]=dataset_parameters( "Lateralfluxes_all_v2", input_filename["lateral_fluxes_cropsource"], "VERIFY_BU", "CROPSOURCE", "X", "black")
+        # This will be overwritten.  v1 of the lateral fluxes (goes until 2019)
+        master_datasets["Lateralfluxes_all_v1"]=dataset_parameters( "Lateralfluxes_all_v1", input_filename["lateral_fluxes_v1"], "VERIFY_BU", "CROPSOURCE", "X", "black")
         ##
-        master_datasets["lateral_fluxes_cropsource"]=dataset_parameters( "lateral_fluxes_cropsource", input_filename["lateral_fluxes_cropsource"], "VERIFY_BU", "CROPSOURCE", "o", "red")
-        master_datasets["lateral_fluxes_cropsink"]=dataset_parameters( "lateral_fluxes_cropsink", input_filename["lateral_fluxes_cropsink"], "VERIFY_BU", "CROPSINK", "o", "green")
-        master_datasets["lateral_fluxes_cropnet"]=dataset_parameters( "lateral_fluxes_cropnet", input_filename["lateral_fluxes_cropsource"], "VERIFY_BU", "CROPSINK", "o", "black")
-        master_datasets["lateral_fluxes_woodsource"]=dataset_parameters( "lateral_fluxes_woodsource", input_filename["lateral_fluxes_woodsource"], "VERIFY_BU", "WOODSOURCE", "s", "red")
-        master_datasets["lateral_fluxes_woodsink"]=dataset_parameters( "lateral_fluxes_woodsink", input_filename["lateral_fluxes_woodsink"], "VERIFY_BU", "WOODSINK", "s", "green")
-        master_datasets["lateral_fluxes_woodnet"]=dataset_parameters( "lateral_fluxes_woodnet", input_filename["lateral_fluxes_woodsink"], "VERIFY_BU", "WOODSINK", "s", "black")
-        master_datasets["lateral_fluxes_lakeriversource"]=dataset_parameters( "lateral_fluxes_lakeriversource", input_filename["lateral_fluxes_lakeriversource"], "VERIFY_BU", "LAKERIVEREMIS", "^", "red")
-        master_datasets["lateral_fluxes_riversink"]=dataset_parameters( "lateral_fluxes_riversink", input_filename["lateral_fluxes_riversink"], "VERIFY_BU", "RIVERSINK", "^", "green")
-        master_datasets["lateral_fluxes_rivernet"]=dataset_parameters( "lateral_fluxes_rivernet", input_filename["lateral_fluxes_riversink"], "VERIFY_BU", "RIVERSINK", "^", "black")
+        master_datasets["lateral_fluxes_cropsource_v1"]=dataset_parameters( "lateral_fluxes_cropsource", input_filename["lateral_fluxes_v1"], "VERIFY_BU", "CROPSOURCE", "o", "red")
+        master_datasets["lateral_fluxes_cropsink_v1"]=dataset_parameters( "lateral_fluxes_cropsink", input_filename["lateral_fluxes_v1"], "VERIFY_BU", "CROPSINK", "o", "green")
+        master_datasets["lateral_fluxes_cropnet_v1"]=dataset_parameters( "lateral_fluxes_cropnet", input_filename["lateral_fluxes_v1"], "VERIFY_BU", "CROPSINK", "o", "black")
+        master_datasets["lateral_fluxes_woodsource_v1"]=dataset_parameters( "lateral_fluxes_woodsource", input_filename["lateral_fluxes_v1"], "VERIFY_BU", "WOODSOURCE", "s", "red")
+        master_datasets["lateral_fluxes_woodsink_v1"]=dataset_parameters( "lateral_fluxes_woodsink", input_filename["lateral_fluxes_v1"], "VERIFY_BU", "WOODSINK", "s", "green")
+        master_datasets["lateral_fluxes_woodnet_v1"]=dataset_parameters( "lateral_fluxes_woodnet", input_filename["lateral_fluxes_v1"], "VERIFY_BU", "WOODSINK", "s", "black")
+        master_datasets["lateral_fluxes_lakeriversource_v1"]=dataset_parameters( "lateral_fluxes_lakeriversource", input_filename["lateral_fluxes_v1"], "VERIFY_BU", "LAKERIVEREMIS", "^", "red")
+        master_datasets["lateral_fluxes_riversink_v1"]=dataset_parameters( "lateral_fluxes_riversink", input_filename["lateral_fluxes_v1"], "VERIFY_BU", "RIVERSINK", "^", "green")
+        master_datasets["lateral_fluxes_rivernet_v1"]=dataset_parameters( "lateral_fluxes_rivernet", input_filename["lateral_fluxes_v1"], "VERIFY_BU", "RIVERSINK", "^", "black")
+
+        # This will be overwritten.  v2 of the lateral fluxes (goes until 2020)
+        master_datasets["Lateralfluxes_all_v2"]=dataset_parameters( "Lateralfluxes_all_v2", input_filename["lateral_fluxes_v2"], "VERIFY_BU", "ALLCROPSOURCE", "X", "black")
+        ##
+        master_datasets["lateral_fluxes_cropsource_v2"]=dataset_parameters( "lateral_fluxes_cropsource", input_filename["lateral_fluxes_v2"], "VERIFY_BU", "ALLCROPSOURCE", "x", "red")
+        master_datasets["lateral_fluxes_cropsink_v2"]=dataset_parameters( "lateral_fluxes_cropsink", input_filename["lateral_fluxes_v2"], "VERIFY_BU", "ALLCROPSINK", "o", "green")
+        master_datasets["lateral_fluxes_cropnet_v2"]=dataset_parameters( "lateral_fluxes_cropnet", input_filename["lateral_fluxes_v2"], "VERIFY_BU", "ALLCROPSINK", "X", "black")
+        master_datasets["lateral_fluxes_woodsource_v2"]=dataset_parameters( "lateral_fluxes_woodsource", input_filename["lateral_fluxes_v2"], "VERIFY_BU", "ALLWOODSOURCE", "x", "red")
+        master_datasets["lateral_fluxes_woodsink_v2"]=dataset_parameters( "lateral_fluxes_woodsink", input_filename["lateral_fluxes_v2"], "VERIFY_BU", "ALLWOODSINK", "o", "green")
+        master_datasets["lateral_fluxes_woodnet_v2"]=dataset_parameters( "lateral_fluxes_woodnet", input_filename["lateral_fluxes_v2"], "VERIFY_BU", "ALLWOODSINK", "X", "black")
+        master_datasets["lateral_fluxes_lakeriversource_v2"]=dataset_parameters( "lateral_fluxes_lakeriversource", input_filename["lateral_fluxes_v2"], "VERIFY_BU", "LAKERIVEREMIS", "x", "red")
+        master_datasets["lateral_fluxes_riversink_v2"]=dataset_parameters( "lateral_fluxes_riversink", input_filename["lateral_fluxes_v2"], "VERIFY_BU", "RIVERSINK", "o", "green")
+        master_datasets["lateral_fluxes_rivernet_v2"]=dataset_parameters( "lateral_fluxes_rivernet", input_filename["lateral_fluxes_v2"], "VERIFY_BU", "RIVERSINK", "X", "black")
+
+        master_datasets["Lateralfluxes_all_v2_mjm"]=dataset_parameters( "Lateralfluxes_all_v2_mjm", input_filename["lateral_fluxes_v2_mjm"], "VERIFY_BU", "allcropsource", "s", "black")
+        ##
+        master_datasets["lateral_fluxes_cropsource_v2_mjm"]=dataset_parameters( "lateral_fluxes_cropsource_mjm", input_filename["lateral_fluxes_v2_mjm"], "VERIFY_BU", "allcropsource", "x", "red")
+        master_datasets["lateral_fluxes_cropsink_v2_mjm"]=dataset_parameters( "lateral_fluxes_cropsink_mjm", input_filename["lateral_fluxes_v2_mjm"], "VERIFY_BU", "allcropsink", "o", "green", flipdatasign=True)
+        master_datasets["lateral_fluxes_cropnet_v2_mjm"]=dataset_parameters( "lateral_fluxes_cropnet_mjm", input_filename["lateral_fluxes_v2_mjm"], "VERIFY_BU", "allcropsink", "s", "black")
+        master_datasets["lateral_fluxes_woodsource_v2_mjm"]=dataset_parameters( "lateral_fluxes_woodsource_mjm", input_filename["lateral_fluxes_v2_mjm"], "VERIFY_BU", "allwoodsource", "x", "red")
+        master_datasets["lateral_fluxes_woodsink_v2_mjm"]=dataset_parameters( "lateral_fluxes_woodsink_mjm", input_filename["lateral_fluxes_v2_mjm"], "VERIFY_BU", "allwoodsink", "o", "green", flipdatasign=True)
+        master_datasets["lateral_fluxes_woodnet_v2_mjm"]=dataset_parameters( "lateral_fluxes_woodnet_mjm", input_filename["lateral_fluxes_v2_mjm"], "VERIFY_BU", "allwoodsink", "s", "black")
+        master_datasets["lateral_fluxes_lakeriversource_v2_mjm"]=dataset_parameters( "lateral_fluxes_lakeriversource_mjm", input_filename["lateral_fluxes_v2_mjm"], "VERIFY_BU", "lakeriveremis", "x", "red")
+        master_datasets["lateral_fluxes_riversink_v2_mjm"]=dataset_parameters( "lateral_fluxes_riversink_mjm", input_filename["lateral_fluxes_v2_mjm"], "VERIFY_BU", "riversink", "o", "green", flipdatasign=True)
+        master_datasets["lateral_fluxes_rivernet_v2_mjm"]=dataset_parameters( "lateral_fluxes_rivernet_mjm", input_filename["lateral_fluxes_v2_mjm"], "VERIFY_BU", "riversink", "X", "black")
+
 
         ## Some test datasets with N2O.  Not sure these will have any sense.
         master_datasets["FLEXINVERT-N2O-V2019-Original"]=dataset_parameters( "FLEXINVERT-N2O-V2019-Original","/home/dods/verify/VERIFY_OUTPUT/FN2O/Tier3TD_N2O_Flux_FLEXINVERT-SX_NILU_LAND_EU_1M_V0_20191008_THOMPSON_WP4_CountryTotWithEEZ{}.nc".format(self.country_scope), "REGIONAL_TD", "FN2O_TOT", "^", "green")
@@ -1294,12 +1342,12 @@ class simulation_parameters():
         master_datasets['UNFCCC2021_CL'].displayname='UNFCCC CL NGHGI (2021)'
         master_datasets['UNFCCC2021_CL'].displayname_err='UNFCCC CL NGHGI uncertainty (2021)'
         master_datasets['FAOSTAT2019_LULUCF'].displayname='FAOSTAT_LULUCF'
-        master_datasets['CSR-COMBINED-2019'].displayname='Mean of CarboScopeReg 2019'
-        master_datasets['CSR-COMBINED-2019'].displayname_err='Min/Max of CarboScopeReg 2019'
-        master_datasets['EUROCOMv1_ALL_2019'].displayname='Mean of EUROCOMv1 inversions'
-        master_datasets['EUROCOMv1_ALL_2019'].displayname_err='Min/Max of EUROCOMv1 inversions'
-        master_datasets['EUROCOMv2_ALL_2020'].displayname='Mean of EUROCOMv2 inversions'
-        master_datasets['EUROCOMv2_ALL_2020'].displayname_err='Min/Max of EUROCOMv2 inversions'
+        master_datasets['CSR-COMBINED-2019'].displayname='Mean of CarboScopeReg-V2019'
+        master_datasets['CSR-COMBINED-2019'].displayname_err='Min/Max of CarboScopeReg-V2019'
+        master_datasets['EUROCOMv1_ALL_2019'].displayname='Mean of EUROCOM-V2019 inversions'
+        master_datasets['EUROCOMv1_ALL_2019'].displayname_err='Min/Max of EUROCOM-V2019 inversions'
+        master_datasets['EUROCOMv2_ALL_2020'].displayname='Mean of EUROCOM-V2021 inversions'
+        master_datasets['EUROCOMv2_ALL_2020'].displayname_err='Min/Max of EUROCOM-V2021 inversions'
         master_datasets["TrendyV7_ENSEMBLE"].displayname='Median of TRENDY v7 DGVMs'
         master_datasets["TrendyV7_ENSEMBLE"].displayname_err='Min/Max of TRENDY v7 DGVMs'
         master_datasets["TrendyV9_ENSEMBLE"].displayname='Median of TRENDY v9 DGVMs'
@@ -1758,6 +1806,7 @@ class simulation_parameters():
             master_datasets['BLUE2021_GCP'].displayname='BLUEvGCP-V2021'
 #            master_datasets['ORCHIDEEv2-S3-V2021v2'].displayname='ORCHIDEEv2-V2021-VERIFY'
 #            master_datasets['ORCHIDEEv3-S3-V2021v2'].displayname='ORCHIDEE-N-V2021-VERIFY'
+            master_datasets['ORCHIDEEv3-S3-V2021v2'].displayname='ORCHIDEE-V2021-VERIFY'
             master_datasets['FAOSTAT2021norom_LULUCF'].displayname='FAOSTAT-V2021'
             master_datasets['TrendyV10_ENSEMBLE'].displayname='Trendy-V10'
             master_datasets['CABLE-POP-S3-V2021'].displayname='CABLE-POP-V2021-VERIFY'
@@ -1808,7 +1857,7 @@ class simulation_parameters():
             self.panel_ratios=[1.0,1.0/1.7]
             self.igrid_legend=1
 
-            self.lexternal_y=False
+            self.lexternal_y=True
             self.ymin_external=-540.0
             self.ymax_external=390.0
             if self.lexternal_y:
@@ -3013,6 +3062,37 @@ class simulation_parameters():
             master_datasets["TrendyV10_CABLE-POP"].plotmarker="D"
 
             ####
+
+        elif self.graphname == "gcpall2021":
+            self.desired_simulations=[ \
+                                       'GCP2021_ALL', \
+                                       'GCP2021_CAMS', \
+                                       'GCP2021_CMS', \
+                                       'GCP2021_CTRACKER', \
+                                       'GCP2021_JENA-s99', \
+                                       'GCP2021_JENA-sEXT', \
+                                       'GCP2021_NIES', \
+                                       'GCP2021_UoE', \
+                                   ]
+            self.output_file_start="GCPAll2021_"
+            self.output_file_end="_2021_v1.png" 
+            self.titleending=r" : net land CO$_2$ fluxes from GCP-2021 inversions models"
+            
+            master_datasets['GCP2021_ALL'].lplot_errorbar=True
+
+            master_datasets["GCP2021_ALL"].facec="gray"
+            master_datasets["GCP2021_ALL"].uncert_color=master_datasets["GCP2021_ALL"].facec
+            
+            # Highlight a couple
+            master_datasets["GCP2021_JENA-s99"].plot_lines=True
+            master_datasets["GCP2021_JENA-sEXT"].plot_lines=True
+
+            # The space for the legend needs to be a little bit bigger
+            # to make sure we fit in the text.
+            self.npanels=2
+            self.panel_ratios=[1.0,1.0/2.1]
+            self.igrid_legend=1
+
         elif self.graphname == "trendyv10_gcp2021_all":
             self.desired_simulations=[ \
                                        "TrendyV10_ENSEMBLE", \
@@ -3363,7 +3443,7 @@ class simulation_parameters():
             self.panel_ratios=[1.0,1.0/2.1]
             self.igrid_legend=1
 
-            self.lexternal_y=True
+            self.lexternal_y=False
             self.ymin_external=-160.0
             self.ymax_external=10.0
             if self.lexternal_y:
@@ -3433,7 +3513,7 @@ class simulation_parameters():
             self.panel_ratios=[1.0,1.0/2.1]
             self.igrid_legend=1
 
-            self.lexternal_y=True
+            self.lexternal_y=False
             self.ymin_external=-160.0
             self.ymax_external=10.0
             if self.lexternal_y:
@@ -3761,6 +3841,7 @@ class simulation_parameters():
             master_datasets['FAOSTAT2021norom_GL-GL'].displayname='FAOSTAT-V2021-GL'
             master_datasets['ECOSSE2019_GL-GL-lim'].displayname='ECOSSE-V2019-GL'
             master_datasets['EPIC2021v2_NBP_GRS'].displayname='EPIC-V2021-GL'
+            master_datasets['ORCHIDEEv3-S3-V2021v2-GL_GL'].displayname="ORCHIDEE-V2021-GL"
 
             # Change some things from the above
             master_datasets['UNFCCC_GRASS'].displayname='UNFCCC2019_GL-GL area'
@@ -4039,6 +4120,7 @@ class simulation_parameters():
             master_datasets['FAOSTAT2021norom_CL-CL'].displayname='FAOSTAT-V2021-CL'
             master_datasets['ECOSSE2021_CL-CL_calculated'].displayname='ECOSSE-V2021-CL'
             master_datasets['EPIC2021_NBP_CRP'].displayname='EPIC-V2021-CL'
+            master_datasets['ORCHIDEEv3-S3-V2021v2-CL_CL'].displayname='ORCHIDEE-V2021-CL'
 
             self.desired_legend=[\
                             master_datasets['UNFCCC2021_CL'].displayname,master_datasets["UNFCCC2021_CL"].displayname_err,\
@@ -4355,7 +4437,7 @@ class simulation_parameters():
             self.output_file_start="EUROCOMInversionsv1_"
             self.output_file_end="_2019_v1.png" 
             self.titleending=r" : net land CO$_2$ fluxes from EUROCOM inversions"
-            master_datasets['CSR-COMBINED-2019'].displayname='Mean of CarboScopReg v2019'
+            master_datasets['CSR-COMBINED-2019'].displayname='Mean of CarboScopReg-V2019'
 
             self.desired_legend=[\
                                  master_datasets['EUROCOMv1_ALL_2019'].displayname, master_datasets['EUROCOMv1_ALL_2019'].displayname_err, \
@@ -4610,7 +4692,8 @@ class simulation_parameters():
             master_datasets["GCP2019_CAMS"].lcorrect_inversion=True
             
             master_datasets['GCP2019_ALL'].lplot_errorbar=True
-            
+           
+            # Correcting all the inversions for lateral fluxes
         elif self.graphname in ("topdownlulucf_2021","topdownlulucfbar_2021"):
             
                                   
@@ -4640,7 +4723,7 @@ class simulation_parameters():
             master_datasets['H&N2021'].displayname='H&N-V2021'
             master_datasets['BLUE2021_GCP'].displayname='BLUEvGCP-V2021'
 #            master_datasets['ORCHIDEEv2-S3-V2021v2'].displayname='ORCHIDEEv2-V2021-VERIFY'
-#            master_datasets['ORCHIDEEv3-S3-V2021v2'].displayname='ORCHIDEE-N-V2021-VERIFY'
+            master_datasets['ORCHIDEEv3-S3-V2021v2'].displayname='ORCHIDEE-V2021-VERIFY'
             master_datasets['FAOSTAT2021norom_LULUCF'].displayname='FAOSTAT-V2021'
             master_datasets['TrendyV10_ENSEMBLE'].displayname='Trendy-V10'
             master_datasets['CABLE-POP-S3-V2021'].displayname='CABLE-POP-V2021-VERIFY'
@@ -4741,15 +4824,54 @@ class simulation_parameters():
 
             #endif
 
-            # This is a bigger legend, so the size will be closer to the
-            # size of the plot.
-            self.npanels=2
-            self.panel_ratios=[1.0,0.8]
-            self.igrid_legend=1
+            if self.use_lateral_fluxes:
 
-            self.lexternal_y=False
+                self.desired_simulations=self.desired_simulations + ["Lateralfluxes_all_v2", "lateral_fluxes_cropsource_v2", "lateral_fluxes_cropsink_v2", "lateral_fluxes_woodsource_v2", "lateral_fluxes_woodsink_v2", "lateral_fluxes_lakeriversource_v2", "lateral_fluxes_riversink_v2"]
+
+                # For correcting with lateral fluxes
+                master_datasets["CSR-COMBINED-2021"].lcorrect_inversion=True
+                master_datasets["EUROCOMv2_ALL_2020"].lcorrect_inversion=True
+                master_datasets["GCP2021_ALL"].lcorrect_inversion=True
+                master_datasets["LUMIA-COMBINED-v2021"].lcorrect_inversion=True
+                master_datasets["CIF-CHIMERE-v2021"].lcorrect_inversion=True
+
+                # These simulations will be combined together.
+                self.overwrite_simulations["Lateralfluxes_all_v2"]=["lateral_fluxes_cropsource_v2","lateral_fluxes_cropsink_v2","lateral_fluxes_woodsource_v2","lateral_fluxes_woodsink_v2","lateral_fluxes_lakeriversource_v2","lateral_fluxes_riversink_v2"]
+                # So I don't want to generally plot the components
+                master_datasets["lateral_fluxes_cropsource_v2"].displaylegend=False
+                master_datasets["lateral_fluxes_cropsink_v2"].displaylegend=False
+                master_datasets["lateral_fluxes_woodsource_v2"].displaylegend=False
+                master_datasets["lateral_fluxes_woodsink_v2"].displaylegend=False
+                master_datasets["lateral_fluxes_lakeriversource_v2"].displaylegend=False
+                master_datasets["lateral_fluxes_riversink_v2"].displaylegend=False
+                master_datasets["Lateralfluxes_all_v2"].displaylegend=False
+                self.overwrite_operations["Lateralfluxes_all_v2"]="sum"
+                self.overwrite_coeffs["Lateralfluxes_all_v2"]=[1.0,1.0,1.0,1.0,1.0,1.0]
+
+                self.correction_tag=" (removing lateral fluxes)"
+                self.correction_list=["Lateralfluxes_all_v2"]
+
+                # This is a bigger legend, so the size will be closer to the
+                # size of the plot.
+                self.npanels=2
+                self.panel_ratios=[1.0,1.0/1.1]
+                self.igrid_legend=1
+
+
+            else:
+
+                # This is a bigger legend, so the size will be closer to the
+                # size of the plot.
+                self.npanels=2
+                self.panel_ratios=[1.0,1.0/1.4]
+                self.igrid_legend=1
+
+            #endif
+
+            self.lexternal_y=True
             self.ymin_external=-800.0
-            self.ymax_external=700.0
+            # 800 with lateral fluxes, 700 without
+            self.ymax_external=800.0
             if self.lexternal_y:
                 self.lharmonize_y=True
             #endif
@@ -4956,9 +5078,11 @@ class simulation_parameters():
             master_datasets["CSR-COMBINED-2019"].lplot_errorbar=True
             master_datasets["CSR-COMBINED-2019"].lwhiskerbars=True
 
-            self.lexternal_y=False
+            self.lexternal_y=True
             self.ymin_external=-800.0
-            self.ymax_external=700.0
+            # 700 for no lat fluxes in the 2021 version, 800 for lat fluxes
+            #self.ymax_external=700.0
+            self.ymax_external=800.0
             if self.lexternal_y:
                 self.lharmonize_y=True
             #endif
@@ -5468,7 +5592,6 @@ class simulation_parameters():
             self.desired_simulations=[ \
                                        'UNFCCC2019_LULUCF', \
                                        'MS-NRT', \
-                                       'rivers_lakes_reservoirs_ULB', \
                                        'CSR-COMBINED-2019', \
                                        'EUROCOMv1_ALL_2019', \
                                        'GCP2019_ALL', \
@@ -5499,13 +5622,36 @@ class simulation_parameters():
             master_datasets["CSR-COMBINED-2019"].lcorrect_inversion=True
             master_datasets["EUROCOMv1_ALL_2019"].lcorrect_inversion=True
            
-            self.npanels=2
-            self.panel_ratios=[1.0,1.0/1.7]
-            self.igrid_legend=1
+            if self.use_lateral_fluxes:
 
-            self.lexternal_y=False
+                self.correction_tag=" (removing rivers_lakes_reservoirs_ULB)"
+                self.correction_list=['rivers_lakes_reservoirs_ULB']
+                self.desired_simulations=self.desired_simulations + self.correction_list
+                master_datasets['rivers_lakes_reservoirs_ULB'].displaylegend=False
+
+                master_datasets["CSR-COMBINED-2019"].lcorrect_inversion=True
+                master_datasets["EUROCOMv1_ALL_2019"].lcorrect_inversion=True
+                master_datasets["GCP2019_ALL"].lcorrect_inversion=True
+
+                # This is a bigger legend, so the size will be closer to the
+                # size of the plot.
+                self.npanels=2
+                self.panel_ratios=[1.0,1.0/1.4]
+                self.igrid_legend=1
+
+                self.ymax_external=800.0
+
+            else:
+
+                self.npanels=2
+                self.panel_ratios=[1.0,1.0/1.7]
+                self.igrid_legend=1
+
+                self.ymax_external=700.0
+            #endif
+
+            self.lexternal_y=True
             self.ymin_external=-800.0
-            self.ymax_external=700.0
             if self.lexternal_y:
                 self.lharmonize_y=True
             #endif
@@ -5602,13 +5748,55 @@ class simulation_parameters():
             master_datasets["CSR-COMBINED-2021"].lcorrect_inversion=False
             master_datasets["EUROCOMv2_ALL_2020"].lcorrect_inversion=False
            
-            self.npanels=2
-            self.panel_ratios=[1.0,1.0/1.7]
-            self.igrid_legend=1
+            if self.use_lateral_fluxes:
 
-            self.lexternal_y=False
+                self.desired_simulations=self.desired_simulations + ["Lateralfluxes_all_v2", "lateral_fluxes_cropsource_v2", "lateral_fluxes_cropsink_v2", "lateral_fluxes_woodsource_v2", "lateral_fluxes_woodsink_v2", "lateral_fluxes_lakeriversource_v2", "lateral_fluxes_riversink_v2"]
+
+                # For correcting with lateral fluxes
+                master_datasets["CSR-COMBINED-2021"].lcorrect_inversion=True
+                master_datasets["EUROCOMv2_ALL_2020"].lcorrect_inversion=True
+                master_datasets["GCP2021_ALL"].lcorrect_inversion=True
+                master_datasets["LUMIA-COMBINED-v2021"].lcorrect_inversion=True
+                master_datasets["CIF-CHIMERE-v2021"].lcorrect_inversion=True
+
+                # These simulations will be combined together.
+                self.overwrite_simulations["Lateralfluxes_all_v2"]=["lateral_fluxes_cropsource_v2","lateral_fluxes_cropsink_v2","lateral_fluxes_woodsource_v2","lateral_fluxes_woodsink_v2","lateral_fluxes_lakeriversource_v2","lateral_fluxes_riversink_v2"]
+                # So I don't want to generally plot the components
+                master_datasets["lateral_fluxes_cropsource_v2"].displaylegend=False
+                master_datasets["lateral_fluxes_cropsink_v2"].displaylegend=False
+                master_datasets["lateral_fluxes_woodsource_v2"].displaylegend=False
+                master_datasets["lateral_fluxes_woodsink_v2"].displaylegend=False
+                master_datasets["lateral_fluxes_lakeriversource_v2"].displaylegend=False
+                master_datasets["lateral_fluxes_riversink_v2"].displaylegend=False
+                master_datasets["Lateralfluxes_all_v2"].displaylegend=False
+                self.overwrite_operations["Lateralfluxes_all_v2"]="sum"
+                self.overwrite_coeffs["Lateralfluxes_all_v2"]=[1.0,1.0,1.0,1.0,1.0,1.0]
+
+                self.correction_tag=" (removing lateral fluxes)"
+                self.correction_list=["Lateralfluxes_all_v2"]
+
+                # This is a bigger legend, so the size will be closer to the
+                # size of the plot.
+                self.npanels=2
+                self.panel_ratios=[1.0,1.0/1.4]
+                self.igrid_legend=1
+
+                self.ymax_external=800.0
+
+            else:
+
+                # This is a bigger legend, so the size will be closer to the
+                # size of the plot.
+                self.npanels=2
+                self.panel_ratios=[1.0,1.0/1.7]
+                self.igrid_legend=1
+
+                self.ymax_external=700.0
+
+            #endif
+
+            self.lexternal_y=True
             self.ymin_external=-800.0
-            self.ymax_external=700.0
             if self.lexternal_y:
                 self.lharmonize_y=True
             #endif
@@ -6250,63 +6438,168 @@ class simulation_parameters():
 
             # Shows the values of the inversions, along with a few datasets
             # that we are using to correct the inversion fluxes.
+            # I feel like we cannot use 
         elif self.graphname == "inversioncorrections":
 
             self.desired_simulations=[ \
                                        "GCP2021_ALL", \
-                                       "rivers_lakes_reservoirs_ULB", \
+                                       "GCP2021_ALL_2", \
+#                                       "rivers_lakes_reservoirs_ULB", \
 #                                       "GFEDv4.1s", \
                                        "Lateralfluxes_all_v2", \
-                                       "lateral_fluxes_cropsource", \
-                                       "lateral_fluxes_cropsink", \
-                                       "lateral_fluxes_cropnet", \
-                                       "lateral_fluxes_woodsource", \
-                                       "lateral_fluxes_woodsink", \
-                                       "lateral_fluxes_woodnet", \
-                                       "lateral_fluxes_lakeriversource", \
-                                       "lateral_fluxes_riversink", \
-                                       "lateral_fluxes_rivernet", \
+                                       "lateral_fluxes_cropsource_v2", \
+                                       "lateral_fluxes_cropsink_v2", \
+                                       "lateral_fluxes_cropnet_v2", \
+                                       "lateral_fluxes_woodsource_v2", \
+                                       "lateral_fluxes_woodsink_v2", \
+                                       "lateral_fluxes_woodnet_v2", \
+                                       "lateral_fluxes_lakeriversource_v2", \
+                                       "lateral_fluxes_riversink_v2", \
+                                       "lateral_fluxes_rivernet_v2", \
+#                                       "Lateralfluxes_all_v2_mjm", \
+#                                       "lateral_fluxes_cropsource_v2_mjm", \
+#                                       "lateral_fluxes_cropsink_v2_mjm", \
+#                                       "lateral_fluxes_cropnet_v2_mjm", \
+#                                       "lateral_fluxes_woodsource_v2_mjm", \
+#                                       "lateral_fluxes_woodsink_v2_mjm", \
+#                                       "lateral_fluxes_woodnet_v2_mjm", \
+#                                       "lateral_fluxes_lakeriversource_v2_mjm", \
+#                                       "lateral_fluxes_riversink_v2_mjm", \
+#                                       "lateral_fluxes_rivernet_v2_mjm", \
                                    ]  
             
             self.output_file_start="InversionCorrections_"
             self.output_file_end="_FCO2land_2021_v1.png" 
 
-            self.titleending=r" : Comparison of inversions with some correction datasets"
+            self.titleending=r" : Comparison of CO$_2$ inversions with lateral fluxes"
             
             master_datasets["GCP2021_ALL"].lplot_errorbar=True
-            master_datasets["GCP2021_ALL"].facec="red"
+            master_datasets["GCP2021_ALL"].facec="gray"
             master_datasets["GCP2021_ALL"].uncert_color=master_datasets["GCP2021_ALL"].facec
 
+            master_datasets["GCP2021_ALL_2"].lplot_errorbar=True
+            master_datasets["GCP2021_ALL_2"].facec="blue"
+            master_datasets["GCP2021_ALL_2"].uncert_color=master_datasets["GCP2021_ALL_2"].facec
+
+            # Correct one and not the other
+            master_datasets["GCP2021_ALL"].lcorrect_inversion=False
+            master_datasets["GCP2021_ALL_2"].lcorrect_inversion=True
+
+
+            master_datasets["Lateralfluxes_all_v2"].displayname="Total lateral fluxes"
+            master_datasets["Lateralfluxes_all_v2_mjm"].displayname="Total lateral fluxes (Matt)"
+            master_datasets["lateral_fluxes_cropnet_v2"].displayname="Net lateral fluxes from crop trade"
+            master_datasets["lateral_fluxes_woodnet_v2"].displayname="Net lateral fluxes from wood trade"
+            master_datasets["lateral_fluxes_rivernet_v2"].displayname="Net rivers and lakes"
+
+            master_datasets["lateral_fluxes_cropsource_v2"].displayname="Source from crop trade"
+            master_datasets["lateral_fluxes_woodsource_v2"].displayname="Source from wood trade"
+            master_datasets["lateral_fluxes_lakeriversource_v2"].displayname="Source from lakes and rivers"
+            master_datasets["lateral_fluxes_cropsink_v2"].displayname="Sink from crop trade"
+            master_datasets["lateral_fluxes_woodsink_v2"].displayname="Sink from wood trade"
+            master_datasets["lateral_fluxes_riversink_v2"].displayname="Sink from rivers"
+
+
+            master_datasets["rivers_lakes_reservoirs_ULB"].displayname="Total emissions from inland waters (ULB)"
             master_datasets['rivers_lakes_reservoirs_ULB'].plotmarker='^'
 
+            # These are a set of five colors recommended by ColorBrewer
+            cb_1=(27/256.0,158/256.0,119/256.0)
+            cb_2=(217/256.0,95/256.0,2/256.0)
+            cb_3=(117/256.0,112/256.0,179/256.0)
+            cb_4=(231/256.0,41/256.0,138/256.0)
+            cb_5=(102/256.0,166/256.0,30/256.0)
+
+            master_datasets["lateral_fluxes_rivernet_v2"].facec=cb_2
+            master_datasets["lateral_fluxes_rivernet_v2"].linecolor=cb_2
+            master_datasets["lateral_fluxes_woodnet_v2"].facec=cb_1
+            master_datasets["lateral_fluxes_woodnet_v2"].linecolor=cb_1
+            master_datasets["lateral_fluxes_cropnet_v2"].facec=cb_3
+            master_datasets["lateral_fluxes_cropnet_v2"].linecolor=cb_3
+            master_datasets["lateral_fluxes_riversink_v2"].facec=cb_2
+            master_datasets["lateral_fluxes_riversink_v2"].linecolor=cb_2
+            master_datasets["lateral_fluxes_lakeriversource_v2"].facec=cb_2
+            master_datasets["lateral_fluxes_lakeriversource_v2"].linecolor=cb_2
+            master_datasets["lateral_fluxes_woodsink_v2"].facec=cb_1
+            master_datasets["lateral_fluxes_woodsink_v2"].linecolor=cb_1
+            master_datasets["lateral_fluxes_woodsource_v2"].facec=cb_1
+            master_datasets["lateral_fluxes_woodsource_v2"].linecolor=cb_1
+            master_datasets["lateral_fluxes_cropsink_v2"].facec=cb_3
+            master_datasets["lateral_fluxes_cropsink_v2"].linecolor=cb_3
+            master_datasets["lateral_fluxes_cropsource_v2"].facec=cb_3
+            master_datasets["lateral_fluxes_cropsource_v2"].linecolor=cb_3
+            master_datasets["Lateralfluxes_all_v2"].facec=cb_4
+            master_datasets["Lateralfluxes_all_v2"].linecolor=cb_4
+            master_datasets["Lateralfluxes_all_v2_mjm"].facec=cb_4
+            master_datasets["Lateralfluxes_all_v2_mjm"].linecolor=cb_4
+            master_datasets['rivers_lakes_reservoirs_ULB'].facec=cb_2
+            master_datasets['rivers_lakes_reservoirs_ULB'].linecolor=cb_2
+
             # These simulations will be combined together.
-            self.overwrite_simulations["Lateralfluxes_all_v2"]=["lateral_fluxes_cropsource","lateral_fluxes_cropsink","lateral_fluxes_woodsource","lateral_fluxes_woodsink","lateral_fluxes_lakeriversource","lateral_fluxes_riversink"]
+            self.overwrite_simulations["Lateralfluxes_all_v2"]=["lateral_fluxes_cropsource_v2","lateral_fluxes_cropsink_v2","lateral_fluxes_woodsource_v2","lateral_fluxes_woodsink_v2","lateral_fluxes_lakeriversource_v2","lateral_fluxes_riversink_v2"]
             # So I don't want to generally plot the components
-            master_datasets["lateral_fluxes_cropsource"].displaylegend=False
-            master_datasets["lateral_fluxes_cropsink"].displaylegend=False
-            master_datasets["lateral_fluxes_woodsource"].displaylegend=False
-            master_datasets["lateral_fluxes_woodsink"].displaylegend=False
-            master_datasets["lateral_fluxes_lakeriversource"].displaylegend=False
-            master_datasets["lateral_fluxes_riversink"].displaylegend=False
+            master_datasets["lateral_fluxes_cropsource_v2"].displaylegend=False
+            master_datasets["lateral_fluxes_cropsink_v2"].displaylegend=False
+            master_datasets["lateral_fluxes_woodsource_v2"].displaylegend=False
+            master_datasets["lateral_fluxes_woodsink_v2"].displaylegend=False
+            master_datasets["lateral_fluxes_lakeriversource_v2"].displaylegend=False
+            master_datasets["lateral_fluxes_riversink_v2"].displaylegend=False
             self.overwrite_operations["Lateralfluxes_all_v2"]="sum"
             self.overwrite_coeffs["Lateralfluxes_all_v2"]=[1.0,1.0,1.0,1.0,1.0,1.0]
 
-            self.overwrite_simulations["lateral_fluxes_cropnet"]=["lateral_fluxes_cropsource","lateral_fluxes_cropsink"]
-            self.overwrite_coeffs["lateral_fluxes_cropnet"]=[1.0,1.0]
-            self.overwrite_operations["lateral_fluxes_cropnet"]="sum"
+            self.overwrite_simulations["lateral_fluxes_cropnet_v2"]=["lateral_fluxes_cropsource_v2","lateral_fluxes_cropsink_v2"]
+            self.overwrite_coeffs["lateral_fluxes_cropnet_v2"]=[1.0,1.0]
+            self.overwrite_operations["lateral_fluxes_cropnet_v2"]="sum"
 
-            self.overwrite_simulations["lateral_fluxes_woodnet"]=["lateral_fluxes_woodsource","lateral_fluxes_woodsink"]
-            self.overwrite_coeffs["lateral_fluxes_woodnet"]=[1.0,1.0]
-            self.overwrite_operations["lateral_fluxes_woodnet"]="sum"
+            self.overwrite_simulations["lateral_fluxes_woodnet_v2"]=["lateral_fluxes_woodsource_v2","lateral_fluxes_woodsink_v2"]
+            self.overwrite_coeffs["lateral_fluxes_woodnet_v2"]=[1.0,1.0]
+            self.overwrite_operations["lateral_fluxes_woodnet_v2"]="sum"
 
-            self.overwrite_simulations["lateral_fluxes_rivernet"]=["lateral_fluxes_lakeriversource","lateral_fluxes_riversink"]
-            self.overwrite_coeffs["lateral_fluxes_rivernet"]=[1.0,1.0]
-            self.overwrite_operations["lateral_fluxes_rivernet"]="sum"
+            self.overwrite_simulations["lateral_fluxes_rivernet_v2"]=["lateral_fluxes_lakeriversource_v2","lateral_fluxes_riversink_v2"]
+            self.overwrite_coeffs["lateral_fluxes_rivernet_v2"]=[1.0,1.0]
+            self.overwrite_operations["lateral_fluxes_rivernet_v2"]="sum"
 
+            # These simulations will be combined together.
+#            self.overwrite_simulations["Lateralfluxes_all_v2_mjm"]=["lateral_fluxes_cropsource_v2_mjm","lateral_fluxes_cropsink_v2_mjm","lateral_fluxes_woodsource_v2_mjm","lateral_fluxes_woodsink_v2_mjm","lateral_fluxes_lakeriversource_v2_mjm","lateral_fluxes_riversink_v2_mjm"]
+            # So I don't want to generally plot the components
+#            master_datasets["lateral_fluxes_cropsource_v2_mjm"].displaylegend=False
+#            master_datasets["lateral_fluxes_cropsink_v2_mjm"].displaylegend=False
+#            master_datasets["lateral_fluxes_woodsource_v2_mjm"].displaylegend=False
+#            master_datasets["lateral_fluxes_woodsink_v2_mjm"].displaylegend=False
+#            master_datasets["lateral_fluxes_lakeriversource_v2_mjm"].displaylegend=False
+#            master_datasets["lateral_fluxes_riversink_v2_mjm"].displaylegend=False
+#            self.overwrite_operations["Lateralfluxes_all_v2_mjm"]="sum"
+#            self.overwrite_coeffs["Lateralfluxes_all_v2_mjm"]=[1.0,1.0,1.0,1.0,1.0,1.0]
+
+            master_datasets["lateral_fluxes_rivernet_v2"].plot_lines=True
+            master_datasets["lateral_fluxes_woodnet_v2"].plot_lines=True
+            master_datasets["lateral_fluxes_cropnet_v2"].plot_lines=True
+            master_datasets["Lateralfluxes_all_v2"].plot_lines=True
+
+            master_datasets['GCP2021_ALL_2'].displayname="Corrected mean of GCP inversions (2021)"
+            master_datasets['GCP2021_ALL_2'].displayname_err="Corrected mix/max of GCP inversions (2021) (removing lateral fluxes)"
+
+            self.desired_legend=[\
+                                 master_datasets['GCP2021_ALL'].displayname, master_datasets['GCP2021_ALL'].displayname_err, \
+                                 master_datasets['GCP2021_ALL_2'].displayname, master_datasets['GCP2021_ALL_2'].displayname_err, \
+#                                 master_datasets['rivers_lakes_reservoirs_ULB'].displayname,\
+#                                 master_datasets["Lateralfluxes_all_v2_mjm"].displayname,\
+                                 master_datasets["Lateralfluxes_all_v2"].displayname,\
+#                                 master_datasets["lateral_fluxes_cropsource_v2"].displayname,\
+#                                 master_datasets["lateral_fluxes_cropsink_v2"].displayname,\
+                                 master_datasets["lateral_fluxes_cropnet_v2"].displayname,\
+#                                 master_datasets["lateral_fluxes_woodsource_v2"].displayname,\
+#                                 master_datasets["lateral_fluxes_woodsink_v2"].displayname,\
+                                 master_datasets["lateral_fluxes_woodnet_v2"].displayname,\
+#                                 master_datasets["lateral_fluxes_lakeriversource_v2"].displayname,\
+#                                 master_datasets["lateral_fluxes_riversink_v2"].displayname,\
+                                 master_datasets["lateral_fluxes_rivernet_v2"].displayname,\
+            ]
+            
             # The space for the legend needs to be a little bit bigger
             # to make sure we fit in the text.
             self.npanels=2
-            self.panel_ratios=[1.0,1.0/2.4]
+            self.panel_ratios=[1.0,1.0/1.5]
             self.igrid_legend=1
 
             self.lexternal_y=False
@@ -7717,6 +8010,53 @@ class simulation_parameters():
             master_datasets["UNFCCC2021_CL"].lplot_errorbar=True
             master_datasets["UNFCCC2021_FL-FL"].lplot_errorbar=True
             master_datasets["UNFCCC2021_FL"].lplot_errorbar=True
+
+            if self.use_lateral_fluxes:
+
+                self.desired_simulations=self.desired_simulations + ["Lateralfluxes_all_v2", "lateral_fluxes_cropsource_v2", "lateral_fluxes_cropsink_v2", "lateral_fluxes_woodsource_v2", "lateral_fluxes_woodsink_v2", "lateral_fluxes_lakeriversource_v2", "lateral_fluxes_riversink_v2"]
+
+                # For correcting with lateral fluxes
+                master_datasets["CSR-COMBINED-2021"].lcorrect_inversion=True
+                master_datasets["EUROCOMv2_ALL_2020"].lcorrect_inversion=True
+                master_datasets["GCP2021_ALL"].lcorrect_inversion=True
+                master_datasets["LUMIA-COMBINED-v2021"].lcorrect_inversion=True
+                master_datasets["CIF-CHIMERE-v2021"].lcorrect_inversion=True
+
+                # These simulations will be combined together.
+                self.overwrite_simulations["Lateralfluxes_all_v2"]=["lateral_fluxes_cropsource_v2","lateral_fluxes_cropsink_v2","lateral_fluxes_woodsource_v2","lateral_fluxes_woodsink_v2","lateral_fluxes_lakeriversource_v2","lateral_fluxes_riversink_v2"]
+                # So I don't want to generally plot the components
+                master_datasets["lateral_fluxes_cropsource_v2"].displaylegend=False
+                master_datasets["lateral_fluxes_cropsink_v2"].displaylegend=False
+                master_datasets["lateral_fluxes_woodsource_v2"].displaylegend=False
+                master_datasets["lateral_fluxes_woodsink_v2"].displaylegend=False
+                master_datasets["lateral_fluxes_lakeriversource_v2"].displaylegend=False
+                master_datasets["lateral_fluxes_riversink_v2"].displaylegend=False
+                master_datasets["Lateralfluxes_all_v2"].displaylegend=False
+                self.overwrite_operations["Lateralfluxes_all_v2"]="sum"
+                self.overwrite_coeffs["Lateralfluxes_all_v2"]=[1.0,1.0,1.0,1.0,1.0,1.0]
+
+                self.correction_tag=" (removing lateral fluxes)"
+                self.correction_list=["Lateralfluxes_all_v2"]
+
+                # This is a bigger legend, so the size will be closer to the
+                # size of the plot.
+                self.npanels=2
+                self.panel_ratios=[1.0,1.0/1.4]
+                self.igrid_legend=1
+
+                self.ymax_external=800.0
+
+            else:
+                
+                # This is a bigger legend, so the size will be closer to the
+                # size of the plot.
+                self.npanels=2
+                self.panel_ratios=[1.0,1.0/1.7]
+                self.igrid_legend=1
+
+                self.ymax_external=700.0
+
+            #endif
 
         elif self.graphname == "meanplotsv1_2021":
 

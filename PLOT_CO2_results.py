@@ -63,7 +63,16 @@ sim_params.refine_plot_parameters()
 # Here are some that we use frequently.
 desired_simulations=sim_params.desired_simulations
 desired_legend=sim_params.desired_legend
-displayname=sim_params.create_displayname_list()
+
+# Take care of debugging information.
+if sim_params.ctest_sim in desired_simulations:
+    print("--- Found the test simulation: ",sim_params.ctest_sim)
+    sim_params.itest_sim=desired_simulations.index(sim_params.ctest_sim)
+else:
+    print("--- Did not find the test simulation: ",sim_params.ctest_sim)
+    print(desired_simulations)
+    sim_params.itest_sim=0
+#endif
 ###############################################
 
 
@@ -399,6 +408,12 @@ else:
    print("We do not have inventories in this dataset.")
 #endif
 
+# Sometimes I need to sum several variables into one timeseries.  This does that, assuming
+# that there one simulation already in the dataset that will be overwritten.
+simulation_data[:,:,:],simulation_min[:,:,:],simulation_max[:,:,:],simulation_err[:,:,:]=combine_simulations(sim_params.overwrite_simulations,sim_params.overwrite_coeffs,sim_params.overwrite_operations,simulation_data,simulation_min,simulation_max,simulation_err,desired_simulations,sim_params.graphname)
+
+print_test_data(sim_params.ltest_data,simulation_data,simulation_err,simulation_min,simulation_max,sim_params.itest_sim,sim_params.itest_plot,desired_simulations,sim_params.desired_plots,"CHECKPOINT 6 (after combine_simulations)")
+
 # For one plot type, we need to remove the biofuel emissions and the emissions
 # from inland water bodies from the inversions.  Inversions see uptakes to both
 # biomass stored in forests that to going to biofuels; our models don't consider biofuel uptake; 
@@ -412,8 +427,19 @@ else:
 # we want.
 
 if sim_params.need_inversion_correction():
-   correction_tag=" (removing rivers_lakes_reservoirs_ULB)"
-   correction_simulations=np.array(["rivers_lakes_reservoirs_ULB","lateral_fluxes_cropnet"],dtype=object)
+   correction_set=set(sim_params.correction_list)
+   test_set=list(correction_set.intersection(set(desired_simulations)))
+   if len(test_set) != len(sim_params.correction_list):
+       print("***********************")
+       print("Do not have all the correction simulations in the simulation list.")
+       print("Corrections: ",sim_params.correction_list)
+       print("Desired simulations: ",desired_simulations)
+       print("***********************************")
+       traceback.print_stack(file=sys.stdout)
+       sys.exit(1)
+    #endif
+
+   correction_simulations=np.array(sim_params.correction_list,dtype=object)
    correction_data=np.zeros((sim_params.ndesiredyears,nplots))
    for isim,simname in enumerate(desired_simulations):  
       if simname in correction_simulations:
@@ -423,28 +449,32 @@ if sim_params.need_inversion_correction():
    for isim,simname in enumerate(desired_simulations):
       ds=sim_params.dataset_parameters[isim]
       if ds.lcorrect_inversion:
+
+         print("--> Correcting: ",simname)
          # This is not straight-forward, since the correction data
          # may have NaN.  If we subtract those, we get NaN.
          simulation_data[isim,:,:]=simulation_data[isim,:,:]-np.where(np.isnan(correction_data),0.0,correction_data)
+         simulation_min[isim,:,:]=simulation_min[isim,:,:]-np.where(np.isnan(correction_data),0.0,correction_data)
+         simulation_max[isim,:,:]=simulation_max[isim,:,:]-np.where(np.isnan(correction_data),0.0,correction_data)
          if desired_legend:
             if ds.displayname in desired_legend:
                jsim=desired_legend.index(ds.displayname)
-               desired_legend[jsim]=desired_legend[jsim]+correction_tag
+               desired_legend[jsim]=desired_legend[jsim]+sim_params.correction_tag
+            else:
+               print("***********************")
+               print("Correcting inversions, but {} does not appear in the desired legend.".format(ds.displayname))
+               print("***********************")
             #endif
          #endif
-         ds.displayname=ds.displayname+correction_tag
+         ds.displayname=ds.displayname+sim_params.correction_tag
       #endif
    #endif
 
 #endif
 
-print_test_data(sim_params.ltest_data,simulation_data,simulation_err,simulation_min,simulation_max,sim_params.itest_sim,sim_params.itest_plot,desired_simulations,sim_params.desired_plots,"CHECKPOINT 6 (after corrections)")
+print_test_data(sim_params.ltest_data,simulation_data,simulation_err,simulation_min,simulation_max,sim_params.itest_sim,sim_params.itest_plot,desired_simulations,sim_params.desired_plots,"CHECKPOINT 7 (after corrections)")
 
-# Sometimes I need to sum several variables into one timeseries.  This does that, assuming
-# that there one simulation already in the dataset that will be overwritten.
-simulation_data[:,:,:],simulation_min[:,:,:],simulation_max[:,:,:],simulation_err[:,:,:]=combine_simulations(sim_params.overwrite_simulations,sim_params.overwrite_coeffs,sim_params.overwrite_operations,simulation_data,simulation_min,simulation_max,simulation_err,desired_simulations,sim_params.graphname)
 
-print_test_data(sim_params.ltest_data,simulation_data,simulation_err,simulation_min,simulation_max,sim_params.itest_sim,sim_params.itest_plot,desired_simulations,sim_params.desired_plots,"CHECKPOINT 7 (after combine_simulations)")
 
 # Need to be careful with this.  This applies Normalization to Zero Mean and Unit of Energy (Z-normalization)
 # to every timeseries.  Not sure how it'll work with timeseries that
@@ -812,6 +842,7 @@ for iplot,cplot in enumerate(sim_params.desired_plots):
    # In order to do this, I should process all the data outside this loop
    # and make sure it's stored in simulation_data.  I am working towards that goal,
    # though perhaps not quite there yet.
+   displayname=sim_params.create_displayname_list()
    df=pd.DataFrame(data=simulation_data[:,:,iplot],index=displayname,columns=sim_params.allyears)
    #print_test_data(sim_params.ltest_data,simulation_data,simulation_err,simulation_min,simulation_max,sim_params.itest_sim,sim_params.itest_plot,desired_simulations,sim_params.desired_plots,"CHECKPOINT 9 (starting plots)")
 
@@ -1078,10 +1109,6 @@ for iplot,cplot in enumerate(sim_params.desired_plots):
       for isim,simname in enumerate(desired_simulations):  
          ds=sim_params.dataset_parameters[isim]
 
-         if sim_params.need_inversion_correction() and desired_simulations[isim] in correction_simulations:
-            continue
-         #endif 
-
          if not ds.displaylegend:
             continue
          #endif
@@ -1188,9 +1215,6 @@ for iplot,cplot in enumerate(sim_params.desired_plots):
          if sim_params.graphname == "sectorplot_full" and desired_simulations[isim] in ("EPIC","ECOSSE_GL-GL","EFISCEN"):
             continue
          #endif
-         if sim_params.need_inversion_correction() and desired_simulations[isim] in correction_simulations:
-            continue
-         #endif      
 
          if not ds.displaylegend:
             continue
@@ -1309,7 +1333,8 @@ for iplot,cplot in enumerate(sim_params.desired_plots):
    #endif
 
    # I want to try stacking some bars at the bottom and right-side axis of some of the inversion plots
-   if sim_params.need_inversion_correction():
+#   if sim_params.need_inversion_correction():
+   if False: # Don't need this at the moment.  Not sure it even works anymore.
 
       temp_data=np.zeros((len(correction_simulations),sim_params.ndesiredyears))
       for isim,csim in enumerate(correction_simulations):
