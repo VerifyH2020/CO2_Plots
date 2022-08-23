@@ -642,6 +642,17 @@ if sim_params.lplot_means:
          overlapping_years_plot.append(not any(nans))
       #endfor
       overlapping_years.append(overlapping_years_plot)
+      
+      # Print them out to the screen
+      print('Overlapping years for country: ',sim_params.desired_plots[iplot])
+      print('--> ',end='')
+      for itime,vyear in enumerate(overlapping_years_plot):
+          if vyear:
+              print(" {}".format(sim_params.allyears[itime]),end='')
+          #endif
+      #endfor
+      print("")
+
       #print("fjeioze ",itime,simulation_data[:,itime,iplot])
       #print("jfieoze ",nans)
       #print("jfieoze ",overlapping_years[itime],itime)

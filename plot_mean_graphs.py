@@ -148,7 +148,9 @@ ax1mean.set_ylabel(r'Tg C yr$^{-1}$', fontsize=14)
 if loverlay:
     cr_data=get_country_region_data()
     if plot_version in ["V2021_orig","V2021_ext"] and overlay_version in ["V2019_orig","V2019_ext"]:
-        sim_params.title="Mean of overlapping timeseries - V2019 (2006-2015) and V2021 (2009-2018)\n{} : net land CO$_2$ fluxes".format(cr_data[country_code].long_name)
+        # With the use of six simulations in the GCP2021, this now only
+        # goes from 2010 to 2018
+        sim_params.title="Mean of overlapping timeseries - V2019 (2006-2015) and V2021 (2010-2018)\n{} : net land CO$_2$ fluxes".format(cr_data[country_code].long_name)
     else:
         print("*********************************")
         print("Not sure how to name this plot.")

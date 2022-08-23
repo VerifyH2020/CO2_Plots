@@ -284,7 +284,7 @@ class dataset():
         elif self.name == "EUROCOMv2_ALL_2020":
             self.lerror=True
             self.color="blue"
-            self.displayname="Mean of EUROCOMv2 inversions"
+            self.displayname="Mean of EUROCOM-V2021 inversions"
             self.possible_names=[self.name,self.displayname]
             self.possible_min_names=[]
             self.possible_max_names=[]             
@@ -310,7 +310,7 @@ class dataset():
         elif self.name == "CSR-COMBINED-2021":
             self.lerror=True
             self.color="blue"
-            self.displayname="Mean of CarboScopeReg V2021"
+            self.displayname="Mean of CarboScopeReg-V2021"
             self.possible_names=[self.name,self.displayname]
             self.possible_min_names=[]
             self.possible_max_names=[]             
@@ -323,7 +323,7 @@ class dataset():
         elif self.name == "LUMIA-COMBINED-v2021":
             self.lerror=True
             self.color="blue"
-            self.displayname="Mean of LUMIA V2021"
+            self.displayname="Mean of LUMIA-V2021"
             self.possible_names=[self.name,self.displayname]
             self.possible_min_names=[]
             self.possible_max_names=[]             
@@ -349,8 +349,8 @@ class dataset():
         elif self.name == "ORCHIDEEv3-S3-V2021v2":
             self.lerror=False 
             self.color="yellow"
-            self.displayname="ORCHIDEE-N-V2021-VERIFY"
-            self.possible_names=[self.name,self.displayname]
+            self.displayname="ORCHIDEE-V2021-VERIFY"
+            self.possible_names=[self.name,self.displayname,'ORCHIDEE-N-V2021-VERIFY']
             self.input_file="./MEANPLOTSV2_{}_FCO2land_2021_v1.csv".format(self.country_code)
 
         elif self.name == "BLUE2021_GCP":
@@ -438,7 +438,7 @@ def get_simulation_parameters(plot_version,country_code):
         sim_params.gray_bars.append(create_gray_bars(4.5,6.5,"white","Bottom-up\n(DGVMs)",5.5))
         sim_params.gray_bars.append(create_gray_bars(6.5,9.0,"lightgray","Bottom-up\n(bookkeeping)",7.5))
 
-        sim_params.ymax=550.0
+        sim_params.ymax=200.0
         sim_params.ymin=-500
 
     elif plot_version == "V2019_ext":
@@ -460,7 +460,7 @@ def get_simulation_parameters(plot_version,country_code):
         sim_params.gray_bars.append(create_gray_bars(6.5,9.5,"white","Bottom-up\n(DGVMs)",8.0))
         sim_params.gray_bars.append(create_gray_bars(9.5,13.0,"lightgray","Bottom-up\n(bookkeeping)",11.0))
 
-        sim_params.ymax=550.0
+        sim_params.ymax=200.0
         sim_params.ymin=-500
 
     elif plot_version == "V2021_orig":
@@ -482,7 +482,7 @@ def get_simulation_parameters(plot_version,country_code):
         sim_params.gray_bars.append(create_gray_bars(4.5,6.5,"white","Bottom-up\n(DGVMs)",5.5))
         sim_params.gray_bars.append(create_gray_bars(6.5,9.0,"lightgray","Bottom-up\n(bookkeeping)",7.5))
 
-        sim_params.ymax=550.0
+        sim_params.ymax=200.0
         sim_params.ymin=-500
 
     elif plot_version == "V2021_ext":
@@ -504,7 +504,7 @@ def get_simulation_parameters(plot_version,country_code):
         sim_params.gray_bars.append(create_gray_bars(6.5,9.5,"white","Bottom-up\n(DGVMs)",8.0))
         sim_params.gray_bars.append(create_gray_bars(9.5,13.0,"lightgray","Bottom-up\n(bookkeeping)",11.0))
 
-        sim_params.ymax=550.0
+        sim_params.ymax=200.0
         sim_params.ymin=-500
 
     else:

@@ -131,7 +131,7 @@ class simulation_parameters():
 
         parser.add_argument('--plot_meangraph', dest='lplot_meangraph', action='store',default=False,help='if TRUE, we will create additional plots of the timeseries means for every country and region that we can.  The filename is the same, except preceded by MeanBar.')
 
-        parser.add_argument('--use_lateral_fluxes', dest='use_lateral_fluxes', action='store',default=False,help='if TRUE, we will correct inversions on some graphs by lateral fluxes.')
+        parser.add_argument('--use_lateral_fluxes', dest='use_lateral_fluxes', action='store',default="False",help='if TRUE, we will correct inversions on some graphs by lateral fluxes.')
 
         parser.add_argument('--plot_monthly_data', dest='plot_monthly_data', action='store',default="False",help='if TRUE, we plot monthly data instead of annual (used for some testing)')
 
@@ -347,7 +347,7 @@ class simulation_parameters():
             elif self.country_scope in ["Master","AllCountriesRegions"]:
 #                self.desired_plots=["E28", "FRA", "USA", 'AFR','WLD']
 #                self.desired_plots=["E28", "FRA", "DEU", 'NLD','Ireland']
-                self.desired_plots=["E28", "DEU", 'FRA',"PRT",'WLD']
+#                self.desired_plots=["E28", "DEU", 'FRA',"PRT",'WLD']
                 self.desired_plots=["E28"]
                 #self.desired_plots=["E28", "DEU", 'FRA',"PRT","Greece","Sweden","Austria","Romania"]
 #                self.desired_plots=['COD','AFR','GAB','ZAA']
@@ -8244,6 +8244,39 @@ class simulation_parameters():
             master_datasets["UNFCCC2021_CL"].lplot_errorbar=True
             master_datasets["UNFCCC2021_FL-FL"].lplot_errorbar=True
             master_datasets["UNFCCC2021_FL"].lplot_errorbar=True
+
+            if self.use_lateral_fluxes:
+
+                self.desired_simulations=self.desired_simulations + ["Lateralfluxes_all_v2", "lateral_fluxes_cropsource_v2", "lateral_fluxes_cropsink_v2", "lateral_fluxes_woodsource_v2", "lateral_fluxes_woodsink_v2", "lateral_fluxes_lakeriversource_v2", "lateral_fluxes_riversink_v2"]
+
+                # For correcting with lateral fluxes
+                master_datasets["CSR-COMBINED-2021"].lcorrect_inversion=True
+                master_datasets["EUROCOMv2_ALL_2020"].lcorrect_inversion=True
+                master_datasets["GCP2021_ALL"].lcorrect_inversion=True
+                master_datasets["LUMIA-COMBINED-v2021"].lcorrect_inversion=True
+                master_datasets["CIF-CHIMERE-v2021"].lcorrect_inversion=True
+
+                # These simulations will be combined together.
+                self.overwrite_simulations["Lateralfluxes_all_v2"]=["lateral_fluxes_cropsource_v2","lateral_fluxes_cropsink_v2","lateral_fluxes_woodsource_v2","lateral_fluxes_woodsink_v2","lateral_fluxes_lakeriversource_v2","lateral_fluxes_riversink_v2"]
+                # So I don't want to generally plot the components
+                master_datasets["lateral_fluxes_cropsource_v2"].displaylegend=False
+                master_datasets["lateral_fluxes_cropsink_v2"].displaylegend=False
+                master_datasets["lateral_fluxes_woodsource_v2"].displaylegend=False
+                master_datasets["lateral_fluxes_woodsink_v2"].displaylegend=False
+                master_datasets["lateral_fluxes_lakeriversource_v2"].displaylegend=False
+                master_datasets["lateral_fluxes_riversink_v2"].displaylegend=False
+                master_datasets["Lateralfluxes_all_v2"].displaylegend=False
+                self.overwrite_operations["Lateralfluxes_all_v2"]="sum"
+                self.overwrite_coeffs["Lateralfluxes_all_v2"]=[1.0,1.0,1.0,1.0,1.0,1.0]
+
+#                self.correction_tag=" (removing lateral fluxes)"
+                self.correction_tag="" # Not graphing, but reading in with
+                                       # another program.  Easier if this is 
+                                       # blank.
+                self.correction_list=["Lateralfluxes_all_v2"]
+
+            #endif
+                
 
 
         elif self.graphname == "peatlands_2021":
