@@ -38,7 +38,14 @@ from netcdf_subroutines import create_time_axis_from_netcdf
 # Standard time/lat/lon variables are in files which end with _2D.nc.
 # The script also now processes _2Dmod.nc files, which are similar
 # to CountryTot files.  These were renamed to TempCT.
-
+#
+# NOTE: Some 2D.nc files are known to be incorrect.  If this script
+#       is applied, the results are bad.  Therefore, we keep a list of
+#       those files and skip them.  These are generally 2D.nc files that
+#       were created from country totals listed in spreadsheets in 2019
+#       and 2020.  Ideally, those would be replaced with 2Dmod/TempCT files,
+#       but that would require redoing all those scripts and testing them.
+#
 #############################################################
 # A subroutine to print missing information from regions to the
 # NetCDF file.  Only used for the2Dmod TempCT file.
@@ -220,13 +227,14 @@ elif region_flag.lower() in ["glob","global"]:
    path_mask = "/home/dods/verify/VERIFY_INPUT/COUNTRY_MASKS/EU_16othercountries.nc"
    region_tag="Global"
 elif region_flag.lower() in ["afr","africa"]:
-
+   print("Using the mask file for Africa.")
    #TRYING A NEW MASK FILE FOR AFRICA
    path_regs = "/home/dods/verify/VERIFY_INPUT/COUNTRY_MASKS/african_global_country_region_masks_%(EEZ)s_%(nlat)sx%(nlon)s_%(slat)s%(elat)s_%(slon)s%(elon)s.nc"
    path_mask = "/home/dods/verify/VERIFY_INPUT/COUNTRY_MASKS/african_global_country_region_masks_0.1x0.1.nc"
    region_tag="Africa"
    
 elif region_flag.lower() in ["all_countries_regions","allcountriesregions"]:
+   print("Using the mask file for all countries and regions.")
 
    #TRYING A NEW MASK FILE FOR ALL REGION
    path_regs = "/home/dods/verify/VERIFY_INPUT/COUNTRY_MASKS/all_countries_and_regions_masks_%(EEZ)s_%(nlat)sx%(nlon)s_%(slat)s%(elat)s_%(slon)s%(elon)s.nc"
@@ -294,7 +302,9 @@ print("Calculating mask file area.")
 country_region_areas=[]
 cname_mask=[]
 ccode_mask=[]
+## Run this if you change the mask file
 #calculate_country_areas()
+#####
 country_region_areas=get_country_areas()
 for icount in range(cmask.shape[0]):
    #area=np.ma.where(cmask[icount].mask == False, cmask[icount] * cgrid.area, 0).sum(axis=(-1,-2))
@@ -303,13 +313,21 @@ for icount in range(cmask.shape[0]):
    ccode_mask.append("".join([letter.decode('utf-8') for letter in ccode[icount] if letter is not np.ma.masked]))
    # Convert the bytes into strings
 
-   print(" Area for {} ({}): {} m**2".format(cname_mask[-1],ccode_mask[-1],country_region_areas[ccode_mask[-1]]))
-   
+   if ccode_mask[-1] in country_region_areas.keys():
+      print(" Area for {} ({}): {} m**2".format(cname_mask[-1],ccode_mask[-1],country_region_areas[ccode_mask[-1]]))
+   else:
+      print("--> Could not find {} in country_region_areas.".format(ccode_mask[-1]))
+      print("--> Likely a country/region that no longer exists.")
+   #endif
 #endfor
 
 # Information about all our countries and regions
 country_region_data=get_country_region_data()
 ##################################
+
+#### 2D files to skip (see above note):
+skip_files=["Tier2_CO2_LULUCF_MSNRT-SX_JRC_LAND_EU_1M_V1_20200205_PETRESCU_WPX_2D.nc","Tier1_CO2_AllFluxes_FAOSTAT-SX_FAO_LAND_EU_1M_V1_20191212_PETRASCU_WPX_2D.nc","Tier1_CO2_AllFluxes_FAOSTAT-SX_FAO_LAND_EU_1M_V2_20201221_PETRASCU_WPX_2D.nc","Tier1_CO2_HWP_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_2D.nc","Tier1_CO2_WetlandConvert_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_2D.nc","Tier1_CO2_ForestConvert_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_2D.nc","Tier1_CO2_OtherRemain_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_2D.nc","Tier1_CO2_WetlandRemain_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_2D.nc","Tier1_CO2_SettlementRemain_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_2D.nc","Tier1_CO2_GrasslandConvert_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_2D.nc","Tier1_CO2_CroplandRemain_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_2D.nc","Tier1_CO2_ForestRemain_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_2D.nc","Tier1_CO2_OtherConvert_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_2D.nc","Tier1_CO2_SettlementConvert_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_2D.nc","Tier1_CO2_CroplandConvert_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_2D.nc","Tier1_CO2_GrasslandRemain_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_2D.nc","Tier1_CO2_LULUCF_Inventory-SX_UNFCCC_LAND_EU_1Y_V1_20191112_PETRESCU_WP1_2D.nc","Tier3BUPB_CO2_LandFlux_BLUE-2019-HILDA_bgc-jena_LAND_GL_1M_V1_20191020_Pongratz_WP3_CountryTotWithEEZ.nc","Tier3BUPB_CO2_LandFlux_BLUE-2019_bgc-jena_LAND_GL_1M_V1_20191020_Pongratz_WP3_2D.nc","Tier3BUPB_CO2_LandFlux_BLUE-2019-HILDA_bgc-jena_LAND_GL_1M_V1_20191020_Pongratz_WP3_2D.nc","Tier3BUDD_CO2_NBP_CBM-SX_JRC_FOR_EU_1Y_V1_20201026_PETRESCU_WPX_2D.nc","Tier3BUDD_CO2_NBP_CBM-SX_JRC_FOR_EU_1Y_V1_20191212_PETRESCU_WPX_2D.nc","Tier3BUDD_CO2_Trees_EFISCEN-SX_WENR_FOR_EU_1M_V1_20201103_SCHELHAAS_WPX_2D.nc","Tier3BUDD_CO2_Trees_EFISCEN-SX_WENR_FOR_EU_1M_V1_20191212_SCHELHAAS_WPX_2D.nc","Tier3BUDD_CO2_Trees_EFISCEN-SX_WENR_FOR_EU_1M_V1_20200601_SCHELHAAS_WPX_2D.nc","Tier3BUDD_CO2_TreesLUH2v2_EFISCEN-SX_WENR_FOR_EU_1M_V1_20191212_SCHELHAAS_WPX_2D.nc"]
+
 
 for item in [path] if path.endswith(".nc") else [os.path.join(path, filename) for filename in os.listdir(path)]:
 
@@ -321,6 +339,16 @@ for item in [path] if path.endswith(".nc") else [os.path.join(path, filename) fo
        #endif
     #endfor
     if not current_ending:
+       continue
+    #endif
+
+    # The filename may be preceded by a directory.
+    itemlist=item.split("/")
+    if itemlist[-1] in skip_files:
+       print("******************")
+       print("Known problem creating a CountryTot from this file: ",item)
+       print("Skipping.")
+       print("******************")
        continue
     #endif
 
